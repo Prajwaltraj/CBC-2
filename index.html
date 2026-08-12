@@ -186,6 +186,17 @@
         </div>
     </main>
 
+    <!-- Registration / Email Section -->
+    <section class="w-full max-w-lg mx-auto relative z-10 mb-12 px-4 opacity-0 gsap-form">
+        <form id="notify-form" class="glow-box rounded-lg p-6 flex flex-col md:flex-row gap-4 items-center">
+            <input type="email" id="email-input" required placeholder="ENTER_EMAIL_ID..." class="w-full bg-black/50 border border-cyber-cyan/50 rounded px-4 py-2 text-cyber-cyan focus:outline-none focus:border-cyber-cyan font-mono placeholder-cyber-cyan/30">
+            <button type="submit" class="w-full md:w-auto px-6 py-2 bg-cyber-cyan/10 border border-cyber-cyan text-cyber-cyan font-bold font-mono hover:bg-cyber-cyan hover:text-black transition-all duration-300 whitespace-nowrap shadow-[0_0_15px_rgba(0,243,255,0.2)] hover:shadow-[0_0_20px_rgba(0,243,255,0.6)]">
+                JOIN_QUEUE
+            </button>
+        </form>
+        <p id="form-message" class="text-sm font-mono mt-3 text-center hidden"></p>
+    </section>
+
     <!-- Footer -->
     <footer class="gsap-footer opacity-0 p-6 text-center border-t border-cyber-cyan/20 bg-cyber-darkBox/50 backdrop-blur-md relative z-10 font-mono text-xs md:text-sm text-gray-400">
         <p>Code Breaker Challenge 2.0 <span class="text-cyber-cyan px-2">·</span> Presented by Dept. of AI & ML, GAT Bengaluru</p>
@@ -231,12 +242,45 @@
             { opacity: 1, y: 0, scale: 1, duration: 1.5 },
             "-=1.0"
         )
-        // 7. Footer fades in
+        // 7. Form fades in
+        .fromTo(".gsap-form",
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, duration: 1 },
+            "-=0.8"
+        )
+        // 8. Footer fades in
         .fromTo(".gsap-footer",
             { opacity: 0 },
             { opacity: 1, duration: 1 },
             "-=0.5"
         );
+
+        // Form Submission Logic
+        document.getElementById('notify-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const emailInput = document.getElementById('email-input');
+            const messageEl = document.getElementById('form-message');
+            const email = emailInput.value;
+
+            try {
+                const response = await fetch('/subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                });
+
+                if (response.ok) {
+                    messageEl.textContent = "> email_added_to_registry.xls";
+                    messageEl.className = "text-sm font-mono mt-3 text-center text-cyber-cyan glow-text-cyan block";
+                    emailInput.value = "";
+                } else {
+                    throw new Error('Server error');
+                }
+            } catch (err) {
+                messageEl.textContent = "> err: failed_to_transmit";
+                messageEl.className = "text-sm font-mono mt-3 text-center text-cyber-magenta glow-text-magenta block";
+            }
+        });
     </script>
 </body>
 </html>
