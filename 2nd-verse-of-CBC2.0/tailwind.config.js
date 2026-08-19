@@ -6,6 +6,9 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        'nav': '1200px',
+      },
       colors: {
         cyber: {
           bg: '#010103',

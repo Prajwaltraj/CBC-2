@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from 'framer-motion';
-import { Terminal as TerminalIcon, Code2, ShieldAlert, Cpu, Network, ChevronDown, Github, Twitter, Disc, MapPin, Calendar, Clock, Zap, Download, Lock, Unlock, Mail, Phone, Instagram, Link as LinkIcon, User } from 'lucide-react';
+import { Code2, ShieldAlert, Cpu, Network, Zap, Download, Lock, Unlock, Mail, Phone, Instagram, Link as LinkIcon, User, Trophy, Crown, Medal, Award, Sparkles, CheckCircle2, Briefcase, Menu, X } from 'lucide-react';
 import Particles from "react-tsparticles";
 import { loadSlim } from "tsparticles-slim";
 import { PROBLEM_STATEMENTS_CONFIG } from './config/problemStatements';
@@ -116,11 +116,23 @@ const NeuralBackground = () => {
 // ------------------------------------------------------------------
 const NavigationBar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Close mobile menu on resize to desktop view (>= 1200px)
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1200) {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const navLinks = [
@@ -139,41 +151,87 @@ const NavigationBar = () => {
       animate={{ y: 0 }}
       transition={{ duration: 0.8, ease: BUTTERY_EASE }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-[#010103]/80 backdrop-blur-md border-b border-white/10 py-3' : 'bg-transparent py-5'
+        isScrolled || mobileMenuOpen ? 'bg-[#010103]/90 backdrop-blur-md border-b border-white/10 py-2.5 sm:py-3' : 'bg-transparent py-3 sm:py-4 nav:py-5'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center">
-        <a href="#" className="flex items-center gap-2 group">
-          <img src="https://codebreakerchallenge2o.vercel.app/logos/cbc2ologo.PNG" alt="CBC 2.0" className="h-10 w-10 object-contain transition-transform duration-300 group-hover:scale-110" />
-          <span className="font-orbitron font-bold text-xl tracking-wider text-white group-hover:text-[#00F3FF] transition-colors">CBC 2.0</span>
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-8 flex justify-between items-center w-full">
+        {/* Logo */}
+        <a href="#" className="flex items-center gap-1.5 sm:gap-2 group z-50 shrink-0">
+          <img src="https://codebreakerchallenge2o.vercel.app/logos/cbc2ologo.PNG" alt="CBC 2.0" className="h-8 w-8 sm:h-9 sm:w-9 nav:h-10 nav:w-10 object-contain transition-transform duration-300 group-hover:scale-110" />
+          <span className="font-orbitron font-bold text-base sm:text-lg nav:text-xl tracking-wider text-white group-hover:text-[#00F3FF] transition-colors">CBC 2.0</span>
         </a>
-        <div className="hidden md:flex items-center gap-6 font-orbitron text-[11px] tracking-wider">
+
+        {/* Desktop Nav Links (Expands above 1200px) */}
+        <div className="hidden min-[1200px]:flex items-center gap-5 xl:gap-7 font-orbitron text-[11px] tracking-wider transition-all">
           {navLinks.map((link) => (
-            <a key={link.name} href={link.href} className="nav-link uppercase">{link.name}</a>
+            <a key={link.name} href={link.href} className="nav-link uppercase whitespace-nowrap">{link.name}</a>
           ))}
         </div>
-        <div>
-          <a href="#" className="relative inline-flex items-center justify-center px-6 py-2.5 overflow-hidden font-orbitron font-bold text-white bg-[#010103] border border-[#00F3FF] rounded-md hover:bg-[#00F3FF]/10 transition-colors group">
+
+        {/* Right Controls: Register Button + Mobile Menu Toggle (Toggle visible only below 1200px) */}
+        <div className="flex items-center gap-1.5 sm:gap-2 min-[1200px]:gap-4 shrink-0">
+          <a href="#" className="relative inline-flex items-center justify-center px-3 sm:px-4 min-[1200px]:px-6 py-1.5 sm:py-2 min-[1200px]:py-2.5 overflow-hidden font-orbitron font-bold text-white bg-[#010103] border border-[#00F3FF] rounded-md hover:bg-[#00F3FF]/10 transition-colors group shadow-[0_0_10px_rgba(0,243,255,0.15)] shrink-0">
             <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-[#00F3FF] rounded-full group-hover:w-56 group-hover:h-56 opacity-10"></span>
-            <span className="relative flex items-center gap-2 text-xs md:text-sm">
-              <Zap size={16} className="text-[#00F3FF]" /> REGISTER
+            <span className="relative flex items-center gap-1 sm:gap-1.5 min-[1200px]:gap-2 text-[10px] sm:text-[11px] min-[1200px]:text-sm whitespace-nowrap">
+              <Zap size={13} className="text-[#00F3FF] min-[1200px]:w-4 min-[1200px]:h-4" /> REGISTER
             </span>
           </a>
+
+          {/* Mobile Menu Toggle (Visible only below 1200px, hidden above 1200px) */}
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle navigation menu"
+            className="min-[1200px]:hidden p-1.5 sm:p-2 rounded-md bg-[#0a0a0f]/80 border border-white/10 hover:border-[#00F3FF]/50 text-gray-300 hover:text-[#00F3FF] transition-all focus:outline-none shrink-0"
+          >
+            {mobileMenuOpen ? <X size={18} className="text-[#00F3FF]" /> : <Menu size={18} />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile Collapsible Navigation Menu (Visible only below 1200px when open) */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: BUTTERY_EASE }}
+            className="min-[1200px]:hidden overflow-hidden bg-[#010103]/95 backdrop-blur-xl border-b border-[#00F3FF]/20"
+          >
+            <div className="px-5 py-5 flex flex-col gap-2 font-orbitron text-xs tracking-wider max-w-7xl mx-auto">
+              {navLinks.map((link, idx) => (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between py-2.5 px-3 rounded-lg border border-transparent hover:border-[#00F3FF]/30 hover:bg-[#00F3FF]/5 text-gray-300 hover:text-[#00F3FF] transition-all"
+                >
+                  <span className="uppercase font-bold tracking-widest">{link.name}</span>
+                  <span className="text-[10px] text-gray-500 font-mono">0{idx + 1} {'//'}</span>
+                </a>
+              ))}
+              
+              <div className="mt-2 pt-3 border-t border-white/10 flex justify-between items-center text-[10px] font-mono text-gray-400">
+                <span className="text-gray-500">SYS.NAV // ACTIVE</span>
+                <span className="text-[#00F3FF]">CBC 2.0</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.nav>
   );
 };
 
 // ------------------------------------------------------------------
-// FIXED COUNTDOWN TIMER
+// COUNTDOWN TIMER HOOK & COMPONENTS
 // ------------------------------------------------------------------
-const FixedTimer = () => {
+const useCountdown = (targetDateStr) => {
   const [timeLeft, setTimeLeft] = useState({ d: 0, h: 0, m: 0, s: 0 });
 
   useEffect(() => {
-    // Target: Oct 10, 2026 10:30 AM IST (Same as Problem Statements)
-    const targetDate = new Date(PROBLEM_STATEMENTS_CONFIG.UNLOCK_DATE).getTime();
+    const targetDate = new Date(targetDateStr).getTime();
 
     const updateTimer = () => {
       const now = new Date().getTime();
@@ -191,38 +249,47 @@ const FixedTimer = () => {
     updateTimer();
     const interval = setInterval(updateTimer, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [targetDateStr]);
+
+  return timeLeft;
+};
+
+// ------------------------------------------------------------------
+// FIXED COUNTDOWN TIMER
+// ------------------------------------------------------------------
+const FixedTimer = () => {
+  const timeLeft = useCountdown(PROBLEM_STATEMENTS_CONFIG.UNLOCK_DATE);
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, x: 50 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 1, delay: 1 }}
-      className="fixed right-0 top-1/2 -translate-y-1/2 z-[100] flex flex-col gap-2 p-2 md:p-3 glass-panel rounded-l-xl border-r-0 border-[#00F3FF]/30 backdrop-blur-md shadow-[-5px_0_20px_rgba(0,243,255,0.1)] scale-75 md:scale-100 origin-right"
+    <div 
+      className="fixed right-0 top-1/2 -translate-y-1/2 z-[9999] pointer-events-auto select-none"
+      style={{ position: 'fixed', top: '50%', transform: 'translateY(-50%)', right: 0, zIndex: 9999 }}
     >
-      <div className="text-[10px] font-orbitron text-[#00F3FF] tracking-widest text-center uppercase mb-1" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>T-Minus</div>
-      <div className="flex flex-col gap-2 items-center font-mono">
-        <div className="flex flex-col items-center">
-          <span className="text-xl font-bold text-white">{String(timeLeft.d).padStart(2, '0')}</span>
-          <span className="text-[9px] text-gray-500 uppercase tracking-wider">Days</span>
-        </div>
-        <div className="w-full h-px bg-white/10" />
-        <div className="flex flex-col items-center">
-          <span className="text-xl font-bold text-white">{String(timeLeft.h).padStart(2, '0')}</span>
-          <span className="text-[9px] text-gray-500 uppercase tracking-wider">Hrs</span>
-        </div>
-        <div className="w-full h-px bg-white/10" />
-        <div className="flex flex-col items-center">
-          <span className="text-xl font-bold text-white">{String(timeLeft.m).padStart(2, '0')}</span>
-          <span className="text-[9px] text-gray-500 uppercase tracking-wider">Min</span>
-        </div>
-        <div className="w-full h-px bg-white/10" />
-        <div className="flex flex-col items-center">
-          <span className="text-xl font-bold text-[#A855F7] animate-pulse">{String(timeLeft.s).padStart(2, '0')}</span>
-          <span className="text-[9px] text-gray-500 uppercase tracking-wider">Sec</span>
+      <div className="flex flex-col gap-1 md:gap-2 py-1.5 px-1.5 md:p-3 bg-[#010103]/90 glass-panel rounded-l-lg md:rounded-l-xl border-r-0 border-[#00F3FF]/40 backdrop-blur-md shadow-[-5px_0_20px_rgba(0,243,255,0.15)]">
+        <div className="text-[8px] md:text-[10px] font-orbitron font-bold text-[#00F3FF] tracking-widest text-center uppercase mb-0.5 md:mb-1 drop-shadow-[0_0_8px_#00F3FF]" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>T-Minus</div>
+        <div className="flex flex-col gap-1 md:gap-2 items-center font-mono">
+          <div className="flex flex-col items-center">
+            <span className="text-xs md:text-xl font-bold text-white leading-none">{String(timeLeft.d).padStart(2, '0')}</span>
+            <span className="text-[7px] md:text-[9px] text-gray-400 uppercase tracking-wider mt-0.5">Days</span>
+          </div>
+          <div className="w-full h-px bg-white/10" />
+          <div className="flex flex-col items-center">
+            <span className="text-xs md:text-xl font-bold text-white leading-none">{String(timeLeft.h).padStart(2, '0')}</span>
+            <span className="text-[7px] md:text-[9px] text-gray-400 uppercase tracking-wider mt-0.5">Hrs</span>
+          </div>
+          <div className="w-full h-px bg-white/10" />
+          <div className="flex flex-col items-center">
+            <span className="text-xs md:text-xl font-bold text-white leading-none">{String(timeLeft.m).padStart(2, '0')}</span>
+            <span className="text-[7px] md:text-[9px] text-gray-400 uppercase tracking-wider mt-0.5">Min</span>
+          </div>
+          <div className="w-full h-px bg-white/10" />
+          <div className="flex flex-col items-center">
+            <span className="text-xs md:text-xl font-bold text-[#A855F7] animate-pulse leading-none">{String(timeLeft.s).padStart(2, '0')}</span>
+            <span className="text-[7px] md:text-[9px] text-[#A855F7] font-semibold uppercase tracking-wider mt-0.5">Sec</span>
+          </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -449,7 +516,7 @@ const ThemesSection = () => {
   ];
 
   return (
-    <section id="themes" className="py-24 px-4 relative z-10 scroll-mt-20">
+    <section id="themes" className="py-24 px-4 relative z-10 scroll-mt-20 overflow-hidden">
       <div className="max-w-6xl mx-auto relative">
         <motion.h2 
           initial={{ opacity: 0 }}
@@ -479,48 +546,292 @@ const ThemesSection = () => {
 };
 
 const PrizesSection = () => {
+  const prizes = [
+    {
+      place: "1st Place",
+      title: "Winner",
+      isWinner: true,
+      amount: "₹30,000",
+      themeColor: "#00F3FF",
+      accentBg: "from-[#00F3FF]/18 via-[#0077B6]/10 to-[#020617]/95",
+      borderColor: "border-[#00F3FF]/70 group-hover:border-[#00F3FF]",
+      borderGlow: "shadow-[0_0_30px_rgba(0,243,255,0.25),inset_0_0_20px_rgba(0,243,255,0.1)]",
+      badgeBg: "bg-[#00F3FF]/15 text-[#00F3FF] border-[#00F3FF]/40",
+      pedestalHeight: "min-[1000px]:h-28 lg:h-36",
+      pedestalBg: "from-[#00F3FF]/25 via-[#0077B6]/8 to-[#020617]",
+      pedestalBorder: "border-t-2 border-[#00F3FF]/80",
+      pedestalGlow: "shadow-[0_-6px_20px_rgba(0,243,255,0.2)]",
+      icon: <Trophy className="w-9 h-9 text-[#00F3FF]" />,
+      orderClass: "order-1 min-[1000px]:order-2",
+      elevationClass: "translate-y-0 min-[1000px]:-translate-y-8 z-20",
+      delay: 0.4,
+      perks: [
+        "Direct Internship & Placement Offer",
+        "Official Champion Trophy & Medals",
+        "Pre-Placement Assessment (PPA)",
+        "Exclusive Winner Swags & Certificate"
+      ]
+    },
+    {
+      place: "2nd Place",
+      title: "1st Runner Up",
+      amount: "₹20,000",
+      themeColor: "#00B4D8",
+      accentBg: "from-[#00B4D8]/12 via-[#005F73]/5 to-[#020617]/95",
+      borderColor: "border-[#00B4D8]/45 group-hover:border-[#00B4D8]/90",
+      borderGlow: "shadow-[0_0_20px_rgba(0,180,216,0.16),inset_0_0_15px_rgba(0,180,216,0.06)]",
+      badgeBg: "bg-[#00B4D8]/10 text-[#00B4D8] border-[#00B4D8]/30",
+      pedestalHeight: "min-[1000px]:h-20 lg:h-24",
+      pedestalBg: "from-[#00B4D8]/18 via-[#00B4D8]/4 to-[#020617]",
+      pedestalBorder: "border-t border-[#00B4D8]/50",
+      pedestalGlow: "shadow-[0_-4px_14px_rgba(0,180,216,0.12)]",
+      icon: <Medal className="w-8 h-8 text-[#00B4D8]" />,
+      orderClass: "order-2 min-[1000px]:order-1",
+      elevationClass: "translate-y-0",
+      delay: 0.2,
+      perks: [
+        "3-Month Internship Opportunity",
+        "Pre-Placement Assessment (PPA)",
+        "Silver Medals & Podium Trophy",
+        "Official Certificate & Swags"
+      ]
+    },
+    {
+      place: "3rd Place",
+      title: "2nd Runner Up",
+      amount: "₹10,000",
+      themeColor: "#3B82F6",
+      accentBg: "from-[#3B82F6]/10 via-[#1E3A8A]/5 to-[#020617]/95",
+      borderColor: "border-[#3B82F6]/40 group-hover:border-[#3B82F6]/80",
+      borderGlow: "shadow-[0_0_20px_rgba(59,130,246,0.14),inset_0_0_15px_rgba(59,130,246,0.05)]",
+      badgeBg: "bg-[#3B82F6]/10 text-[#3B82F6] border-[#3B82F6]/30",
+      pedestalHeight: "min-[1000px]:h-14 lg:h-16",
+      pedestalBg: "from-[#3B82F6]/15 via-[#3B82F6]/3 to-[#020617]",
+      pedestalBorder: "border-t border-[#3B82F6]/40",
+      pedestalGlow: "shadow-[0_-4px_12px_rgba(59,130,246,0.1)]",
+      icon: <Award className="w-8 h-8 text-[#3B82F6]" />,
+      orderClass: "order-3 min-[1000px]:order-3",
+      elevationClass: "translate-y-0",
+      delay: 0.6,
+      perks: [
+        "3-Month Internship Opportunity",
+        "Pre-Placement Assessment (PPA)",
+        "Bronze Medals & Recognition",
+        "Official Certificate & Swags"
+      ]
+    }
+  ];
+
   return (
-    <section id="prizes" className="py-24 px-4 relative z-10 scroll-mt-20">
-      <div className="max-w-5xl mx-auto relative">
-        <motion.h2 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="text-4xl md:text-6xl font-orbitron font-bold text-center mb-16 uppercase"
-        >
-          <span className="text-[#A855F7] glow-magenta">Prizes</span> & Perks
-        </motion.h2>
+    <section id="prizes" className="py-24 px-4 relative z-10 scroll-mt-20 overflow-hidden">
+      {/* Background cyber tunnel / binary perspective ambient lighting */}
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-gradient-to-b from-[#00F3FF]/8 via-[#0077B6]/6 to-transparent blur-[110px] pointer-events-none rounded-full" />
 
-        <div className="flex flex-col md:flex-row justify-center items-end gap-6 mb-16">
-          {/* 1st Runner Up */}
-          <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2, duration: 0.8 }}
-            className="w-full md:w-1/3 glass-panel p-8 rounded-t-xl text-center border-t-4 border-[#00F3FF] md:h-64 flex flex-col justify-center bg-[#010103]/80">
-            <h3 className="text-xl font-orbitron text-gray-400 uppercase tracking-widest mb-2">1st Runner Up</h3>
-            <p className="text-4xl font-black font-orbitron text-[#00F3FF]">₹20,000</p>
+      <div className="max-w-6xl mx-auto relative">
+        {/* Section Title & Poster-Themed Header */}
+        <div className="text-center mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#00F3FF]/10 border border-[#00F3FF]/30 text-xs font-mono text-[#00F3FF] mb-4 uppercase tracking-widest"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-[#00F3FF]" />
+            CASH POOL 60K+ • CODE BREAKER CHALLENGE 2.0
           </motion.div>
 
-          {/* Winner */}
-          <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.4, duration: 0.8 }}
-            className="w-full md:w-1/3 glass-panel p-8 rounded-t-xl text-center border-t-4 border-[#FBBF24] md:h-72 flex flex-col justify-center bg-[#010103] shadow-[0_-20px_40px_rgba(251,191,36,0.15)] relative z-10 transform md:-translate-y-4">
-            <h3 className="text-2xl font-orbitron text-gray-200 uppercase tracking-widest mb-2">Winner</h3>
-            <p className="text-5xl font-black font-orbitron text-[#FBBF24] glow-[#FBBF24]">₹30,000</p>
-          </motion.div>
-
-          {/* 2nd Runner Up */}
-          <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.6, duration: 0.8 }}
-            className="w-full md:w-1/3 glass-panel p-8 rounded-t-xl text-center border-t-4 border-[#A855F7] md:h-56 flex flex-col justify-center bg-[#010103]/80">
-            <h3 className="text-lg font-orbitron text-gray-400 uppercase tracking-widest mb-2">2nd Runner Up</h3>
-            <p className="text-3xl font-black font-orbitron text-[#A855F7]">₹10,000</p>
-          </motion.div>
+          <motion.h2 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="text-4xl md:text-6xl font-orbitron font-black uppercase tracking-wider text-white"
+          >
+            <span className="text-[#00F3FF] glow-cyan">Prizes</span> & Perks
+          </motion.h2>
+          <p className="mt-4 text-gray-400 font-mono text-sm max-w-xl mx-auto">
+            Organized by Department of AI & ML, Global Academy of Technology. Compete for ₹60,000+ cash bounties, verified trophies, direct placements, and elite industry opportunities.
+          </p>
         </div>
 
-        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          className="glass-panel p-8 rounded-xl border border-white/10 text-center max-w-3xl mx-auto">
-          <Zap size={32} className="text-[#FBBF24] mx-auto mb-4" />
-          <h4 className="text-xl font-orbitron font-bold text-white mb-2">Exclusive Opportunities at Dyashin Technologies</h4>
-          <p className="text-gray-300 font-mono text-sm leading-relaxed">
-            The winning team will receive a direct internship opportunity and placement offer. Runner-ups will be awarded a 3-month internship and a PPA (Pre-Placement Assessment) offer based on individual performance!
-          </p>
+        {/* Podium Grid on >= 1000px, Centered Box Column on < 1000px */}
+        <div className="flex flex-col items-center gap-6 min-[1000px]:grid min-[1000px]:grid-cols-3 min-[1000px]:items-end min-[1000px]:gap-4 mb-20">
+          {prizes.map((prize, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.45, ease: "easeOut" }}
+              className={`w-full max-w-md min-[1000px]:max-w-none flex flex-col ${prize.orderClass} ${prize.elevationClass} group relative`}
+            >
+              {/* Subtle radial spotlight behind card */}
+              <div 
+                className="absolute -top-8 left-1/2 -translate-x-1/2 w-36 h-36 blur-2xl pointer-events-none rounded-full opacity-25 group-hover:opacity-50 transition-opacity duration-500"
+                style={{ backgroundColor: `${prize.themeColor}30` }}
+              />
+
+              {/* Main Prize Card Block */}
+              <div 
+                className={`relative bg-gradient-to-b ${prize.accentBg} backdrop-blur-xl border ${prize.borderColor} ${prize.borderGlow} rounded-2xl p-6 md:p-7 flex flex-col justify-between transition-all duration-300 group-hover:scale-[1.02] ${prize.isWinner ? 'min-[1000px]:min-h-[460px]' : 'min-[1000px]:min-h-[420px]'}`}
+              >
+                {/* Cyber Corner Accents */}
+                <div className="absolute top-2 left-2 w-2.5 h-2.5 border-t border-l opacity-50 group-hover:opacity-90 transition-opacity" style={{ borderColor: prize.themeColor }} />
+                <div className="absolute top-2 right-2 w-2.5 h-2.5 border-t border-r opacity-50 group-hover:opacity-90 transition-opacity" style={{ borderColor: prize.themeColor }} />
+                <div className="absolute bottom-2 left-2 w-2.5 h-2.5 border-b border-l opacity-50 group-hover:opacity-90 transition-opacity" style={{ borderColor: prize.themeColor }} />
+                <div className="absolute bottom-2 right-2 w-2.5 h-2.5 border-b border-r opacity-50 group-hover:opacity-90 transition-opacity" style={{ borderColor: prize.themeColor }} />
+
+                {/* Top Badge */}
+                <div className="flex items-center justify-between gap-2 mb-4">
+                  <div className={`px-3 py-1 rounded-full text-xs font-orbitron font-bold uppercase tracking-wider border ${prize.badgeBg}`}>
+                    {prize.place}
+                  </div>
+                  {prize.isWinner && (
+                    <div className="flex items-center gap-1 text-[11px] font-orbitron font-bold text-[#00F3FF] bg-[#00F3FF]/15 border border-[#00F3FF]/40 px-2.5 py-1 rounded-full">
+                      <Crown className="w-3.5 h-3.5 text-[#00F3FF]" />
+                      CHAMPION
+                    </div>
+                  )}
+                </div>
+
+                {/* Icon & Title */}
+                <div className="text-center my-3">
+                  <div 
+                    className="w-16 h-16 md:w-18 md:h-18 mx-auto rounded-2xl flex items-center justify-center mb-4 transition-transform duration-500 group-hover:scale-105 border"
+                    style={{ 
+                      backgroundColor: `${prize.themeColor}12`,
+                      borderColor: `${prize.themeColor}40`,
+                      boxShadow: `0 0 16px ${prize.themeColor}25`
+                    }}
+                  >
+                    {prize.icon}
+                  </div>
+                  <h3 className="text-lg md:text-xl font-orbitron font-bold text-gray-200 tracking-wide mb-1">
+                    {prize.title}
+                  </h3>
+                  <div 
+                    className="text-4xl md:text-5xl font-black font-orbitron tracking-tight my-2"
+                    style={{ 
+                      color: prize.themeColor,
+                      textShadow: `0 0 14px ${prize.themeColor}45`
+                    }}
+                  >
+                    {prize.amount}
+                  </div>
+                </div>
+
+                {/* Perks Checklist */}
+                <div className="border-t border-white/10 pt-4 mt-2">
+                  <div className="text-[11px] font-mono uppercase tracking-widest text-gray-400 mb-2.5">
+                    Tier Privileges & Rewards
+                  </div>
+                  <ul className="space-y-2">
+                    {prize.perks.map((perk, perkIdx) => (
+                      <li key={perkIdx} className="flex items-start gap-2 text-xs font-mono text-gray-300">
+                        <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: prize.themeColor }} />
+                        <span className="leading-snug">{perk}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {/* Stepped Pedestal Block (Visible only on >= 1000px) */}
+              <div 
+                className={`w-full mt-2 rounded-xl bg-gradient-to-b ${prize.pedestalBg} ${prize.pedestalBorder} ${prize.pedestalGlow} ${prize.pedestalHeight} hidden min-[1000px]:flex flex-col items-center justify-center relative overflow-hidden backdrop-blur-md transition-all duration-300`}
+              >
+                {/* Cyber Grid Lines inside Pedestal */}
+                <div className="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:12px_12px] opacity-30" />
+
+                {/* Cyber LED Accent Line */}
+                <div 
+                  className="w-12 h-1 rounded-full opacity-50 group-hover:opacity-90 transition-opacity" 
+                  style={{ backgroundColor: prize.themeColor, boxShadow: `0 0 10px ${prize.themeColor}` }}
+                />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Podium Base Line Stage (Visible only on >= 1000px) */}
+        <div className="relative -mt-16 mb-16 hidden min-[1000px]:block">
+          <div className="h-[2px] w-full bg-gradient-to-r from-[#00B4D8]/20 via-[#00F3FF]/50 to-[#3B82F6]/20 shadow-[0_0_12px_rgba(0,243,255,0.2)]" />
+        </div>
+
+        {/* Perks & Career Fast-Track Banner (Dyashin Partnership) */}
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }} 
+          whileInView={{ opacity: 1, y: 0 }} 
+          viewport={{ once: true }}
+          className="relative glass-panel p-8 md:p-10 rounded-2xl border border-[#00F3FF]/20 bg-gradient-to-b from-[#00F3FF]/[0.03] via-white/[0.01] to-[#020617]/95 shadow-[0_10px_40px_rgba(0,0,0,0.6)] overflow-hidden"
+        >
+          {/* Subtle Ambient Backlight */}
+          <div className="absolute top-0 right-0 w-80 h-80 bg-[#00F3FF]/8 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#0077B6]/8 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="relative z-10">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-white/10">
+              <div className="flex items-center gap-4 text-left">
+                <div className="w-14 h-14 rounded-2xl bg-[#00F3FF]/15 border border-[#00F3FF]/40 flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(0,243,255,0.2)]">
+                  <Zap className="w-7 h-7 text-[#00F3FF]" />
+                </div>
+                <div>
+                  <div className="inline-flex items-center gap-1.5 text-xs font-mono text-[#00F3FF] font-bold tracking-widest uppercase mb-1">
+                    <Briefcase className="w-3.5 h-3.5" />
+                    In Association With Dyashin • Innovate · Collaborate · Accelerate
+                  </div>
+                  <h4 className="text-2xl md:text-3xl font-orbitron font-bold text-white">
+                    Exclusive Opportunities at Dyashin Technologies
+                  </h4>
+                </div>
+              </div>
+              <div className="px-5 py-2.5 rounded-xl bg-[#00F3FF]/10 border border-[#00F3FF]/30 font-mono text-xs text-[#00F3FF] shrink-0">
+                Placement & Internship Partner
+              </div>
+            </div>
+
+            {/* 4 Feature Columns */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-[#00F3FF]/40 transition-colors">
+                <div className="w-8 h-8 rounded-lg bg-[#00F3FF]/20 text-[#00F3FF] flex items-center justify-center font-bold font-orbitron text-sm mb-3">
+                  01
+                </div>
+                <h5 className="font-orbitron font-bold text-white text-sm mb-1.5">Direct Placement Offer</h5>
+                <p className="text-gray-400 font-mono text-xs leading-relaxed">
+                  Winning team members receive direct full-time hiring & engineering onboarding at Dyashin.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-[#00B4D8]/40 transition-colors">
+                <div className="w-8 h-8 rounded-lg bg-[#00B4D8]/20 text-[#00B4D8] flex items-center justify-center font-bold font-orbitron text-sm mb-3">
+                  02
+                </div>
+                <h5 className="font-orbitron font-bold text-white text-sm mb-1.5">3-Month Paid Internship</h5>
+                <p className="text-gray-400 font-mono text-xs leading-relaxed">
+                  Both 1st & 2nd runner-up teams gain hands-on 3-month engineering internship roles.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-[#3B82F6]/40 transition-colors">
+                <div className="w-8 h-8 rounded-lg bg-[#3B82F6]/20 text-[#3B82F6] flex items-center justify-center font-bold font-orbitron text-sm mb-3">
+                  03
+                </div>
+                <h5 className="font-orbitron font-bold text-white text-sm mb-1.5">Pre-Placement (PPA)</h5>
+                <p className="text-gray-400 font-mono text-xs leading-relaxed">
+                  Top performers during the internship qualify for permanent placement offers.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/20 transition-colors">
+                <div className="w-8 h-8 rounded-lg bg-white/10 text-white flex items-center justify-center font-bold font-orbitron text-sm mb-3">
+                  04
+                </div>
+                <h5 className="font-orbitron font-bold text-white text-sm mb-1.5">Swags & Merit Honors</h5>
+                <p className="text-gray-400 font-mono text-xs leading-relaxed">
+                  Verified certificates of merit, hackathon kits, medals, and specialized partner perks.
+                </p>
+              </div>
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>
@@ -545,22 +856,23 @@ const TimelineSection = () => {
         <h2 className="text-4xl md:text-6xl font-orbitron font-bold text-center mb-24 uppercase">
           Live <span className="text-[#FBBF24] glow[#FBBF24]-">Schedule</span>
         </h2>
-        <div className="relative pl-8 md:pl-0">
-          <div className="absolute left-[20px] md:left-1/2 top-0 bottom-0 w-[2px] bg-white/5 md:-translate-x-1/2" />
+        <div className="relative">
+          <div className="absolute left-5 md:left-1/2 top-0 bottom-0 w-[2px] -translate-x-1/2 bg-white/5" />
           <motion.div 
             style={{ height: lineHeight }}
-            className="absolute left-[20px] md:left-1/2 top-0 w-[2px] bg-gradient-to-b from-[#00F3FF] to-[#A855F7] md:-translate-x-1/2 will-change-transform shadow-[0_0_15px_#A855F7]" 
-          />          {schedule.map((item, idx) => (
-            <div key={idx} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group mb-16 last:mb-0">
-              <div className="absolute left-[-16px] md:left-1/2 md:-translate-x-1/2 w-8 h-8 rounded-full bg-[#010103] border-2 border-white/20 flex items-center justify-center z-10 group-hover:border-[#00F3FF] transition-colors shadow-[0_0_10px_rgba(0,0,0,0)] group-hover:shadow-[0_0_15px_#00F3FF]">
-                <div className="w-2 h-2 rounded-full bg-white/50 group-hover:bg-[#00F3FF] transition-colors" />
+            className="absolute left-5 md:left-1/2 top-0 w-[2px] -translate-x-1/2 bg-gradient-to-b from-[#00F3FF] to-[#A855F7] will-change-transform shadow-[0_0_15px_#A855F7]" 
+          />
+          {schedule.map((item, idx) => (
+            <div key={idx} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group mb-16 last:mb-0 pl-14 md:pl-0">
+              <div className="absolute left-5 md:left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-[#010103] border-2 border-white/20 flex items-center justify-center z-10 group-hover:border-[#00F3FF] transition-colors shadow-[0_0_10px_rgba(0,0,0,0)] group-hover:shadow-[0_0_15px_#00F3FF]">
+                <div className="w-2.5 h-2.5 rounded-full bg-white/50 group-hover:bg-[#00F3FF] transition-colors" />
               </div>
               <motion.div 
                 initial={{ opacity: 0, x: idx % 2 === 0 ? 50 : -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.8, ease: BUTTERY_EASE }}
-                className="w-[calc(100%-2rem)] md:w-[calc(50%-3rem)] glass-panel p-6 rounded-xl hover:border-[#00F3FF]/30 transition-colors"
+                className="w-full md:w-[calc(50%-3rem)] glass-panel p-6 rounded-xl hover:border-[#00F3FF]/30 transition-colors"
               >
                 <div className="text-[#00F3FF] text-sm mb-2 font-bold">{item.time}</div>
                 <h4 className="text-xl font-orbitron font-bold mb-2">{item.title}</h4>
@@ -585,7 +897,7 @@ const RulesSection = () => {
   ];
 
   return (
-    <section id="rules" className="py-24 px-4 relative z-10 scroll-mt-20">
+    <section id="rules" className="py-24 px-4 relative z-10 scroll-mt-20 overflow-hidden">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-4xl md:text-6xl font-orbitron font-bold text-center mb-16 uppercase">
           Rules & <span className="text-white">Regulations</span>
@@ -635,7 +947,7 @@ const ProblemStatementsSection = () => {
   }, []);
 
   return (
-    <section id="problems" className="py-24 px-4 relative z-10 scroll-mt-20 border-y border-white/5 bg-[#010103]/50">
+    <section id="problems" className="py-24 px-4 relative z-10 scroll-mt-20 border-y border-white/5 bg-[#010103]/50 overflow-hidden">
       <div className="max-w-5xl mx-auto">
         <h2 className="text-4xl md:text-6xl font-orbitron font-bold text-center mb-16 uppercase">
           Problem <span className="text-[#00F3FF] glow-cyan">Statements</span>
@@ -684,7 +996,7 @@ const SponsorsSection = () => {
   const supportSponsors = ["Support 1", "Support 2"];
 
   return (
-    <section id="sponsors" className="py-24 px-4 relative z-10 scroll-mt-20">
+    <section id="sponsors" className="py-24 px-4 relative z-10 scroll-mt-20 overflow-hidden">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-4xl md:text-6xl font-orbitron font-bold text-center mb-16 uppercase">
           Our <span className="text-gray-400">Sponsors</span>
@@ -745,31 +1057,397 @@ const SponsorsSection = () => {
   );
 };
 
-const TeamSection = () => {
-  const teamArray = Array(10).fill({ name: "Name Placeholder", role: "Designation" });
+const TeamTiltCard = ({ member, index, isAllSelected }) => {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const mouseXSpring = useSpring(x, { stiffness: 450, damping: 28 });
+  const mouseYSpring = useSpring(y, { stiffness: 450, damping: 28 });
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["12deg", "-12deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-12deg", "12deg"]);
+  const glareX = useTransform(mouseXSpring, [-0.5, 0.5], ["0%", "100%"]);
+  const glareY = useTransform(mouseYSpring, [-0.5, 0.5], ["0%", "100%"]);
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const xPct = (e.clientX - rect.left) / rect.width - 0.5;
+    const yPct = (e.clientY - rect.top) / rect.height - 0.5;
+    x.set(xPct);
+    y.set(yPct);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
 
   return (
-    <section id="team" className="py-24 border-y border-white/5 bg-[#010103] overflow-hidden relative z-10">
-      <h2 className="text-center text-[#A855F7] font-orbitron font-bold text-3xl md:text-5xl uppercase mb-12">
-        The Core <span className="text-white">Team</span>
-      </h2>
-      <div className="flex whitespace-nowrap py-4">
-        <motion.div 
-          animate={{ x: ["0%", "-50%"] }}
-          transition={{ ease: "linear", duration: 30, repeat: Infinity }}
-          className="flex gap-6 items-center px-4"
-        >
-          {/* Double array for infinite scroll */}
-          {[...teamArray, ...teamArray].map((member, idx) => (
-            <div key={idx} className="glass-panel w-64 h-80 rounded-xl p-6 flex flex-col items-center justify-center border-white/5 hover:border-[#A855F7]/30 transition-colors shrink-0">
-              <div className="w-24 h-24 rounded-full bg-white/5 flex items-center justify-center mb-6">
-                <User size={32} className="text-gray-500" />
+    <motion.div
+      layout={!isAllSelected}
+      initial={{ opacity: 0, y: 25, scale: 0.92 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9, y: 15, transition: { duration: 0.15 } }}
+      transition={{ 
+        duration: 0.4, 
+        delay: isAllSelected ? 0 : index * 0.05, 
+        ease: [0.22, 1, 0.36, 1] 
+      }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+      className="w-[240px] sm:w-[260px] flex-shrink-0 glass-panel p-5 rounded-2xl border border-white/10 hover:border-[#00F3FF]/60 transition-colors duration-200 group flex flex-col justify-between relative overflow-hidden bg-gradient-to-b from-white/[0.03] via-[#040D1A]/60 to-[#010103]/95 hover:shadow-[0_10px_35px_rgba(0,243,255,0.18)] will-change-transform perspective-[1000px] select-none"
+    >
+      {/* Holographic Sheen Reflection */}
+      <motion.div
+        style={{
+          background: `radial-gradient(circle at ${glareX} ${glareY}, rgba(0, 243, 255, 0.15), transparent 70%)`,
+        }}
+        className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+      />
+
+      {/* Biometric Laser Scanline Sweep on Hover */}
+      <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 overflow-hidden z-20">
+        <div className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#00F3FF] to-transparent shadow-[0_0_12px_#00F3FF] animate-laser" />
+      </div>
+
+      {/* Cyber Corner HUD Brackets */}
+      <div className="absolute top-2 left-2 w-2.5 h-2.5 border-t-2 border-l-2 border-white/20 group-hover:border-[#00F3FF] transition-colors" />
+      <div className="absolute top-2 right-2 w-2.5 h-2.5 border-t-2 border-r-2 border-white/20 group-hover:border-[#00F3FF] transition-colors" />
+      <div className="absolute bottom-2 left-2 w-2.5 h-2.5 border-b-2 border-l-2 border-white/20 group-hover:border-[#00F3FF] transition-colors" />
+      <div className="absolute bottom-2 right-2 w-2.5 h-2.5 border-b-2 border-r-2 border-white/20 group-hover:border-[#00F3FF] transition-colors" />
+
+      {/* Card Content */}
+      <div style={{ transform: "translateZ(25px)" }} className="relative z-30 flex flex-col h-full justify-between">
+        {/* Badge & Active Pulse */}
+        <div className="flex items-center justify-between mb-3">
+          <span 
+            className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full border tracking-wider"
+            style={{ 
+              color: member.color,
+              borderColor: `${member.color}40`,
+              backgroundColor: `${member.color}12` 
+            }}
+          >
+            {member.badge}
+          </span>
+          <span className="flex h-2 w-2 relative" title="Verified Active">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00F3FF] opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00F3FF]"></span>
+          </span>
+        </div>
+
+        {/* Photo Placeholder Frame */}
+        <div className="relative w-28 h-28 sm:w-32 sm:h-32 mx-auto my-2 rounded-2xl overflow-hidden border border-white/15 group-hover:border-[#00F3FF]/70 transition-all duration-300 flex items-center justify-center bg-[#070D17]/90 shadow-[0_0_20px_rgba(0,0,0,0.6)]">
+          {/* Cyber matrix background lines */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#00F3FF0d_1px,transparent_1px),linear-gradient(to_bottom,#00F3FF0d_1px,transparent_1px)] bg-[size:8px_8px] pointer-events-none" />
+          
+          {member.image ? (
+            <img src={member.image} alt={member.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+          ) : (
+            <div className="flex flex-col items-center justify-center text-center p-2 z-10">
+              <div 
+                className="w-12 h-12 rounded-xl flex items-center justify-center mb-1.5 transition-transform duration-300 group-hover:scale-110"
+                style={{ 
+                  backgroundColor: `${member.color}18`,
+                  border: `1px solid ${member.color}50`,
+                  boxShadow: `0 0 16px ${member.color}25`
+                }}
+              >
+                <User size={24} style={{ color: member.color }} />
               </div>
-              <h4 className="text-lg font-orbitron font-bold text-white mb-1">{member.name}</h4>
-              <p className="text-sm font-mono text-[#A855F7] uppercase tracking-widest">{member.role}</p>
+              <span className="text-[9px] font-mono text-gray-400 uppercase tracking-widest font-semibold">
+                PHOTO
+              </span>
             </div>
-          ))}
-        </motion.div>
+          )}
+
+          {/* Holographic corner ticks inside photo frame */}
+          <div className="absolute top-1.5 left-1.5 w-1.5 h-1.5 border-t border-l border-[#00F3FF]/50" />
+          <div className="absolute bottom-1.5 right-1.5 w-1.5 h-1.5 border-b border-r border-[#00F3FF]/50" />
+        </div>
+
+        {/* Member Name & Designation */}
+        <div className="text-center mt-3" style={{ transform: "translateZ(18px)" }}>
+          <h4 className="text-base font-orbitron font-bold text-white group-hover:text-[#00F3FF] transition-colors tracking-wide truncate">
+            {member.name}
+          </h4>
+          <p 
+            className="text-xs font-mono font-semibold mt-1 tracking-wide"
+            style={{ color: member.color }}
+          >
+            {member.role}
+          </p>
+          <p className="text-[10px] font-mono text-gray-500 mt-0.5 uppercase tracking-widest truncate">
+            {member.dept || "Dept. of AI & ML, GAT"}
+          </p>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+const TeamSection = () => {
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [animCycle, setAnimCycle] = useState(0);
+  const [isScanning, setIsScanning] = useState(false);
+
+  const categories = [
+    { id: "all", label: "All Crew" },
+    { id: "leads", label: "Core Leads" },
+    { id: "faculty", label: "Faculty Mentors" },
+    { id: "tech", label: "Tech & Dev" },
+    { id: "ops", label: "Operations & PR" },
+  ];
+
+  const teamMembers = [
+    {
+      name: "Vinayaka S",
+      role: "Lead Organizer",
+      category: "leads",
+      badge: "LEAD-01",
+      color: "#00F3FF",
+      dept: "Dept. of AI & ML, GAT",
+      image: ""
+    },
+    {
+      name: "Bhuvan AR",
+      role: "Operations Head",
+      category: "leads",
+      badge: "LEAD-02",
+      color: "#00B4D8",
+      dept: "Dept. of AI & ML, GAT",
+      image: ""
+    },
+    {
+      name: "Ravikumar G",
+      role: "Event Coordinator",
+      category: "leads",
+      badge: "LEAD-03",
+      color: "#38BDF8",
+      dept: "Dept. of AI & ML, GAT",
+      image: ""
+    },
+    {
+      name: "Prajwal T Raj",
+      role: "Technical Lead",
+      category: "tech",
+      badge: "DEV LEAD",
+      color: "#00F3FF",
+      dept: "Dept. of AI & ML, GAT",
+      image: ""
+    },
+    {
+      name: "Dr. Faculty Head",
+      role: "HOD, Dept of AI & ML",
+      category: "faculty",
+      badge: "PATRON",
+      color: "#FBBF24",
+      dept: "GAT Bengaluru",
+      image: ""
+    },
+    {
+      name: "Prof. Staff Advisor",
+      role: "Faculty Coordinator",
+      category: "faculty",
+      badge: "MENTOR",
+      color: "#FBBF24",
+      dept: "GAT Bengaluru",
+      image: ""
+    },
+    {
+      name: "Platform Architect",
+      role: "Infrastructure Lead",
+      category: "tech",
+      badge: "SYSTEMS",
+      color: "#3B82F6",
+      dept: "Dept. of AI & ML, GAT",
+      image: ""
+    },
+    {
+      name: "Creative & PR Lead",
+      role: "Brand & Media Head",
+      category: "ops",
+      badge: "MEDIA",
+      color: "#00B4D8",
+      dept: "Dept. of AI & ML, GAT",
+      image: ""
+    }
+  ];
+
+  const handleCategoryChange = (catId) => {
+    setActiveCategory(catId);
+    setAnimCycle(prev => prev + 1);
+    
+    if (catId === "all") {
+      setIsScanning(true);
+      setTimeout(() => {
+        setIsScanning(false);
+      }, 1200);
+    }
+  };
+
+  const filteredMembers = activeCategory === "all" 
+    ? teamMembers 
+    : teamMembers.filter(m => m.category === activeCategory);
+
+  return (
+    <section id="team" className="py-16 md:py-20 border-y border-white/5 bg-[#010103] relative z-10 overflow-hidden scroll-mt-20">
+      {/* Background ambient lighting */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-gradient-to-b from-[#00F3FF]/8 via-[#0077B6]/5 to-transparent blur-[110px] pointer-events-none rounded-full" />
+
+      <div className="max-w-7xl mx-auto px-4 relative">
+        {/* Header & Category Filter Bar */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8 pb-6 border-b border-white/10">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#00F3FF]/10 border border-[#00F3FF]/30 text-xs font-mono text-[#00F3FF] uppercase tracking-widest mb-2">
+              <Sparkles className="w-3.5 h-3.5 text-[#00F3FF]" />
+              Organizing Squad // CBC 2.0
+            </div>
+            <h2 className="text-3xl md:text-4xl font-orbitron font-bold uppercase text-white tracking-wider">
+              The <span className="text-[#00F3FF] glow-cyan">Core</span> Crew
+            </h2>
+          </div>
+
+          {/* Cyber Filter Pills */}
+          <div className="flex flex-wrap items-center justify-center gap-1.5 bg-white/5 p-1.5 rounded-2xl border border-white/10 relative">
+            {categories.map((cat) => {
+              const isActive = activeCategory === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => handleCategoryChange(cat.id)}
+                  className={`relative px-3.5 py-1.5 rounded-xl text-xs font-mono transition-all duration-200 z-10 ${
+                    isActive
+                      ? "text-black font-bold"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeCategoryBadge"
+                      className="absolute inset-0 rounded-xl bg-[#00F3FF] shadow-[0_0_15px_rgba(0,243,255,0.4)]"
+                      transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                      style={{ zIndex: -1 }}
+                    />
+                  )}
+                  <span className="relative z-10 flex items-center gap-1.5">
+                    {cat.id === "all" && isActive && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-black animate-ping" />
+                    )}
+                    {cat.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Live Squad Status HUD Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-8 px-4 py-2.5 rounded-xl bg-black/50 border border-white/10 backdrop-blur-md font-mono text-xs">
+          <div className="flex items-center gap-2.5">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${activeCategory === "all" ? "bg-[#00F3FF]" : "bg-emerald-400"} opacity-75`}></span>
+              <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${activeCategory === "all" ? "bg-[#00F3FF]" : "bg-emerald-400"}`}></span>
+            </span>
+            <span className="text-gray-300 font-bold uppercase tracking-wider text-[11px]">
+              {activeCategory === "all" ? (
+                <span className="text-[#00F3FF]">
+                  SQUAD SYNCHRONIZATION: <span className="text-white">8/8 OPERATIVES DEPLOYED [INFINITE STREAM]</span>
+                </span>
+              ) : (
+                <span>
+                  CATEGORY: <span className="text-[#00F3FF]">{categories.find(c => c.id === activeCategory)?.label.toUpperCase()}</span> ({filteredMembers.length} ACTIVE)
+                </span>
+              )}
+            </span>
+          </div>
+          <div className="flex items-center gap-3 text-[11px] text-gray-400">
+            <span className="hidden sm:inline font-mono text-gray-500">{'// ENCRYPTION: SECURE'}</span>
+            <span className="px-2 py-0.5 rounded bg-[#00F3FF]/10 border border-[#00F3FF]/30 text-[#00F3FF] text-[10px] font-bold tracking-widest uppercase">
+              {activeCategory === "all" ? "RUNNING STREAM" : "FILTERED VIEW"}
+            </span>
+          </div>
+        </div>
+
+        {/* Cyber Scanner Beam when 'all' is chosen */}
+        <div className="relative">
+          <AnimatePresence>
+            {isScanning && (
+              <>
+                {/* Holographic Radar Pulse Wave */}
+                <motion.div
+                  key={`radar-wave-${animCycle}`}
+                  initial={{ opacity: 0.8, scale: 0.2 }}
+                  animate={{ opacity: 0, scale: 2.2 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1.2, ease: "easeOut" }}
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[450px] h-[450px] rounded-full border border-[#00F3FF]/60 bg-radial from-[#00F3FF]/20 via-[#00F3FF]/5 to-transparent pointer-events-none z-20 blur-[1px]"
+                />
+                {/* Holographic Sweep Beam */}
+                <motion.div
+                  key={`sweep-beam-${animCycle}`}
+                  initial={{ top: "0%", opacity: 0 }}
+                  animate={{ top: "100%", opacity: [0, 1, 1, 0] }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1.1, ease: [0.25, 0.1, 0.25, 1] }}
+                  className="absolute left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#00F3FF] to-transparent shadow-[0_0_25px_#00F3FF,0_0_50px_#00F3FF] pointer-events-none z-30"
+                />
+              </>
+            )}
+          </AnimatePresence>
+
+          {/* Conditional Rendering: Infinite Running Marquee for 'all', Regular Grid for other categories */}
+          {activeCategory === "all" ? (
+            <div className="relative w-full overflow-hidden marquee-mask py-4 marquee-container">
+              <div className="flex gap-6 w-max">
+                {/* Track 1 */}
+                <div className="animate-team-track">
+                  {teamMembers.map((member, idx) => (
+                    <TeamTiltCard 
+                      key={`track1-${member.name}-${idx}`} 
+                      member={member} 
+                      index={idx}
+                      isAllSelected={true}
+                      animCycle={animCycle}
+                    />
+                  ))}
+                </div>
+                {/* Track 2 for seamless infinite loop */}
+                <div className="animate-team-track" aria-hidden="true">
+                  {teamMembers.map((member, idx) => (
+                    <TeamTiltCard 
+                      key={`track2-${member.name}-${idx}`} 
+                      member={member} 
+                      index={idx}
+                      isAllSelected={true}
+                      animCycle={animCycle}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <motion.div 
+              key={`grid-${activeCategory}-${animCycle}`}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3 }}
+              className="flex flex-wrap justify-center items-stretch gap-6 py-4 min-h-[300px]"
+            >
+              <AnimatePresence mode="popLayout">
+                {filteredMembers.map((member, idx) => (
+                  <TeamTiltCard 
+                    key={`filtered-${member.name}-${idx}`} 
+                    member={member} 
+                    index={idx}
+                    isAllSelected={false}
+                    animCycle={animCycle}
+                  />
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          )}
+        </div>
       </div>
     </section>
   );
@@ -859,11 +1537,10 @@ const Footer = () => (
 
 export default function App() {
   return (
-    <>
+    <div className="w-full max-w-full overflow-x-hidden bg-[#010103] text-[#F0F0F0] selection:bg-[#00F3FF]/30 selection:text-white min-h-screen relative">
       <CustomCursor />
       <FixedTimer />
-      <div className="w-full bg-[#010103] text-[#F0F0F0] selection:bg-[#00F3FF]/30 selection:text-white min-h-screen">
-        <NavigationBar />
+      <NavigationBar />
         <HeroSection />
         <StatsSection />
         <AboutSection />
@@ -875,7 +1552,6 @@ export default function App() {
         <SponsorsSection />
         <TeamSection />
         <Footer />
-      </div>
-    </>
+    </div>
   );
 }
