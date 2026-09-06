@@ -47,7 +47,7 @@ const HeroSection = () => (
     </motion.div>
 
     <p className="text-purple-400 text-sm md:text-base font-orbitron tracking-[0.2em] uppercase mb-2 relative z-10">
-      Hosting Partners
+       In Colaboration with
     </p>
 
     {/* Hosting Partners Logos */}

@@ -27,25 +27,7 @@ const TeamSection = () => {
       image: ""
     },
     {
-      name: "Prof. Anusha J",
-      role: "Faculty Co-Convenor",
-      category: "faculty",
-      badge: "MENTOR",
-      color: "#FBBF24",
-      dept: "GAT Bengaluru",
-      image: ""
-    },
-    {
       name: "Prof. C Christlin Shanuja",
-      role: "Faculty Co-Convenor",
-      category: "faculty",
-      badge: "MENTOR",
-      color: "#FBBF24",
-      dept: "GAT Bengaluru",
-      image: ""
-    },
-    {
-      name: "Prof. Likhith Krishna Kikkeri",
       role: "Faculty Co-Convenor",
       category: "faculty",
       badge: "MENTOR",
@@ -62,6 +44,25 @@ const TeamSection = () => {
       dept: "GAT Bengaluru",
       image: ""
     },
+    {
+      name: "Prof. Anusha J",
+      role: "Faculty Co-Convenor",
+      category: "faculty",
+      badge: "MENTOR",
+      color: "#FBBF24",
+      dept: "GAT Bengaluru",
+      image: ""
+    },
+    {
+      name: "Prof. Likhith Krishna Kikkeri",
+      role: "Faculty Co-Convenor",
+      category: "faculty",
+      badge: "MENTOR",
+      color: "#FBBF24",
+      dept: "GAT Bengaluru",
+      image: ""
+    },
+    
 
     // Core Committee Leads
     {
@@ -91,16 +92,7 @@ const TeamSection = () => {
       dept: "Dept. of AI & ML, GAT",
       image: ""
     },
-    {
-      name: "Yashaswini S",
-      role: "Treasurer",
-      category: "leads",
-      badge: "TREASURER",
-      color: "#A855F7",
-      dept: "Dept. of AI & ML, GAT",
-      image: ""
-    },
-
+    
     // Technical Team
     {
       name: "Prajwal T Raj",
@@ -123,10 +115,28 @@ const TeamSection = () => {
 
     // Operations & Media Team
     {
+      name: "Yashaswini S",
+      role: "Treasurer",
+      category: "ops",
+      badge: "TREASURER",
+      color: "#A855F7",
+      dept: "Dept. of AI & ML, GAT",
+      image: ""
+    },
+    {
       name: "Janavi H B",
       role: "Stage Head",
       category: "ops",
       badge: "STAGE HEAD",
+      color: "#EC4899",
+      dept: "Dept. of AI & ML, GAT",
+      image: ""
+    },
+    {
+      name: "Namratha B A",
+      role: "Stage CO-Head",
+      category: "ops",
+      badge: "STAGE CO-HEAD",
       color: "#EC4899",
       dept: "Dept. of AI & ML, GAT",
       image: ""

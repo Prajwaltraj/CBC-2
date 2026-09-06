@@ -26,7 +26,7 @@ const SponsorsSection = () => {
 
           {/* Layer 2: Hosting Sponsors */}
           <div className="text-center">
-            <h3 className="text-sm font-mono text-[#00F3FF] tracking-[0.2em] uppercase mb-6">Hosting Sponsors</h3>
+            <h3 className="text-sm font-mono text-[#00F3FF] tracking-[0.2em] uppercase mb-6">Hosting Partners</h3>
             <div className="flex justify-center items-center gap-6 flex-wrap">
               <div className="glass-panel w-48 h-24 rounded-lg flex items-center justify-center text-gray-500 hover:text-white transition-colors">Co-Sponsor 1</div>
               <div className="glass-panel w-48 h-24 rounded-lg flex items-center justify-center text-gray-500 hover:text-white transition-colors">Co-Sponsor 2</div>
