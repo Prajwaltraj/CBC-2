@@ -1,4 +1,4 @@
-import { Mail, Phone, Instagram, Link as LinkIcon } from 'lucide-react';
+import { Mail, Phone, Instagram, } from 'lucide-react';
 
 
 
@@ -14,7 +14,6 @@ const Footer = () => (
           <span className="font-orbitron font-bold text-2xl tracking-wider">CBC 2.0</span>
         </div>
         <p className="text-gray-400 text-sm font-mono leading-relaxed">
-          The 2nd Verse.<br/>
           AI For Change <br/>
           Think. Build. Break Limits.<br/>
         </p> 
@@ -28,10 +27,11 @@ const Footer = () => (
             <Mail size={20} /><span className="font-mono text-sm">Email Us: <br />Codebreakeraiml@gmail.com</span>
           </a>
           <a href="https://www.instagram.com/codebreaker_aiml/reels/" className="flex items-center gap-3 px-4 py-3 glass-panel rounded-lg hover:bg-[#E1306C]/20 hover:text-[#E1306C] transition-colors w-full md:w-max">
-            <Instagram size={20} /> <span className="font-mono text-sm">CBC 2.0<br /> </span>
+            <Instagram size={20} /> <span className="font-mono text-sm">
+              Code Breaker Challenge 2.0 <br /> </span>
           </a>
           <a href="https://www.instagram.com/aitron_aiml/" className="flex items-center gap-3 px-4 py-3 glass-panel rounded-lg hover:bg-gray-500/20 hover:text-white transition-colors w-full md:w-max">
-            <LinkIcon size={20} /> <span className="font-mono text-sm">Aitron AIML</span>
+            < Instagram size={20} /> <span className="font-mono text-sm">Aitron AIML</span>
           </a>
         </div>
       </div>
