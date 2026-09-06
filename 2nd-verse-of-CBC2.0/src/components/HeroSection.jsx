@@ -23,7 +23,7 @@ const HeroSection = () => (
     >
       <img src="https://gat.ac.in/img/main-logo.webp" alt="Global Academy of Technology" className="h-16 md:h-20 object-contain bg-white/90 p-2 rounded-lg" />
       <div className="h-12 w-[1px] bg-white/20 hidden md:block" />
-      <img src="https://codebreakerchallenge2o.vercel.app/logos/cbc2ologo.PNG" alt="Code Breaker Challenge 2.0" className="h-16 md:h-20 object-contain" />
+      <img src="/team/cbc logo.png" alt="Code Breaker Challenge 2.0" className="h-16 md:h-20 object-contain" />
       <div className="h-12 w-[1px] bg-white/20 hidden md:block" />
       <img src="https://codebreakerchallenge2o.vercel.app/logos/aimldeptlogo.png" alt="Dept of AI & ML" className="h-16 md:h-20 object-contain" />
     </motion.div>
