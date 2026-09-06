@@ -27,11 +27,11 @@ const Footer = () => (
           <a href="mailto:Codebreakeraiml@gmail.com?subject=Query%20Regarding%20Code%20Breaker%20Challenge%202.0" className="flex items-center gap-3 px-4 py-3 glass-panel rounded-lg hover:bg-yellow-400/20 hover:text-yellow-400 transition-colors w-full md:w-max">
             <Mail size={20} /><span className="font-mono text-sm">Email Us: <br />Codebreakeraiml@gmail.com</span>
           </a>
-          <a href="#" className="flex items-center gap-3 px-4 py-3 glass-panel rounded-lg hover:bg-[#E1306C]/20 hover:text-[#E1306C] transition-colors w-full md:w-max">
-            <Instagram size={20} /> <span className="font-mono text-sm">Instagram<br /> </span>
+          <a href="https://www.instagram.com/codebreaker_aiml/reels/" className="flex items-center gap-3 px-4 py-3 glass-panel rounded-lg hover:bg-[#E1306C]/20 hover:text-[#E1306C] transition-colors w-full md:w-max">
+            <Instagram size={20} /> <span className="font-mono text-sm">CBC 2.0<br /> </span>
           </a>
-          <a href="#" className="flex items-center gap-3 px-4 py-3 glass-panel rounded-lg hover:bg-gray-500/20 hover:text-white transition-colors w-full md:w-max">
-            <LinkIcon size={20} /> <span className="font-mono text-sm">Website</span>
+          <a href="https://www.instagram.com/aitron_aiml/" className="flex items-center gap-3 px-4 py-3 glass-panel rounded-lg hover:bg-gray-500/20 hover:text-white transition-colors w-full md:w-max">
+            <LinkIcon size={20} /> <span className="font-mono text-sm">Aitron AIML</span>
           </a>
         </div>
       </div>
@@ -42,11 +42,11 @@ const Footer = () => (
         <div className="text-gray-400 text-sm space-y-3 font-mono">
           <div>
             <p className="text-white font-bold mb-1">Vinayaka</p>
-            <p className="flex items-center gap-2 text-xs"><Phone size={12} className="text-[#A855F7]"/> +91 00000 00000</p>
+            <p className="flex items-center gap-2 text-xs"><Phone size={12} className="text-[#A855F7]"/> +91 70226 56317</p>
           </div>
           <div>
             <p className="text-white font-bold mb-1">Prajwal T Raj</p>
-            <p className="flex items-center gap-2 text-xs"><Phone size={12} className="text-[#A855F7]"/> +91 00000 00000</p>
+            <p className="flex items-center gap-2 text-xs"><Phone size={12} className="text-[#A855F7]"/> +91 79751 56216</p>
           </div>
         </div>
       </div>
@@ -57,11 +57,11 @@ const Footer = () => (
         <div className="text-gray-400 text-sm space-y-3 font-mono">
           <div>
             <p className="text-white font-bold mb-1">Bhuvan</p>
-            <p className="flex items-center gap-2 text-xs"><Phone size={12} className="text-[#A855F7]"/> +91 00000 00000</p>
+            <p className="flex items-center gap-2 text-xs"><Phone size={12} className="text-[#A855F7]"/> +91 83174 62097</p>
           </div>
           <div>
             <p className="text-white font-bold mb-1">Ravi</p>
-            <p className="flex items-center gap-2 text-xs"><Phone size={12} className="text-[#A855F7]"/> +91 00000 00000</p>
+            <p className="flex items-center gap-2 text-xs"><Phone size={12} className="text-[#A855F7]"/> +91 90087 88111</p>
           </div>
         </div>
       </div>
