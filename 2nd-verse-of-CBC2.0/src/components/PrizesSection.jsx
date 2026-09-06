@@ -233,7 +233,7 @@ const PrizesSection = () => {
                 <div>
                   <div className="inline-flex items-center gap-1.5 text-xs font-mono text-[#00F3FF] font-bold tracking-widest uppercase mb-1">
                     <Briefcase className="w-3.5 h-3.5" />
-                    In Association With Dyashin • Innovate · Collaborate · Accelerate
+                    In Collaboration With Dyashin • Innovate · Collaborate · Accelerate
                   </div>
                   <h4 className="text-2xl md:text-3xl font-orbitron font-bold text-white">
                     Exclusive Opportunities at Dyashin Technologies
@@ -263,7 +263,8 @@ const PrizesSection = () => {
                 </div>
                 <h5 className="font-orbitron font-bold text-white text-sm mb-1.5">1-4 Month Paid Internship</h5>
                 <p className="text-gray-400 font-mono text-xs leading-relaxed">
-                  Both 1st & 2nd runner-up teams gain hands-on 1-4 month engineering internship roles.
+                  Both 1st & 2nd runner-up teams gain hands-on &
+                  1-4 month engineering internship roles.
                 </p>
               </div>
 

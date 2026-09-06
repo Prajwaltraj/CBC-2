@@ -10,7 +10,7 @@ const ThemesSection = () => {
       desc: "Full-stack applications, websites, platforms, and UI/UX design projects." 
     },
     { 
-      title: "Artificial Intelligence (AI) & Machine Learning (ML)", 
+      title: "Artificial Intelligence & Machine Learning (AI&ML)", 
       icon: <Cpu size={40} />, 
       color: "#A855F7", 
       desc: "Data-driven solutions, predictive models, natural language processing, and intelligent systems." 
