@@ -245,9 +245,9 @@ const PrizesSection = () => {
               </div>
             </div>
 
-            {/* 4 Feature Columns */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-[#00F3FF]/40 transition-colors">
+            {/* 2 Feature Columns */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-2 mt-8">
+              <div className="p-2 rounded-xl bg-white/[0.02] border border-white/5 hover:border-[#00F3FF]/40 transition-colors">
                 <div className="w-8 h-8 rounded-lg bg-[#00F3FF]/20 text-[#00F3FF] flex items-center justify-center font-bold font-orbitron text-sm mb-3">
                   01
                 </div>
