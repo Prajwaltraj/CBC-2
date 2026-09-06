@@ -14,7 +14,8 @@ import SponsorsSection from './components/SponsorsSection';
 import TeamSection from './components/TeamSection';
 import Footer from './components/Footer';
 import AdminPortal from './pages/AdminPortal';
-import FoodPortal from './pages/FoodPortal';
+import MealsTracking from './pages/MealsTracking';
+import Attendance from './pages/Attendance';
 import SmartBoard from './pages/SmartBoard';
 
 function LandingPage() {
@@ -44,7 +45,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/admin" element={<AdminPortal />} />
-        <Route path="/food" element={<FoodPortal />} />
+        <Route path="/meals" element={<MealsTracking />} />
+        <Route path="/attendance" element={<Attendance />} />
         <Route path="/board" element={<SmartBoard />} />
       </Routes>
     </Router>

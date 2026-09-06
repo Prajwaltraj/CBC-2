@@ -24,10 +24,10 @@ const PrizesSection = () => {
       elevationClass: "translate-y-0 min-[1000px]:-translate-y-8 z-20",
       delay: 0.4,
       perks: [
-        "Direct Internship & Placement Offer",
-        "Official Champion Trophy & Medals",
-        "Pre-Placement Assessment (PPA)",
-        "Exclusive Winner Swags & Certificate"
+        "Direct Placement Offer",
+        "Official Champion Medals",
+        /// "",
+        /// "Exclusive Winner Swags & Certificate"
       ]
     },
     {
@@ -48,10 +48,9 @@ const PrizesSection = () => {
       elevationClass: "translate-y-0",
       delay: 0.2,
       perks: [
-        "3-Month Internship Opportunity",
-        "Pre-Placement Assessment (PPA)",
-        "Silver Medals & Podium Trophy",
-        "Official Certificate & Swags"
+        "1-4 Month Internship Opportunity",
+        "Silver Medals",
+       /// "Official Certificate & Swags"
       ]
     },
     {
@@ -72,10 +71,9 @@ const PrizesSection = () => {
       elevationClass: "translate-y-0",
       delay: 0.6,
       perks: [
-        "3-Month Internship Opportunity",
-        "Pre-Placement Assessment (PPA)",
-        "Bronze Medals & Recognition",
-        "Official Certificate & Swags"
+        "1-4 Month Internship Opportunity",
+        "Bronze Medals",
+        //"Official Certificate & Swags"
       ]
     }
   ];
@@ -263,31 +261,12 @@ const PrizesSection = () => {
                 <div className="w-8 h-8 rounded-lg bg-[#00B4D8]/20 text-[#00B4D8] flex items-center justify-center font-bold font-orbitron text-sm mb-3">
                   02
                 </div>
-                <h5 className="font-orbitron font-bold text-white text-sm mb-1.5">3-Month Paid Internship</h5>
+                <h5 className="font-orbitron font-bold text-white text-sm mb-1.5">1-4 Month Paid Internship</h5>
                 <p className="text-gray-400 font-mono text-xs leading-relaxed">
-                  Both 1st & 2nd runner-up teams gain hands-on 3-month engineering internship roles.
+                  Both 1st & 2nd runner-up teams gain hands-on 1-4 month engineering internship roles.
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-[#3B82F6]/40 transition-colors">
-                <div className="w-8 h-8 rounded-lg bg-[#3B82F6]/20 text-[#3B82F6] flex items-center justify-center font-bold font-orbitron text-sm mb-3">
-                  03
-                </div>
-                <h5 className="font-orbitron font-bold text-white text-sm mb-1.5">Pre-Placement (PPA)</h5>
-                <p className="text-gray-400 font-mono text-xs leading-relaxed">
-                  Top performers during the internship qualify for permanent placement offers.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/20 transition-colors">
-                <div className="w-8 h-8 rounded-lg bg-white/10 text-white flex items-center justify-center font-bold font-orbitron text-sm mb-3">
-                  04
-                </div>
-                <h5 className="font-orbitron font-bold text-white text-sm mb-1.5">Swags & Merit Honors</h5>
-                <p className="text-gray-400 font-mono text-xs leading-relaxed">
-                  Verified certificates of merit, hackathon kits, medals, and specialized partner perks.
-                </p>
-              </div>
             </div>
           </div>
         </motion.div>

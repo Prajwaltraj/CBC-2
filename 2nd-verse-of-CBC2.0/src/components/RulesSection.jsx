@@ -64,6 +64,14 @@ const RulesSection = () => {
         "If any team member needs to exit the campus due to an emergency, prior approval and intimation to coordinators is required.",
         "A minimum of two team members must remain at the venue at all times."
       ]
+    },
+    {
+      title: "7. Emergency Protocol & Exit Policy ",
+      icon: <MapPin size={20} className="text-[#A855F7]" />,
+      rules: [
+        "Leaving Venue: If any team member needs to exit the campus due to an emergency, prior approval and intimation to coordinators is required.",
+        "Minimum Team Presence: A minimum of two team members must remain at the venue at all times.",
+      ]
     }
   ];
 
