@@ -1,6 +1,18 @@
 {
   "rewrites": [
     {
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/attendance",
+      "destination": "/attendance.html"
+    },
+    {
+      "source": "/meals",
+      "destination": "/meals.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
