@@ -27,9 +27,10 @@ const SponsorsSection = () => {
           {/* Layer 2: Hosting Sponsors */}
           <div className="text-center">
             <h3 className="text-sm font-mono text-[#00F3FF] tracking-[0.2em] uppercase mb-6">Hosting Partners</h3>
-            <div className="flex justify-center items-center gap-6 flex-wrap">
-              <div className="glass-panel w-48 h-24 rounded-lg flex items-center justify-center text-gray-500 hover:text-white transition-colors">Co-Sponsor 1</div>
-              <div className="glass-panel w-48 h-24 rounded-lg flex items-center justify-center text-gray-500 hover:text-white transition-colors">Co-Sponsor 2</div>
+            <div className="flex justify-center items-center gap-6 flex-wrap glass-panel p-6 rounded-2xl w-fit mx-auto">
+              <img src="https://www.dsedify.com/_next/static/media/edify-logo.9eae1a96.webp" alt="DSEdify" className="h-12 md:h-14 object-contain bg-white/90 p-2 rounded-lg" />
+              <div className="h-12 w-[1px] bg-white/20 hidden md:block" />
+              <img src="https://www.dyashin.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fdyashin.1e17371d.webp&w=3840&q=75" alt="Dyashin" className="h-12 md:h-14 object-contain" />
             </div>
           </div>
 

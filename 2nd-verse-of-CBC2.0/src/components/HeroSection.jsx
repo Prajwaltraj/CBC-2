@@ -21,7 +21,7 @@ const HeroSection = () => (
       transition={{ duration: 1.5, ease: BUTTERY_EASE }}
       className="relative z-10 flex flex-wrap justify-center items-center gap-8 mb-10 w-full max-w-4xl"
     >
-      <img src="https://www.gat.ac.in/img/main-logo.webp" alt="Global Academy of Technology" className="h-16 md:h-20 object-contain" />
+      <img src="https://gat.ac.in/img/main-logo.webp" alt="Global Academy of Technology" className="h-16 md:h-20 object-contain bg-white/90 p-2 rounded-lg" />
       <div className="h-12 w-[1px] bg-white/20 hidden md:block" />
       <img src="https://codebreakerchallenge2o.vercel.app/logos/cbc2ologo.PNG" alt="Code Breaker Challenge 2.0" className="h-16 md:h-20 object-contain" />
       <div className="h-12 w-[1px] bg-white/20 hidden md:block" />

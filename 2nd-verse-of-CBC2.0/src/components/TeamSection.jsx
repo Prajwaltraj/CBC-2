@@ -72,7 +72,7 @@ const TeamSection = () => {
       badge: "CONVENOR",
       color: "#00F3FF",
       dept: "Dept. of AI & ML, GAT",
-      image: ""
+      image: "/team/Niyathi.png"
     },
     {
       name: "Bhuvan A R",
@@ -81,7 +81,7 @@ const TeamSection = () => {
       badge: "CO-CONVENOR",
       color: "#00B4D8",
       dept: "Dept. of AI & ML, GAT",
-      image: ""
+      image: "/team/Bhuvan.png"
     },
     {
       name: "Ravi Kumar G",
@@ -110,7 +110,7 @@ const TeamSection = () => {
       badge: "TECH CO-HEAD",
       color: "#00B4D8",
       dept: "Dept. of AI & ML, GAT",
-      image: ""
+      image: "/team/Chethan.png"
     },
 
     // Operations & Media Team
@@ -130,7 +130,7 @@ const TeamSection = () => {
       badge: "STAGE HEAD",
       color: "#EC4899",
       dept: "Dept. of AI & ML, GAT",
-      image: ""
+      image: "/team/Jaanvi.png"
     },
     {
       name: "Namratha B A",
@@ -148,7 +148,7 @@ const TeamSection = () => {
       badge: "CREATIVE HEAD",
       color: "#F43F5E",
       dept: "Dept. of AI & ML, GAT",
-      image: ""
+      image: "/team/Riya.png"
     },
     {
       name: "Samrudh H T",
@@ -157,7 +157,7 @@ const TeamSection = () => {
       badge: "MEDIA HEAD",
       color: "#06B6D4",
       dept: "Dept. of AI & ML, GAT",
-      image: ""
+      image: "/team/samrudh.png"
     },
     {
       name: "Pratheeksha R",
@@ -166,7 +166,7 @@ const TeamSection = () => {
       badge: "MEDIA CO-HEAD",
       color: "#06B6D4",
       dept: "Dept. of AI & ML, GAT",
-      image: ""
+      image: "/team/Pratheeksha.png"
     },
     {
       name: "Mythri Mehendarkar R",
@@ -184,7 +184,7 @@ const TeamSection = () => {
       badge: "HOSPITALITY",
       color: "#38BDF8",
       dept: "Dept. of AI & ML, GAT",
-      image: ""
+      image: "/team/laasya.png"
     },
     {
       name: "Vinayaka S",
@@ -193,7 +193,7 @@ const TeamSection = () => {
       badge: "REGISTRATION",
       color: "#10B981",
       dept: "Dept. of AI & ML, GAT",
-      image: ""
+      image: "/team/vinayaka.png"
     },
     {
       name: "Yashavantha M S",
@@ -202,7 +202,7 @@ const TeamSection = () => {
       badge: "DISCIPLINE",
       color: "#F59E0B",
       dept: "Dept. of AI & ML, GAT",
-      image: ""
+      image: "/team/yashavantha.png"
     },
     {
       name: "S Maha Skanda",
