@@ -4,119 +4,6 @@ import { ref, onValue } from 'firebase/database';
 import { AlertTriangle, Volume2, VolumeX, BellRing } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Resilient Web Audio API Siren Synthesizer
-class SirenSoundEngine {
-  constructor() {
-    this.ctx = null;
-    this.osc1 = null;
-    this.osc2 = null;
-    this.lfo = null;
-    this.lfoGain = null;
-    this.gainNode = null;
-    this.isPlaying = false;
-  }
-
-  init() {
-    try {
-      if (!this.ctx) {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (AudioCtx) {
-          this.ctx = new AudioCtx();
-        }
-      }
-      if (this.ctx && this.ctx.state === 'suspended') {
-        this.ctx.resume();
-      }
-    } catch (e) {
-      console.warn('AudioContext init error:', e);
-    }
-  }
-
-  start() {
-    this.init();
-    if (this.isPlaying || !this.ctx) return;
-
-    try {
-      if (this.ctx.state === 'suspended') {
-        this.ctx.resume();
-      }
-
-      const now = this.ctx.currentTime;
-
-      // Master gain node
-      this.gainNode = this.ctx.createGain();
-      this.gainNode.gain.setValueAtTime(0.001, now);
-      this.gainNode.gain.exponentialRampToValueAtTime(0.3, now + 0.08);
-      this.gainNode.connect(this.ctx.destination);
-
-      // Primary tone oscillator (sawtooth for sharp alarm presence)
-      this.osc1 = this.ctx.createOscillator();
-      this.osc1.type = 'sawtooth';
-      this.osc1.frequency.setValueAtTime(800, now);
-
-      // Secondary tone oscillator (triangle tone for rich body)
-      this.osc2 = this.ctx.createOscillator();
-      this.osc2.type = 'triangle';
-      this.osc2.frequency.setValueAtTime(804, now);
-
-      // LFO for emergency pitch wail (1.4 Hz modulation cycle)
-      this.lfo = this.ctx.createOscillator();
-      this.lfo.type = 'sine';
-      this.lfo.frequency.setValueAtTime(1.4, now);
-
-      this.lfoGain = this.ctx.createGain();
-      this.lfoGain.gain.setValueAtTime(320, now); // Sweep between 480Hz and 1120Hz
-
-      this.lfo.connect(this.lfoGain);
-      this.lfoGain.connect(this.osc1.frequency);
-      this.lfoGain.connect(this.osc2.frequency);
-
-      this.osc1.connect(this.gainNode);
-      this.osc2.connect(this.gainNode);
-
-      this.osc1.start(now);
-      this.osc2.start(now);
-      this.lfo.start(now);
-
-      this.isPlaying = true;
-    } catch (e) {
-      console.error('Failed to start Web Audio siren:', e);
-    }
-  }
-
-  stop() {
-    if (!this.isPlaying) return;
-    try {
-      if (this.gainNode && this.ctx) {
-        const now = this.ctx.currentTime;
-        this.gainNode.gain.setValueAtTime(this.gainNode.gain.value, now);
-        this.gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
-        setTimeout(() => this.cleanup(), 140);
-      } else {
-        this.cleanup();
-      }
-    } catch (e) {
-      this.cleanup();
-    }
-  }
-
-  cleanup() {
-    try {
-      if (this.osc1) { this.osc1.stop(); this.osc1.disconnect(); }
-      if (this.osc2) { this.osc2.stop(); this.osc2.disconnect(); }
-      if (this.lfo) { this.lfo.stop(); this.lfo.disconnect(); }
-      if (this.lfoGain) { this.lfoGain.disconnect(); }
-      if (this.gainNode) { this.gainNode.disconnect(); }
-    } catch (e) {}
-    this.osc1 = null;
-    this.osc2 = null;
-    this.lfo = null;
-    this.lfoGain = null;
-    this.gainNode = null;
-    this.isPlaying = false;
-  }
-}
-
 export const BoardTemplate = ({ data, isPreview = false }) => {
   const [time, setTime] = useState(new Date());
 
@@ -219,39 +106,18 @@ const SmartBoard = () => {
   const [isTesting, setIsTesting] = useState(false);
 
   const audioRef = useRef(null);
-  const synthRef = useRef(null);
 
-  // Initialize synth instance
-  useEffect(() => {
-    synthRef.current = new SirenSoundEngine();
-    return () => {
-      if (synthRef.current) {
-        synthRef.current.stop();
-      }
-    };
-  }, []);
-
-  // Helper to start siren audio
+  // Helper to start siren audio (single source)
   const startSirenSound = useCallback(() => {
     if (muted) return;
-    
-    // Play synthesized siren
-    if (synthRef.current) {
-      synthRef.current.start();
-    }
-    
-    // Play fallback audio element
     if (audioRef.current) {
       audioRef.current.currentTime = 0;
-      audioRef.current.play().catch(e => console.warn("HTML5 audio playback blocked/error:", e));
+      audioRef.current.play().catch(e => console.warn("Audio playback blocked/error:", e));
     }
   }, [muted]);
 
   // Helper to stop siren audio
   const stopSirenSound = useCallback(() => {
-    if (synthRef.current) {
-      synthRef.current.stop();
-    }
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
@@ -291,20 +157,18 @@ const SmartBoard = () => {
     if (!interacted) {
       setInteracted(true);
     }
-    if (synthRef.current) {
-      synthRef.current.init();
-    }
     if (audioRef.current) {
-      audioRef.current.play().then(() => {
-        if (!data?.triggerSiren && !isTesting) {
-          audioRef.current.pause();
-          audioRef.current.currentTime = 0;
-        }
-      }).catch(e => console.warn("Audio unlock attempted:", e));
-    }
-
-    if (data?.triggerSiren && !muted) {
-      startSirenSound();
+      if (data?.triggerSiren && !muted) {
+        audioRef.current.play().catch(e => console.warn("Audio play error:", e));
+      } else if (!isTesting) {
+        // Silent unlock for browser autoplay policy
+        audioRef.current.play().then(() => {
+          if (!data?.triggerSiren && !isTesting) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+          }
+        }).catch(e => console.warn("Audio unlock attempted:", e));
+      }
     }
   };
 
@@ -329,7 +193,7 @@ const SmartBoard = () => {
 
   return (
     <div className="w-screen h-screen overflow-hidden relative select-none" onClick={handleInteraction}>
-      {/* Audio fallback tag pointing to local siren.wav */}
+      {/* Single source audio file */}
       <audio ref={audioRef} src="/siren.wav" loop preload="auto" />
 
       {/* Unlocked overlay / Prompt */}
@@ -396,4 +260,5 @@ const SmartBoard = () => {
 };
 
 export default SmartBoard;
+
 
