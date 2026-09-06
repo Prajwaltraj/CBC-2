@@ -1,3 +1,10 @@
+import { useState, useEffect } from 'react';
+
+// ------------------------------------------------------------------
+// GLOBAL CONSTANTS & DESIGN TOKENS
+// ------------------------------------------------------------------
+
+
 
 const useCountdown = (targetDateStr) => {
   const [timeLeft, setTimeLeft] = useState({ d: 0, h: 0, m: 0, s: 0 });

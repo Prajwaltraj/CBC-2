@@ -1,3 +1,15 @@
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from 'framer-motion';
+import { Code2, ShieldAlert, Cpu, Network, Zap, Download, Lock, Unlock, Mail, Phone, Instagram, Link as LinkIcon, User, Trophy, Crown, Medal, Award, Sparkles, CheckCircle2, Briefcase, Menu, X } from 'lucide-react';
+import Particles from "react-tsparticles";
+import { loadSlim } from "tsparticles-slim";
+import { PROBLEM_STATEMENTS_CONFIG } from '../config/problemStatements';
+
+// ------------------------------------------------------------------
+// GLOBAL CONSTANTS & DESIGN TOKENS
+// ------------------------------------------------------------------
+const BUTTERY_EASE = [0.22, 1, 0.36, 1];
+
 
 const AboutSection = () => (
   <section id="about" className="py-24 px-4 relative z-10 overflow-hidden min-h-[60vh] flex items-center justify-center scroll-mt-20">
