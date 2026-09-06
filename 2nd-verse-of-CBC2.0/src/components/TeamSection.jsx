@@ -1,4 +1,6 @@
-
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles } from 'lucide-react';
 import TeamTiltCard from './TeamTiltCard';
 const TeamSection = () => {
   const [activeCategory, setActiveCategory] = useState("all");

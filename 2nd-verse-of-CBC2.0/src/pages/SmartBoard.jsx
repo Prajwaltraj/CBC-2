@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { rtdb } from '../firebase';
 import { ref, onValue } from 'firebase/database';
-import { AlertTriangle, Clock } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const BoardTemplate = ({ data, isPreview = false }) => {
@@ -111,7 +111,7 @@ const SmartBoard = () => {
       setData(val);
       
       if (val?.triggerSiren && audioRef.current) {
-        audioRef.current.play().catch(e => console.log("Audio play blocked. Click screen."));
+        audioRef.current.play().catch(() => console.log("Audio play blocked. Click screen."));
       } else if (!val?.triggerSiren && audioRef.current) {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;

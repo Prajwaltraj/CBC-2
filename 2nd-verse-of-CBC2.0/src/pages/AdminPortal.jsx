@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { auth, loginWithGoogle, loginWithEmail, logout, rtdb } from '../firebase';
 import { ref, set } from 'firebase/database';
-import { LogIn, LogOut, Send, AlertTriangle, Monitor, XCircle, CheckCircle2 } from 'lucide-react';
+import { LogOut, Send, AlertTriangle, Monitor, XCircle, CheckCircle2 } from 'lucide-react';
 import { BoardTemplate } from './SmartBoard'; // Import the template for live preview
 
 const AdminPortal = () => {

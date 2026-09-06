@@ -1,7 +1,4 @@
-// ------------------------------------------------------------------
-// CUSTOM CURSOR
-// ------------------------------------------------------------------
-
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CustomCursor from './components/CustomCursor';
 import NavigationBar from './components/NavigationBar';
 import FixedTimer from './components/FixedTimer';
@@ -16,6 +13,9 @@ import ProblemStatementsSection from './components/ProblemStatementsSection';
 import SponsorsSection from './components/SponsorsSection';
 import TeamSection from './components/TeamSection';
 import Footer from './components/Footer';
+import AdminPortal from './pages/AdminPortal';
+import FoodPortal from './pages/FoodPortal';
+import SmartBoard from './pages/SmartBoard';
 
 function LandingPage() {
   return (
@@ -36,12 +36,6 @@ function LandingPage() {
     </div>
   );
 }
-
-
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import AdminPortal from './pages/AdminPortal';
-import FoodPortal from './pages/FoodPortal';
-import SmartBoard from './pages/SmartBoard';
 
 export default function App() {
   return (

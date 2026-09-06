@@ -1,4 +1,5 @@
-
+import { motion } from 'framer-motion';
+import { Cpu, Network, Code2, ShieldAlert } from 'lucide-react';
 import TiltCard from './TiltCard';
 const ThemesSection = () => {
   const tracks = [

@@ -1,5 +1,5 @@
-
 import { useCountdown } from './useCountdown';
+import { PROBLEM_STATEMENTS_CONFIG } from '../config/problemStatements';
 const FixedTimer = () => {
   const timeLeft = useCountdown(PROBLEM_STATEMENTS_CONFIG.UNLOCK_DATE);
 

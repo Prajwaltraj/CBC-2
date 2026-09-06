@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { auth, loginWithGoogle, logout } from '../firebase';
 import { LogIn, LogOut, Utensils, Download, CheckCircle } from 'lucide-react';
 // import * as XLSX from 'xlsx'; // To be installed later if needed
