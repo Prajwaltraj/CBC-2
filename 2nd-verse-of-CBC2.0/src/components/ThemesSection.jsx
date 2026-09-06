@@ -1,12 +1,26 @@
 import { motion } from 'framer-motion';
-import { Cpu, Network, Code2, ShieldAlert } from 'lucide-react';
+import { Code2, Cpu, ShieldAlert } from 'lucide-react';
 import TiltCard from './TiltCard';
 const ThemesSection = () => {
   const tracks = [
-    { title: "GenAI & LLMs", icon: <Cpu size={40} />, color: "#00F3FF", desc: "Build the next generation of intelligent agents." },
-    { title: "Web3 & Blockchain", icon: <Network size={40} />, color: "#A855F7", desc: "Decentralized applications and trustless systems." },
-    { title: "IoT & Hardware", icon: <Code2 size={40} />, color: "#00F3FF", desc: "Bridge the gap between physical and digital worlds." },
-    { title: "Cybersecurity", icon: <ShieldAlert size={40} />, color: "#22C55E", desc: "Fortify the digital infrastructure of tomorrow." }
+    { 
+      title: "Software & Web Development", 
+      icon: <Code2 size={40} />, 
+      color: "#00F3FF", 
+      desc: "Full-stack applications, websites, platforms, and UI/UX design projects." 
+    },
+    { 
+      title: "Artificial Intelligence (AI) & Machine Learning (ML)", 
+      icon: <Cpu size={40} />, 
+      color: "#A855F7", 
+      desc: "Data-driven solutions, predictive models, natural language processing, and intelligent systems." 
+    },
+    { 
+      title: "Cybersecurity", 
+      icon: <ShieldAlert size={40} />, 
+      color: "#22C55E", 
+      desc: "Ethical hacking, security tools, vulnerability detection, and secure system design." 
+    }
   ];
 
   return (
@@ -20,7 +34,7 @@ const ThemesSection = () => {
         >
         <span className="text-[#00F3FF] glow-cyan">Domains</span>
         </motion.h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 perspective-[1000px]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 perspective-[1000px]">
           {tracks.map((track, idx) => (
             <TiltCard key={idx} className="group hover:border-white/30 transition-colors duration-500">
               <div 
