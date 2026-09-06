@@ -90,7 +90,7 @@ const TeamSection = () => {
       badge: "CO-CONVENOR",
       color: "#38BDF8",
       dept: "Dept. of AI & ML, GAT",
-      image: ""
+      image: "/team/Ravi.png"
     },
     
     // Technical Team
@@ -101,7 +101,7 @@ const TeamSection = () => {
       badge: "TECH HEAD",
       color: "#00F3FF",
       dept: "Dept. of AI & ML, GAT",
-      image: ""
+      image: "/team/Prajwal.png"
     },
     {
       name: "Chethan Ponnappa A",

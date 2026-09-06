@@ -34,7 +34,7 @@ const NavigationBar = () => {
 
   const navLinks = [
     { name: 'About', href: '#about' },
-    { name: 'Domain', href: '#Domain' },
+    { name: 'Domains', href: '#themes' },
     { name: 'Prizes', href: '#prizes' },
     { name: 'Timeline', href: '#timeline' },
     { name: 'Statements', href: '#problems' },
