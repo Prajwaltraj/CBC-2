@@ -42,6 +42,32 @@ const NavigationBar = () => {
     { name: 'Team', href: '#team' },
   ];
 
+  const handleNavClick = (e, href) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+
+    if (href === '#' || href === '#hero') {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+      return;
+    }
+
+    if (href.startsWith('#')) {
+      const targetId = href.substring(1);
+      const element = document.getElementById(targetId);
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+          });
+        }, 50);
+      }
+    }
+  };
+
   return (
     <motion.nav
       initial={{ y: -100 }}
@@ -53,7 +79,7 @@ const NavigationBar = () => {
     >
       <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-8 flex justify-between items-center w-full">
         {/* Logo */}
-        <a href="#" className="flex items-center gap-1.5 sm:gap-2 group z-50 shrink-0">
+        <a href="#" onClick={(e) => handleNavClick(e, '#')} className="flex items-center gap-1.5 sm:gap-2 group z-50 shrink-0">
           <img src="https://codebreakerchallenge2o.vercel.app/logos/cbc2ologo.PNG" alt="CBC 2.0" className="h-8 w-8 sm:h-9 sm:w-9 nav:h-10 nav:w-10 object-contain transition-transform duration-300 group-hover:scale-110" />
           <span className="font-orbitron font-bold text-base sm:text-lg nav:text-xl tracking-wider text-white group-hover:text-[#00F3FF] transition-colors">CBC 2.0</span>
         </a>
@@ -61,7 +87,7 @@ const NavigationBar = () => {
         {/* Desktop Nav Links (Expands above 1200px) */}
         <div className="hidden min-[1200px]:flex items-center gap-5 xl:gap-7 font-orbitron text-[11px] tracking-wider transition-all">
           {navLinks.map((link) => (
-            <a key={link.name} href={link.href} className="nav-link uppercase whitespace-nowrap">{link.name}</a>
+            <a key={link.name} href={link.href} onClick={(e) => handleNavClick(e, link.href)} className="nav-link uppercase whitespace-nowrap cursor-pointer">{link.name}</a>
           ))}
         </div>
 
@@ -79,7 +105,7 @@ const NavigationBar = () => {
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle navigation menu"
-            className="min-[1200px]:hidden p-1.5 sm:p-2 rounded-md bg-[#0a0a0f]/80 border border-white/10 hover:border-[#00F3FF]/50 text-gray-300 hover:text-[#00F3FF] transition-all focus:outline-none shrink-0"
+            className="min-[1200px]:hidden p-1.5 sm:p-2 rounded-md bg-[#0a0a0f]/80 border border-white/10 hover:border-[#00F3FF]/50 text-gray-300 hover:text-[#00F3FF] transition-all focus:outline-none shrink-0 cursor-pointer"
           >
             {mobileMenuOpen ? <X size={18} className="text-[#00F3FF]" /> : <Menu size={18} />}
           </button>
@@ -101,8 +127,8 @@ const NavigationBar = () => {
                 <a
                   key={link.name}
                   href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between py-2.5 px-3 rounded-lg border border-transparent hover:border-[#00F3FF]/30 hover:bg-[#00F3FF]/5 text-gray-300 hover:text-[#00F3FF] transition-all"
+                  onClick={(e) => handleNavClick(e, link.href)}
+                  className="flex items-center justify-between py-2.5 px-3 rounded-lg border border-transparent hover:border-[#00F3FF]/30 hover:bg-[#00F3FF]/5 text-gray-300 hover:text-[#00F3FF] transition-all cursor-pointer"
                 >
                   <span className="uppercase font-bold tracking-widest">{link.name}</span>
                   <span className="text-[10px] text-gray-500 font-mono">0{idx + 1} {'//'}</span>

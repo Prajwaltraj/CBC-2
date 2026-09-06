@@ -185,7 +185,7 @@ h1, h2, h3, h4, h5, h6, .font-orbitron {
   display: flex;
   gap: 1.5rem;
   flex-shrink: 0;
-  animation: team-marquee-scroll 30s linear infinite;
+  animation: team-marquee-scroll 55s linear infinite;
   will-change: transform;
 }
 

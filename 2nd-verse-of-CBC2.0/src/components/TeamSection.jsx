@@ -9,51 +9,16 @@ const TeamSection = () => {
 
   const categories = [
     { id: "all", label: "All Crew" },
+    { id: "faculty", label: "Faculty Committee" },
     { id: "leads", label: "Core Leads" },
-    { id: "faculty", label: "Faculty Mentors" },
     { id: "tech", label: "Tech & Dev" },
-    { id: "ops", label: "Operations & PR" },
+    { id: "ops", label: "Operations & Media" },
   ];
 
   const teamMembers = [
+    // Faculty Core Committee
     {
-      name: "Vinayaka S",
-      role: "Lead Organizer",
-      category: "leads",
-      badge: "LEAD-01",
-      color: "#00F3FF",
-      dept: "Dept. of AI & ML, GAT",
-      image: ""
-    },
-    {
-      name: "Bhuvan AR",
-      role: "Operations Head",
-      category: "leads",
-      badge: "LEAD-02",
-      color: "#00B4D8",
-      dept: "Dept. of AI & ML, GAT",
-      image: ""
-    },
-    {
-      name: "Ravikumar G",
-      role: "Event Coordinator",
-      category: "leads",
-      badge: "LEAD-03",
-      color: "#38BDF8",
-      dept: "Dept. of AI & ML, GAT",
-      image: ""
-    },
-    {
-      name: "Prajwal T Raj",
-      role: "Technical Lead",
-      category: "tech",
-      badge: "DEV LEAD",
-      color: "#00F3FF",
-      dept: "Dept. of AI & ML, GAT",
-      image: ""
-    },
-    {
-      name: "Dr. Faculty Head",
+      name: "Dr. Roopa B S",
       role: "HOD, Dept of AI & ML",
       category: "faculty",
       badge: "PATRON",
@@ -62,8 +27,8 @@ const TeamSection = () => {
       image: ""
     },
     {
-      name: "Prof. Staff Advisor",
-      role: "Faculty Coordinator",
+      name: "Prof. Anusha J",
+      role: "Faculty Co-Convenor",
       category: "faculty",
       badge: "MENTOR",
       color: "#FBBF24",
@@ -71,20 +36,170 @@ const TeamSection = () => {
       image: ""
     },
     {
-      name: "Platform Architect",
-      role: "Infrastructure Lead",
-      category: "tech",
-      badge: "SYSTEMS",
-      color: "#3B82F6",
+      name: "Prof. C Christlin Shanuja",
+      role: "Faculty Co-Convenor",
+      category: "faculty",
+      badge: "MENTOR",
+      color: "#FBBF24",
+      dept: "GAT Bengaluru",
+      image: ""
+    },
+    {
+      name: "Prof. Likhith Krishna Kikkeri",
+      role: "Faculty Co-Convenor",
+      category: "faculty",
+      badge: "MENTOR",
+      color: "#FBBF24",
+      dept: "GAT Bengaluru",
+      image: ""
+    },
+    {
+      name: "Prof. Prasanna N",
+      role: "IEEE Coordinator",
+      category: "faculty",
+      badge: "MENTOR",
+      color: "#FBBF24",
+      dept: "GAT Bengaluru",
+      image: ""
+    },
+
+    // Core Committee Leads
+    {
+      name: "Niyathi Nagesh",
+      role: "Convenor",
+      category: "leads",
+      badge: "CONVENOR",
+      color: "#00F3FF",
       dept: "Dept. of AI & ML, GAT",
       image: ""
     },
     {
-      name: "Creative & PR Lead",
-      role: "Brand & Media Head",
-      category: "ops",
-      badge: "MEDIA",
+      name: "Bhuvan A R",
+      role: "Co-Convenor",
+      category: "leads",
+      badge: "CO-CONVENOR",
       color: "#00B4D8",
+      dept: "Dept. of AI & ML, GAT",
+      image: ""
+    },
+    {
+      name: "Ravi Kumar G",
+      role: "Co-Convenor",
+      category: "leads",
+      badge: "CO-CONVENOR",
+      color: "#38BDF8",
+      dept: "Dept. of AI & ML, GAT",
+      image: ""
+    },
+    {
+      name: "Yashaswini S",
+      role: "Treasurer",
+      category: "leads",
+      badge: "TREASURER",
+      color: "#A855F7",
+      dept: "Dept. of AI & ML, GAT",
+      image: ""
+    },
+
+    // Technical Team
+    {
+      name: "Prajwal T Raj",
+      role: "Technical Head",
+      category: "tech",
+      badge: "TECH HEAD",
+      color: "#00F3FF",
+      dept: "Dept. of AI & ML, GAT",
+      image: ""
+    },
+    {
+      name: "Chethan Ponnappa A",
+      role: "Technical Co-Head",
+      category: "tech",
+      badge: "TECH CO-HEAD",
+      color: "#00B4D8",
+      dept: "Dept. of AI & ML, GAT",
+      image: ""
+    },
+
+    // Operations & Media Team
+    {
+      name: "Janavi H B",
+      role: "Stage Head",
+      category: "ops",
+      badge: "STAGE HEAD",
+      color: "#EC4899",
+      dept: "Dept. of AI & ML, GAT",
+      image: ""
+    },
+    {
+      name: "Riya Vinod",
+      role: "Creative Head",
+      category: "ops",
+      badge: "CREATIVE HEAD",
+      color: "#F43F5E",
+      dept: "Dept. of AI & ML, GAT",
+      image: ""
+    },
+    {
+      name: "Samrudh H T",
+      role: "Social Media Head",
+      category: "ops",
+      badge: "MEDIA HEAD",
+      color: "#06B6D4",
+      dept: "Dept. of AI & ML, GAT",
+      image: ""
+    },
+    {
+      name: "Pratheeksha R",
+      role: "Social Media Co-Head",
+      category: "ops",
+      badge: "MEDIA CO-HEAD",
+      color: "#06B6D4",
+      dept: "Dept. of AI & ML, GAT",
+      image: ""
+    },
+    {
+      name: "Mythri Mehendarkar R",
+      role: "Hospitality Head",
+      category: "ops",
+      badge: "HOSPITALITY",
+      color: "#38BDF8",
+      dept: "Dept. of AI & ML, GAT",
+      image: ""
+    },
+    {
+      name: "Laasya S D",
+      role: "Hospitality Co-Head",
+      category: "ops",
+      badge: "HOSPITALITY",
+      color: "#38BDF8",
+      dept: "Dept. of AI & ML, GAT",
+      image: ""
+    },
+    {
+      name: "Vinayaka S",
+      role: "Registration Head",
+      category: "ops",
+      badge: "REGISTRATION",
+      color: "#10B981",
+      dept: "Dept. of AI & ML, GAT",
+      image: ""
+    },
+    {
+      name: "Yashavantha M S",
+      role: "Discipline Head",
+      category: "ops",
+      badge: "DISCIPLINE",
+      color: "#F59E0B",
+      dept: "Dept. of AI & ML, GAT",
+      image: ""
+    },
+    {
+      name: "S Maha Skanda",
+      role: "Logistics Head",
+      category: "ops",
+      badge: "LOGISTICS",
+      color: "#8B5CF6",
       dept: "Dept. of AI & ML, GAT",
       image: ""
     }
@@ -168,7 +283,7 @@ const TeamSection = () => {
             <span className="text-gray-300 font-bold uppercase tracking-wider text-[11px]">
               {activeCategory === "all" ? (
                 <span className="text-[#00F3FF]">
-                  SQUAD SYNCHRONIZATION: <span className="text-white">8/8 OPERATIVES DEPLOYED [INFINITE STREAM]</span>
+                  SQUAD SYNCHRONIZATION: <span className="text-white">{teamMembers.length}/{teamMembers.length} OPERATIVES DEPLOYED [INFINITE STREAM]</span>
                 </span>
               ) : (
                 <span>
