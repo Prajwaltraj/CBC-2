@@ -31,7 +31,7 @@ export const BoardTemplate = ({ data, isPreview = false }) => {
       {/* Header */}
       <header className={`px-8 py-6 border-b flex justify-between items-center transition-colors duration-300 ${isUrgent ? 'border-red-500/50 bg-red-500/20' : 'border-white/10 bg-black/40'}`}>
         <div className="flex items-center gap-4">
-          <img src="https://codebreakerchallenge2o.vercel.app/logos/cbc2ologo.PNG" alt="CBC 2.0" className="h-12 w-12 object-contain" />
+          <img src="team/cbc logo.png" alt="CBC 2.0" className="h-12 w-12 object-contain" />
           <div>
             <h1 className="text-2xl font-orbitron font-bold text-white tracking-widest uppercase">CBC 2.0</h1>
             <p className="text-xs font-mono text-[#00F3FF] tracking-widest uppercase">Live Broadcast System</p>
@@ -73,7 +73,7 @@ export const BoardTemplate = ({ data, isPreview = false }) => {
             
             <div className={`w-full ${hasPoster ? 'lg:w-1/2 text-left' : 'text-center'}`}>
               {!data && (
-                <img src="https://codebreakerchallenge2o.vercel.app/logos/cbc2ologo.PNG" alt="CBC 2.0" className="w-48 h-48 mx-auto mb-12 opacity-20 grayscale" />
+                <img src="/team/cbc logo.png" alt="CBC 2.0" className="w-48 h-48 mx-auto mb-12 opacity-20 grayscale" />
               )}
               <h2 className={`font-orbitron font-black text-white leading-[1.2] uppercase tracking-wide ${hasPoster ? (isPreview ? 'text-4xl' : 'text-5xl lg:text-7xl') : (isPreview ? 'text-5xl' : 'text-7xl lg:text-9xl')} ${isUrgent ? 'text-red-400 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]' : ''}`}>
                 {statement}
