@@ -24,7 +24,7 @@ const TeamSection = () => {
       badge: "PATRON",
       color: "#FBBF24",
       dept: "GAT Bengaluru",
-      image: ""
+      image: "/team/HOD.png"
     },
     {
       name: "Prof. C Christlin Shanuja",
@@ -33,7 +33,7 @@ const TeamSection = () => {
       badge: "MENTOR",
       color: "#FBBF24",
       dept: "GAT Bengaluru",
-      image: ""
+      image: "/team/Shanuja mam.png"
     },
     {
       name: "Prof. Prasanna N",
@@ -42,7 +42,7 @@ const TeamSection = () => {
       badge: "MENTOR",
       color: "#FBBF24",
       dept: "GAT Bengaluru",
-      image: ""
+      image: "/team/prasanna.png"
     },
     {
       name: "Prof. Anusha J",
@@ -51,7 +51,7 @@ const TeamSection = () => {
       badge: "MENTOR",
       color: "#FBBF24",
       dept: "GAT Bengaluru",
-      image: ""
+      image: "/team/Anusha.png"
     },
     {
       name: "Prof. Likhith Krishna Kikkeri",
@@ -60,7 +60,7 @@ const TeamSection = () => {
       badge: "MENTOR",
       color: "#FBBF24",
       dept: "GAT Bengaluru",
-      image: ""
+      image: "team/likith.png"
     },
     
 
@@ -121,7 +121,7 @@ const TeamSection = () => {
       badge: "TREASURER",
       color: "#A855F7",
       dept: "Dept. of AI & ML, GAT",
-      image: ""
+      image: "/team/yashaswini.png"
     },
     {
       name: "Janavi H B",
@@ -193,7 +193,7 @@ const TeamSection = () => {
       badge: "REGISTRATION",
       color: "#10B981",
       dept: "Dept. of AI & ML, GAT",
-      image: "/team/vinayaka.png"
+      image: "/team/Vinayaka.png"
     },
     {
       name: "Yashavantha M S",
@@ -202,7 +202,7 @@ const TeamSection = () => {
       badge: "DISCIPLINE",
       color: "#F59E0B",
       dept: "Dept. of AI & ML, GAT",
-      image: "/team/yashavantha.png"
+      image: "/team/yashvantha.png"
     },
     {
       name: "S Maha Skanda",
@@ -211,7 +211,7 @@ const TeamSection = () => {
       badge: "LOGISTICS",
       color: "#8B5CF6",
       dept: "Dept. of AI & ML, GAT",
-      image: ""
+      image: "/team/skanda .png"
     }
   ];
 
