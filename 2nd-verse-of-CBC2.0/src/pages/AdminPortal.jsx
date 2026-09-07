@@ -202,10 +202,10 @@ const AdminPortal = () => {
           <a href="/" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Home</a>
           <div className="h-4 w-px bg-white/10"></div>
 
-          <a href="/meals" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-gray-400 hover:text-[#10B981] transition-colors flex items-center gap-1">
+          <a href="/meals.html" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-gray-400 hover:text-[#10B981] transition-colors flex items-center gap-1">
             Meals Tracking ↗
           </a>
-          <a href="/attendance" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-gray-400 hover:text-[#FBBF24] transition-colors flex items-center gap-1">
+          <a href="/attendance.html" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-gray-400 hover:text-[#FBBF24] transition-colors flex items-center gap-1">
             Attendance ↗
           </a>
           <div className="h-4 w-px bg-white/10"></div>

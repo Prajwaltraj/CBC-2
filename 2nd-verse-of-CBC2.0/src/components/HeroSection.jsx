@@ -85,25 +85,60 @@ const HeroSection = () => (
           <span className="glitch" data-text="CHALLENGE">CHALLENGE</span>{" "}
           <span className="text-[#FFD700]">2.0</span>
         </h1>
-        <div className="flex justify-center items-center gap-4 mb-1">
-          <div className="bg-[#00F3FF]/10 border border-[#00F3FF]/30 px-6 py-2 rounded-full inline-block">
-            <span className="text-[#00F3FF] font-bold tracking-widest uppercase text-sm font-mono">
-              The 2nd Verse
-            </span> 
+        <div className="flex flex-col items-center gap-4 mb-6 mt-4">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4">
+            <img 
+              src="/team/sdg long.png" 
+              alt="Sustainable Development Goals" 
+              className="h-12 md:h-16 object-contain opacity-90 hover:opacity-100 transition-opacity drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] rounded-lg" 
+            />
+            <div className="flex items-center justify-center gap-4">
+              <img 
+                src="/team/sdg 04.jpeg" 
+                alt="SDG 4 - Quality Education" 
+                className="h-12 md:h-16 object-contain opacity-90 hover:opacity-100 transition-opacity drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] rounded-lg" 
+              />
+              <img 
+                src="/team/sdg 09.jpeg" 
+                alt="SDG 9 - Industry, Innovation and Infrastructure" 
+                className="h-12 md:h-16 object-contain opacity-90 hover:opacity-100 transition-opacity drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] rounded-lg" 
+              />
+              <img 
+                src="/team/sdg 17.jpeg" 
+                alt="SDG 17 - Partnerships for the Goals" 
+                className="h-12 md:h-16 object-contain opacity-90 hover:opacity-100 transition-opacity drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] rounded-lg" 
+              />
+            </div>
           </div>
-          <button 
-            type="button"
-            className="flex items-center gap-2 px-6 py-2 bg-[#A855F7]/10 border border-[#A855F7]/50 text-[#A855F7] rounded-full hover:bg-[#A855F7]/20 transition-colors font-mono font-bold tracking-widest text-sm uppercase cursor-pointer"
-          >
-            <Download size={16} /> Brochure
-          </button>
         </div>
       </motion.div>
     </div>
 
-    <div className="relative z-10 w-full px-4 mt-6">
+    <div className="relative z-10 w-full px-4 mt-2">
       <TerminalWindow />
     </div>
+
+    {/* Call to Action Buttons Below Terminal */}
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1.5, delay: 0.8, ease: BUTTERY_EASE }}
+      className="relative z-10 flex flex-wrap justify-center items-center gap-6 mt-12 w-full"
+    >
+      <a 
+        href="/brochure.jpg"
+        download="CBC2.0_Brochure.jpg"
+        className="flex items-center gap-2 px-8 py-3.5 bg-[#00F3FF]/10 border border-[#00F3FF]/50 text-[#00F3FF] rounded-full hover:bg-[#00F3FF]/20 transition-all duration-300 font-mono font-bold tracking-widest text-sm uppercase cursor-pointer shadow-[0_0_20px_rgba(0,243,255,0.2)] hover:shadow-[0_0_30px_rgba(0,243,255,0.4)] hover:-translate-y-1"
+      >
+        <Download size={18} /> The Brochure
+      </a>
+      <button 
+        onClick={() => document.getElementById('rules')?.scrollIntoView({ behavior: 'smooth' })}
+        className="flex items-center gap-2 px-8 py-3.5 bg-[#A855F7]/10 border border-[#A855F7]/50 text-[#A855F7] rounded-full hover:bg-[#A855F7]/20 transition-all duration-300 font-mono font-bold tracking-widest text-sm uppercase cursor-pointer shadow-[0_0_20px_rgba(168,85,247,0.2)] hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] hover:-translate-y-1"
+      >
+        The Rule Book
+      </button>
+    </motion.div>
   </section>
 );
 

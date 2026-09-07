@@ -5,6 +5,14 @@
       "destination": "/api/index.py"
     },
     {
+      "source": "/meals",
+      "destination": "/meals.html"
+    },
+    {
+      "source": "/attendance",
+      "destination": "/attendance.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

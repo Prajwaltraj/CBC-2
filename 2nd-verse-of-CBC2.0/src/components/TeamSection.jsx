@@ -175,7 +175,7 @@ const TeamSection = () => {
       badge: "HOSPITALITY",
       color: "#38BDF8",
       dept: "Dept. of AI & ML, GAT",
-      image: ""
+      image: "team/mythri.png"
     },
     {
       name: "Laasya S D",
