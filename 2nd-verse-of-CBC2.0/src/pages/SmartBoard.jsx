@@ -92,7 +92,6 @@ export const BoardTemplate = ({ data, isPreview = false }) => {
         <div className="flex gap-4">
           <span>Dept of AI & ML</span>
           <span>•</span>
-          <span>The 2nd Verse</span>
         </div>
       </footer>
     </div>
@@ -186,15 +185,15 @@ const SmartBoard = () => {
       if (!data?.triggerSiren) {
         stopSirenSound();
       }
-    }, 3000);
+    }, 3000);n
   };
 
   const isUrgent = !!data?.triggerSiren;
 
   return (
     <div className="w-screen h-screen overflow-hidden relative select-none" onClick={handleInteraction}>
-      {/* Single source audio file */}
-      <audio ref={audioRef} src="/siren.wav" loop preload="auto" />
+      {/* Hidden Audio Element */}
+      <audio ref={audioRef} src="/siren.mp3" loop preload="auto" />
 
       {/* Unlocked overlay / Prompt */}
       {!interacted && (
