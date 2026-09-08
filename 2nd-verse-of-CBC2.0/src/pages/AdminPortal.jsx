@@ -14,9 +14,27 @@ const AdminPortal = () => {
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
 
+  // List of emails allowed to access the Admin Portal
+  const ALLOWED_EMAILS = [
+    'prajwaltraj213@gmail.com',
+    'bhuvan.ar0101@gmail.com',
+    'codebreaker.aiml@gmail.com',
+    'cbc2.o.tech@gmail.com'
+  ];
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((u) => {
-      setUser(u);
+      if (u) {
+        if (ALLOWED_EMAILS.includes(u.email)) {
+          setUser(u);
+        } else {
+          logout();
+          setLoginError('Access Denied: Your email is not authorized for the Admin Portal.');
+          setUser(null);
+        }
+      } else {
+        setUser(null);
+      }
     });
     return () => unsubscribe();
   }, []);
