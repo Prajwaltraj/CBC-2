@@ -292,7 +292,7 @@
     'codebreaker.aiml@gmail.com',
     'cbc2.o.tech@gmail.com',
     'chethanponnappa24@gmail.com',
-    'vinayakas307@hamil.com'
+    'vinayakas307@gmail.com'
   ];
 
   const overlay = document.getElementById('auth-overlay');
@@ -403,7 +403,7 @@ async function loadTeam(teamId){
       document.getElementById('statScanned').textContent = scannedTeamsCount;
     }
   }catch(e){
-    showToast('Network error — check your connection');
+    showToast(e.name === 'SyntaxError' ? 'Server error: Are you running locally via Vite? Try vercel dev.' : 'Network error — check your connection');
     console.error(e);
   }
 }
@@ -454,7 +454,7 @@ async function markAttendance(row, present){
     renderTeam(currentTeam);
     showToast(`Marked ${present ? 'present':'absent'}`);
   }catch(e){
-    showToast('Network error — check your connection');
+    showToast(e.name === 'SyntaxError' ? 'Server error: Are you running locally via Vite? Try vercel dev.' : 'Network error — check your connection');
     console.error(e);
   }
 }

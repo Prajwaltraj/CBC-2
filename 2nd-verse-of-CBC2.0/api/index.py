@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify
 
-# We must import from the same directory (api/_sheets.py)
-from ._sheets import get_team_members, set_attendance, set_meal
+try:
+    from ._sheets import get_team_members, set_attendance, set_meal
+except ImportError:
+    from _sheets import get_team_members, set_attendance, set_meal
 
 app = Flask(__name__)
 
@@ -41,5 +43,3 @@ def api_mark():
     except Exception as err:
         print(err)
         return jsonify({"error": str(err) or "Server error"}), 500
-
-# Vercel requires the app variable to be exposed
