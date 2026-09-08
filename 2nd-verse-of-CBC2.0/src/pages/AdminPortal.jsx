@@ -19,7 +19,9 @@ const AdminPortal = () => {
     'prajwaltraj213@gmail.com',
     'bhuvan.ar0101@gmail.com',
     'codebreaker.aiml@gmail.com',
-    'cbc2.o.tech@gmail.com'
+    'cbc2.o.tech@gmail.com',
+    'chethanponnappa24@gmail.com',
+    'vinayakas307@hamil.com'
   ];
 
   useEffect(() => {
