@@ -9,7 +9,7 @@ const BUTTERY_EASE = [0.22, 1, 0.36, 1];
 
 const TerminalWindow = () => {
   const [text, setText] = useState('');
-  const fullText = "> INITIALIZING HACKATHON PROTOCOLS...\n> BYPASSING MAINFRAME FIREWALLS...\n> ACCESS GRANTED.\n> WELCOME TO 2ND VERSE OF CBC 2.0.";
+  const fullText = "> INITIALIZING HACKATHON PROTOCOLS...\n> BYPASSING MAINFRAME FIREWALLS...\n> ACCESS GRANTED.\n> WELCOME TO CBC 2.0.";
   
   useEffect(() => {
     let index = 0;

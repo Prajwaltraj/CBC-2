@@ -22,7 +22,7 @@ const AboutSection = () => (
           <span className="text-white">Break Limits.</span>
         </h2>
         <p className="text-gray-300 text-lg md:text-xl leading-relaxed font-light mb-6">
-          The 2nd Verse of Code Breaker Challenge 2.0 is here. Gather your brightest minds to build solutions that defy conventional boundaries. 
+          The Code Breaker Challenge 2.0 is here. Gather your brightest minds to build solutions that defy conventional boundaries. 
           24 hours to ideate, prototype, and deploy the future of technology.
         </p>
       </motion.div>
