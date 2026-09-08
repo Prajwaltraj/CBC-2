@@ -31,7 +31,7 @@ export const BoardTemplate = ({ data, isPreview = false }) => {
       {/* Header */}
       <header className={`px-8 py-6 border-b flex justify-between items-center transition-colors duration-300 ${isUrgent ? 'border-red-500/50 bg-red-500/20' : 'border-white/10 bg-black/40'}`}>
         <div className="flex items-center gap-4">
-          <img src="team/cbc logo.png" alt="CBC 2.0" className="h-12 w-12 object-contain" />
+          <img src="/team/cbc logo.png" alt="CBC 2.0" className="h-12 w-12 object-contain" />
           <div>
             <h1 className="text-2xl font-orbitron font-bold text-white tracking-widest uppercase">CBC 2.0</h1>
             <p className="text-xs font-mono text-[#00F3FF] tracking-widest uppercase">Live Broadcast System</p>
@@ -86,7 +86,7 @@ export const BoardTemplate = ({ data, isPreview = false }) => {
       {/* Footer */}
       <footer className="px-8 py-4 border-t border-white/10 bg-black/40 flex justify-between items-center text-gray-500 font-mono text-sm uppercase">
         <div className="flex items-center gap-3">
-          <img src="https://codebreakerchallenge2o.vercel.app/logos/gatlockuplogo.png" alt="GAT" className="h-6 object-contain grayscale opacity-50" />
+          <img src="/team/Global logoo.png" alt="GAT" className="h-6 object-contain grayscale opacity-50" />
           <span>Global Academy of Technology</span>
         </div>
         <div className="flex gap-4">
