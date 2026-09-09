@@ -185,7 +185,7 @@ const SmartBoard = () => {
       if (!data?.triggerSiren) {
         stopSirenSound();
       }
-    }, 3000);n
+    }, 3000);
   };
 
   const isUrgent = !!data?.triggerSiren;
