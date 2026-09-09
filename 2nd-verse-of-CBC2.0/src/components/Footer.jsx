@@ -31,7 +31,7 @@ const Footer = () => (
         <div className="flex flex-col gap-3 text-sm font-mono text-gray-400">
           <a href="#" className="hover:text-[#00F3FF] transition-colors w-max">Home</a>
           <a href="#about" className="hover:text-[#00F3FF] transition-colors w-max">About Us</a>
-          <a href="#themes" className="hover:text-[#00F3FF] transition-colors w-max">Themes</a>
+          <a href="#themes" className="hover:text-[#00F3FF] transition-colors w-max">Domains</a>
           <a href="#timeline" className="hover:text-[#00F3FF] transition-colors w-max">Timeline</a>
           <a href="#rules" className="hover:text-[#00F3FF] transition-colors w-max">Rules & FAQs</a>
           <a href="#sponsors" className="hover:text-[#00F3FF] transition-colors w-max">Sponsors</a>
