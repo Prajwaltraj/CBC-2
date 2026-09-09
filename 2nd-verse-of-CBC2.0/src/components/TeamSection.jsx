@@ -193,7 +193,7 @@ const TeamSection = () => {
       badge: "REGISTRATION",
       color: "#10B981",
       dept: "Dept. of AI & ML, GAT",
-      image: "/team/Vinayaka.png"
+      image: "/team/Vinayaka .png"
     },
     {
       name: "Yashavantha M S",
