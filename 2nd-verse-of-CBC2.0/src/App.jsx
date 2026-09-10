@@ -15,7 +15,7 @@ import TeamSection from './components/TeamSection';
 import Footer from './components/Footer';
 import AdminPortal from './pages/AdminPortal';
 import SmartBoard from './pages/SmartBoard';
-
+import { Analytics } from '@vercel/analytics/react';
 function LandingPage() {
   return (
     <div className="w-full max-w-full overflow-x-hidden bg-[#010103] text-[#F0F0F0] selection:bg-[#00F3FF]/30 selection:text-white min-h-screen relative">
@@ -45,6 +45,7 @@ export default function App() {
         <Route path="/admin" element={<AdminPortal />} />
         <Route path="/board" element={<SmartBoard />} />
       </Routes>
+      <Analytics />
     </Router>
   );
 }

@@ -4,6 +4,16 @@ import { ref, set } from 'firebase/database';
 import { LogOut, Send, AlertTriangle, Monitor, XCircle, CheckCircle2 } from 'lucide-react';
 import { BoardTemplate } from './SmartBoard'; // Import the template for live preview
 
+// List of emails allowed to access the Admin Portal
+const ALLOWED_EMAILS = [
+  'prajwaltraj213@gmail.com',
+  'bhuvan.ar0101@gmail.com',
+  'codebreaker.aiml@gmail.com',
+  'cbc2.o.tech@gmail.com',
+  'chethanponnappa24@gmail.com',
+  'vinayakas307@gmail.com'
+];
+
 const AdminPortal = () => {
   const [user, setUser] = useState(null);
   const [posterUrl, setPosterUrl] = useState('');
@@ -13,16 +23,6 @@ const AdminPortal = () => {
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
-
-  // List of emails allowed to access the Admin Portal
-  const ALLOWED_EMAILS = [
-    'prajwaltraj213@gmail.com',
-    'bhuvan.ar0101@gmail.com',
-    'codebreaker.aiml@gmail.com',
-    'cbc2.o.tech@gmail.com',
-    'chethanponnappa24@gmail.com',
-    'vinayakas307@gmail.com'
-  ];
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((u) => {
