@@ -139,7 +139,7 @@ const TeamSection = () => {
       badge: "STAGE CO-HEAD",
       color: "#EC4899",
       dept: "Dept. of AI & ML, GAT",
-      image: ""
+      image: "/team/Namratha.png"
     },
     {
       name: "Riya Vinod",
