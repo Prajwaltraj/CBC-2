@@ -12,20 +12,20 @@ const FixedTimer = () => {
         <div className="text-[8px] md:text-[10px] font-orbitron font-bold text-[#00F3FF] tracking-widest text-center uppercase mb-0.5 md:mb-1 drop-shadow-[0_0_8px_#00F3FF]" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>Mins</div>
         <div className="flex flex-col gap-1 md:gap-2 items-center font-mono">
           <div className="flex flex-col items-center">
-            <span className="text-xs md:text-xl font-bold text-white leading-none">{String(timeLeft.d).padStart(2, '0')}</span>
-            <span className="text-[7px] md:text-[9px] text-gray-400 uppercase tracking-wider mt-0.5">Days</span>
+            <span className="text-xs md:text-xl font-bold text-black dark:text-white leading-none">{String(timeLeft.d).padStart(2, '0')}</span>
+            <span className="text-[7px] md:text-[9px] text-gray-600 dark:text-gray-400 uppercase tracking-wider mt-0.5">Days</span>
           </div>
-          <div className="w-full h-px bg-white/10" />
+          <div className="w-full h-px bg-black/10 dark:bg-white/10" />
           <div className="flex flex-col items-center">
-            <span className="text-xs md:text-xl font-bold text-white leading-none">{String(timeLeft.h).padStart(2, '0')}</span>
-            <span className="text-[7px] md:text-[9px] text-gray-400 uppercase tracking-wider mt-0.5">Hrs</span>
+            <span className="text-xs md:text-xl font-bold text-black dark:text-white leading-none">{String(timeLeft.h).padStart(2, '0')}</span>
+            <span className="text-[7px] md:text-[9px] text-gray-600 dark:text-gray-400 uppercase tracking-wider mt-0.5">Hrs</span>
           </div>
-          <div className="w-full h-px bg-white/10" />
+          <div className="w-full h-px bg-black/10 dark:bg-white/10" />
           <div className="flex flex-col items-center">
-            <span className="text-xs md:text-xl font-bold text-white leading-none">{String(timeLeft.m).padStart(2, '0')}</span>
-            <span className="text-[7px] md:text-[9px] text-gray-400 uppercase tracking-wider mt-0.5">Min</span>
+            <span className="text-xs md:text-xl font-bold text-black dark:text-white leading-none">{String(timeLeft.m).padStart(2, '0')}</span>
+            <span className="text-[7px] md:text-[9px] text-gray-600 dark:text-gray-400 uppercase tracking-wider mt-0.5">Min</span>
           </div>
-          <div className="w-full h-px bg-white/10" />
+          <div className="w-full h-px bg-black/10 dark:bg-white/10" />
           <div className="flex flex-col items-center">
             <span className="text-xs md:text-xl font-bold text-[#A855F7] animate-pulse leading-none">{String(timeLeft.s).padStart(2, '0')}</span>
             <span className="text-[7px] md:text-[9px] text-[#A855F7] font-semibold uppercase tracking-wider mt-0.5">Sec</span>
@@ -36,8 +36,5 @@ const FixedTimer = () => {
   );
 };
 
-// ------------------------------------------------------------------
-// REUSABLE COMPONENTS
-// ------------------------------------------------------------------
 
 export default FixedTimer;

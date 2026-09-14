@@ -3,7 +3,7 @@ import { Mail, Phone, Instagram, } from 'lucide-react';
 
 
 const Footer = () => (
-  <footer className="border-t border-white/10 bg-[#000000] py-16 relative z-10 overflow-hidden">
+  <footer className="border-t border-black/20 dark:border-white/10 bg-[#000000] py-16 relative z-10 overflow-hidden">
     <div className="absolute inset-0 bg-gradient-to-t from-[#00F3FF]/5 to-transparent pointer-events-none" />
     <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 relative z-10">
       
@@ -13,12 +13,12 @@ const Footer = () => (
           <img src="/team/cbc logo.png" alt="CBC 2.0" className="h-12 w-12 object-contain" />
           <span className="font-orbitron font-bold text-2xl tracking-wider">CBC 2.0</span>
         </div>
-        <p className="text-gray-400 text-sm font-mono leading-relaxed">
+        <p className="text-gray-600 dark:text-gray-400 text-sm font-mono leading-relaxed">
           AI For Change <br/>
           Think. Build. Break Limits.<br/>
         </p> 
         <div className="mt-2 text-gray-500 text-xs font-mono leading-relaxed">
-          <p className="font-bold text-gray-400 mb-1">Global Academy of Technology</p>
+          <p className="font-bold text-gray-600 dark:text-gray-400 mb-1">Global Academy of Technology</p>
           <p>Ideal Homes Township,</p>
           <p>Raja Rajeshwari Nagar,</p>
           <p>Bengaluru - 560098</p>
@@ -28,7 +28,7 @@ const Footer = () => (
       {/* Quick Links */}
       <div className="flex flex-col gap-4 lg:pl-8">
         <h4 className="font-orbitron font-bold text-[#00F3FF] tracking-wider mb-2 uppercase">Quick Links</h4>
-        <div className="flex flex-col gap-3 text-sm font-mono text-gray-400">
+        <div className="flex flex-col gap-3 text-sm font-mono text-gray-600 dark:text-gray-400">
           <a href="#" className="hover:text-[#00F3FF] transition-colors w-max">Home</a>
           <a href="#about" className="hover:text-[#00F3FF] transition-colors w-max">About Us</a>
           <a href="#themes" className="hover:text-[#00F3FF] transition-colors w-max">Domains</a>
@@ -48,7 +48,7 @@ const Footer = () => (
           <a href="https://www.instagram.com/codebreaker_aiml/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-4 py-3 glass-panel rounded-lg hover:bg-[#E1306C]/20 hover:text-[#E1306C] transition-colors w-full">
             <Instagram size={18} className="shrink-0" /> <span className="font-mono text-xs">Code Breaker 2.0</span>
           </a>
-          <a href="https://www.instagram.com/aitron_aiml/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-4 py-3 glass-panel rounded-lg hover:bg-gray-500/20 hover:text-white transition-colors w-full">
+          <a href="https://www.instagram.com/aitron_aiml/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-4 py-3 glass-panel rounded-lg hover:bg-gray-500/20 hover:text-black dark:hover:text-white transition-colors w-full">
             <Instagram size={18} className="shrink-0" /> <span className="font-mono text-xs">Aitron AIML</span>
           </a>
         </div>
@@ -57,32 +57,32 @@ const Footer = () => (
       {/* Help & Support (Contacts Combined) */}
       <div className="flex flex-col gap-4">
         <h4 className="font-orbitron font-bold text-[#00F3FF] tracking-wider mb-2 uppercase">Help & Support</h4>
-        <div className="text-gray-400 text-sm space-y-4 font-mono">
+        <div className="text-gray-600 dark:text-gray-400 text-sm space-y-4 font-mono">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-white font-bold mb-1 text-xs">Registration</p>
+              <p className="text-black dark:text-white font-bold mb-1 text-xs">Registration</p>
               <div className="space-y-2">
                 <div>
-                  <p className="text-gray-400 text-[11px] mb-0.5">Vinayaka</p>
-                  <a href="tel:+917022656317" className="flex items-center gap-1.5 text-xs hover:text-white transition-colors"><Phone size={12} className="text-[#A855F7]"/> +91 70226 56317</a>
+                  <p className="text-gray-600 dark:text-gray-400 text-[11px] mb-0.5">Vinayaka</p>
+                  <a href="tel:+917022656317" className="flex items-center gap-1.5 text-xs hover:text-black dark:hover:text-white transition-colors"><Phone size={12} className="text-[#A855F7]"/> +91 70226 56317</a>
                 </div>
                 <div>
-                  <p className="text-gray-400 text-[11px] mb-0.5">Prajwal</p>
-                  <a href="tel:+917975156216" className="flex items-center gap-1.5 text-xs hover:text-white transition-colors"><Phone size={12} className="text-[#A855F7]"/> +91 79751 56216</a>
+                  <p className="text-gray-600 dark:text-gray-400 text-[11px] mb-0.5">Prajwal</p>
+                  <a href="tel:+917975156216" className="flex items-center gap-1.5 text-xs hover:text-black dark:hover:text-white transition-colors"><Phone size={12} className="text-[#A855F7]"/> +91 79751 56216</a>
                 </div>
               </div>
             </div>
             
             <div>
-              <p className="text-white font-bold mb-1 text-xs">Other Queries</p>
+              <p className="text-black dark:text-white font-bold mb-1 text-xs">Other Queries</p>
               <div className="space-y-2">
                 <div>
-                  <p className="text-gray-400 text-[11px] mb-0.5">Bhuvan</p>
-                  <a href="tel:+918317462097" className="flex items-center gap-1.5 text-xs hover:text-white transition-colors"><Phone size={12} className="text-[#00F3FF]"/> +91 83174 62097</a>
+                  <p className="text-gray-600 dark:text-gray-400 text-[11px] mb-0.5">Bhuvan</p>
+                  <a href="tel:+918317462097" className="flex items-center gap-1.5 text-xs hover:text-black dark:hover:text-white transition-colors"><Phone size={12} className="text-[#00F3FF]"/> +91 83174 62097</a>
                 </div>
                 <div>
-                  <p className="text-gray-400 text-[11px] mb-0.5">Ravi</p>
-                  <a href="tel:+919008788111" className="flex items-center gap-1.5 text-xs hover:text-white transition-colors"><Phone size={12} className="text-[#00F3FF]"/> +91 90087 88111</a>
+                  <p className="text-gray-600 dark:text-gray-400 text-[11px] mb-0.5">Ravi</p>
+                  <a href="tel:+919008788111" className="flex items-center gap-1.5 text-xs hover:text-black dark:hover:text-white transition-colors"><Phone size={12} className="text-[#00F3FF]"/> +91 90087 88111</a>
                 </div>
               </div>
             </div>
@@ -93,7 +93,7 @@ const Footer = () => (
     </div>
     
     {/* Bottom Footer */}
-    <div className="max-w-7xl mx-auto px-4 mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-sm font-mono gap-6 relative z-10">
+    <div className="max-w-7xl mx-auto px-4 mt-16 pt-8 border-t border-black/10 dark:border-white/5 flex flex-col md:flex-row justify-between items-center text-sm font-mono gap-6 relative z-10">
       <div className="flex flex-col items-center md:items-start gap-1">
         <p className="text-gray-500">&copy; 2026 Dept of AI & ML, GAT.</p>
         <p className="text-[#00F3FF] font-bold tracking-widest mt-2 flex items-center gap-2">

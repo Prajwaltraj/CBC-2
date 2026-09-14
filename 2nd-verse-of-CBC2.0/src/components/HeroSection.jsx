@@ -4,9 +4,6 @@ import { Download } from 'lucide-react';
 import NeuralBackground from './NeuralBackground';
 import TerminalWindow from './TerminalWindow';
 
-// ------------------------------------------------------------------
-// GLOBAL CONSTANTS & DESIGN TOKENS
-// ------------------------------------------------------------------
 const BUTTERY_EASE = [0.22, 1, 0.36, 1];
      
 const HeroSection = () => (
@@ -21,7 +18,11 @@ const HeroSection = () => (
       transition={{ duration: 1.5, ease: BUTTERY_EASE }}
       className="relative z-10 flex flex-wrap justify-center items-center gap-8 mb-10 w-full max-w-4xl"
     >
-      <img src="/team/Global logoo.png" alt="Global Academy of Technology" className="h-16 md:h-20 object-contain bg-white/90 p-2 rounded-lg" />
+      <img 
+  src="/team/Global logoo.png" 
+  alt="Global Academy of Technology" 
+  className="h-16 md:h-20 object-contain bg-[#FDFEFF] p-2 rounded-lg" 
+/>
       <div className="h-12 w-[1px] bg-white/20 hidden md:block" />
       <img src="/team/cbc logo.png" alt="Code Breaker Challenge 2.0" className="h-16 md:h-20 object-contain" />
       <div className="h-12 w-[1px] bg-white/20 hidden md:block" />
@@ -35,10 +36,10 @@ const HeroSection = () => (
       transition={{ duration: 1.5, delay: 0.5, ease: BUTTERY_EASE }}
       className="relative z-10 flex flex-col items-center text-center mb-6"
     >
-      <p className="text-gray-400 text-sm md:text-base font-orbitron tracking-[0.2em] uppercase mb-2">
+      <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base font-orbitron tracking-[0.2em] uppercase mb-2">
         CTRLCode & Aitron AIML 
       </p>
-      <p className="text-gray-400 text-sm md:text-base font-orbitron tracking-[0.2em] uppercase mb-2">
+      <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base font-orbitron tracking-[0.2em] uppercase mb-2">
         DEPARTMENT OF ARTIFICIAL INTELLIGENCE & MACHINE LEARNING
       </p>
       <p className="text-gray-500 text-xs md:text-sm font-orbitron tracking-[0.2em] uppercase">
@@ -81,7 +82,7 @@ const HeroSection = () => (
             CODE BREAKER
           </span>
         </h1>
-        <h1 className="text-3xl md:text-5xl lg:text-6xl font-black font-orbitron text-white mb-6">
+        <h1 className="text-3xl md:text-5xl lg:text-6xl font-black font-orbitron text-black dark:text-white mb-6">
           <span className="glitch" data-text="CHALLENGE">CHALLENGE</span>{" "}
           <span className="text-[#FFD700]">2.0</span>
         </h1>

@@ -1,6 +1,3 @@
-// ------------------------------------------------------------------
-// GLOBAL CONSTANTS & DESIGN TOKENS
-// ------------------------------------------------------------------
 
 
 const SponsorsSection = () => {
@@ -20,7 +17,7 @@ const SponsorsSection = () => {
           <div className="text-center">
             <h3 className="text-sm font-mono text-[#FBBF24] tracking-[0.2em] uppercase mb-6">Title Sponsors</h3>
             <div className="flex justify-center items-center gap-8 flex-wrap">
-              <div className="glass-panel w-64 h-32 rounded-xl flex items-center justify-center text-gray-500 hover:text-white transition-colors border-[#FBBF24]/30 shadow-[0_0_20px_rgba(251,191,36,0.1)]">Title Placeholder 1</div>
+              <div className="glass-panel w-64 h-32 rounded-xl flex items-center justify-center text-gray-500 hover:text-black dark:hover:text-white transition-colors border-[#FBBF24]/30 shadow-[0_0_20px_rgba(251,191,36,0.1)]">Title Placeholder 1</div>
             </div>
           </div>
 
@@ -38,17 +35,17 @@ const SponsorsSection = () => {
           <div className="text-center">
             <h3 className="text-sm font-mono text-[#00F3FF] tracking-[0.2em] uppercase mb-6">Co-Sponsors</h3>
             <div className="flex justify-center items-center gap-6 flex-wrap">
-              <div className="glass-panel w-48 h-24 rounded-lg flex items-center justify-center text-gray-500 hover:text-white transition-colors">Co-Sponsor 1</div>
-              <div className="glass-panel w-48 h-24 rounded-lg flex items-center justify-center text-gray-500 hover:text-white transition-colors">Co-Sponsor 2</div>
-              <div className="glass-panel w-48 h-24 rounded-lg flex items-center justify-center text-gray-500 hover:text-white transition-colors">Co-Sponsor 3</div>
+              <div className="glass-panel w-48 h-24 rounded-lg flex items-center justify-center text-gray-500 hover:text-black dark:hover:text-white transition-colors">Co-Sponsor 1</div>
+              <div className="glass-panel w-48 h-24 rounded-lg flex items-center justify-center text-gray-500 hover:text-black dark:hover:text-white transition-colors">Co-Sponsor 2</div>
+              <div className="glass-panel w-48 h-24 rounded-lg flex items-center justify-center text-gray-500 hover:text-black dark:hover:text-white transition-colors">Co-Sponsor 3</div>
             </div>
           </div>
 
           {/* Layer 4: 3 Columns */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 border-t border-white/5 pt-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 border-t border-black/10 dark:border-white/5 pt-12">
             {/* Food Sponsors */}
             <div className="text-center">
-              <h3 className="text-xs font-mono text-gray-400 tracking-[0.1em] uppercase mb-4">Food Sponsors</h3>
+              <h3 className="text-xs font-mono text-gray-600 dark:text-gray-400 tracking-[0.1em] uppercase mb-4">Food Sponsors</h3>
               <div className="flex flex-col gap-4 items-center">
                 {foodSponsors.map((s, i) => (
                   <div key={i} className="glass-panel w-full max-w-[200px] h-16 rounded flex items-center justify-center text-gray-500 text-sm">{s}</div>
@@ -57,7 +54,7 @@ const SponsorsSection = () => {
             </div>
             {/* Technical Sponsors */}
             <div className="text-center">
-              <h3 className="text-xs font-mono text-gray-400 tracking-[0.1em] uppercase mb-4">Technical Sponsors</h3>
+              <h3 className="text-xs font-mono text-gray-600 dark:text-gray-400 tracking-[0.1em] uppercase mb-4">Technical Sponsors</h3>
               <div className="flex flex-col gap-4 items-center">
                 {technicalSponsors.map((s, i) => (
                   <div key={i} className="glass-panel w-full max-w-[200px] h-16 rounded flex items-center justify-center text-gray-500 text-sm">{s}</div>
@@ -66,12 +63,27 @@ const SponsorsSection = () => {
             </div>
             {/* Support Sponsors */}
             <div className="text-center">
-              <h3 className="text-xs font-mono text-gray-400 tracking-[0.1em] uppercase mb-4">Support Sponsors</h3>
+              <h3 className="text-xs font-mono text-gray-600 dark:text-gray-400 tracking-[0.1em] uppercase mb-4">Support Sponsors</h3>
               <div className="flex flex-col gap-4 items-center">
                 {supportSponsors.map((s, i) => (
                   <div key={i} className="glass-panel w-full max-w-[200px] h-16 rounded flex items-center justify-center text-gray-500 text-sm">{s}</div>
                 ))}
               </div>
+            </div>
+          </div>
+
+          {/* Previous Sponsors & Partners */}
+          <div className="text-center mt-12 pt-16 border-t border-black/10 dark:border-white/10 relative">
+            <h3 className="text-xl md:text-3xl font-orbitron font-bold text-gray-400 dark:text-gray-500 tracking-[0.1em] uppercase mb-10 opacity-60">
+              Previous Sponsors & Partners
+            </h3>
+            <div className="flex justify-center items-center gap-4 md:gap-8 flex-wrap opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+              {['GeeksforGeeks', 'JPQ Tech Bootcamp', 'Mevi', 'Zorko', 'Vasan Eye Care', 'Agrivimaann', 'ChangePay', 
+              'California Burito'].map((sponsor, idx) => (
+                <div key={idx} className="glass-panel px-6 py-4 rounded-xl flex items-center justify-center text-black dark:text-white font-bold font-orbitron text-sm md:text-base border-white/5 hover:border-white/20 hover:scale-105 transition-all">
+                  {sponsor}
+                </div>
+              ))}
             </div>
           </div>
         </div>

@@ -40,7 +40,7 @@ const TeamTiltCard = ({ member, index, isAllSelected }) => {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-      className="w-[240px] sm:w-[260px] flex-shrink-0 glass-panel p-5 rounded-2xl border border-white/10 hover:border-[#00F3FF]/60 transition-colors duration-200 group flex flex-col justify-between relative overflow-hidden bg-gradient-to-b from-white/[0.03] via-[#040D1A]/60 to-[#010103]/95 hover:shadow-[0_10px_35px_rgba(0,243,255,0.18)] will-change-transform perspective-[1000px] select-none"
+      className="w-[240px] sm:w-[260px] flex-shrink-0 glass-panel p-5 rounded-2xl border border-black/20 dark:border-white/10 hover:border-[#00F3FF]/60 transition-colors duration-200 group flex flex-col justify-between relative overflow-hidden bg-gradient-to-b from-white/[0.03] via-[#040D1A]/60 to-[#010103]/95 hover:shadow-[0_10px_35px_rgba(0,243,255,0.18)] will-change-transform perspective-[1000px] select-none"
     >
       {/* Holographic Sheen Reflection */}
       <motion.div
@@ -56,10 +56,10 @@ const TeamTiltCard = ({ member, index, isAllSelected }) => {
       </div>
 
       {/* Cyber Corner HUD Brackets */}
-      <div className="absolute top-2 left-2 w-2.5 h-2.5 border-t-2 border-l-2 border-white/20 group-hover:border-[#00F3FF] transition-colors" />
-      <div className="absolute top-2 right-2 w-2.5 h-2.5 border-t-2 border-r-2 border-white/20 group-hover:border-[#00F3FF] transition-colors" />
-      <div className="absolute bottom-2 left-2 w-2.5 h-2.5 border-b-2 border-l-2 border-white/20 group-hover:border-[#00F3FF] transition-colors" />
-      <div className="absolute bottom-2 right-2 w-2.5 h-2.5 border-b-2 border-r-2 border-white/20 group-hover:border-[#00F3FF] transition-colors" />
+      <div className="absolute top-2 left-2 w-2.5 h-2.5 border-t-2 border-l-2 border-black/30 dark:border-white/20 group-hover:border-[#00F3FF] transition-colors" />
+      <div className="absolute top-2 right-2 w-2.5 h-2.5 border-t-2 border-r-2 border-black/30 dark:border-white/20 group-hover:border-[#00F3FF] transition-colors" />
+      <div className="absolute bottom-2 left-2 w-2.5 h-2.5 border-b-2 border-l-2 border-black/30 dark:border-white/20 group-hover:border-[#00F3FF] transition-colors" />
+      <div className="absolute bottom-2 right-2 w-2.5 h-2.5 border-b-2 border-r-2 border-black/30 dark:border-white/20 group-hover:border-[#00F3FF] transition-colors" />
 
       {/* Card Content */}
       <div style={{ transform: "translateZ(25px)" }} className="relative z-30 flex flex-col h-full justify-between">
@@ -100,7 +100,7 @@ const TeamTiltCard = ({ member, index, isAllSelected }) => {
               >
                 <User size={24} style={{ color: member.color }} />
               </div>
-              <span className="text-[9px] font-mono text-gray-400 uppercase tracking-widest font-semibold">
+              <span className="text-[9px] font-mono text-gray-600 dark:text-gray-400 uppercase tracking-widest font-semibold">
                 PHOTO
               </span>
             </div>
@@ -113,7 +113,7 @@ const TeamTiltCard = ({ member, index, isAllSelected }) => {
 
         {/* Member Name & Designation */}
         <div className="text-center mt-3" style={{ transform: "translateZ(18px)" }}>
-          <h4 className="text-base font-orbitron font-bold text-white group-hover:text-[#00F3FF] transition-colors tracking-wide truncate">
+          <h4 className="text-base font-orbitron font-bold text-black dark:text-white group-hover:text-[#00F3FF] transition-colors tracking-wide truncate">
             {member.name}
           </h4>
           <p 

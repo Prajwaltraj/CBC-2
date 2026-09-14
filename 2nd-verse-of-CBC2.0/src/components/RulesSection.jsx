@@ -80,22 +80,22 @@ const RulesSection = () => {
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-6xl font-orbitron font-bold uppercase mb-4">
-            Rules & <span className="text-white">Regulations</span>
+            Rules & <span className="text-black dark:text-white">Regulations</span>
           </h2>
-          <p className="text-gray-400 font-mono text-sm max-w-2xl mx-auto uppercase tracking-widest">
+          <p className="text-gray-600 dark:text-gray-400 font-mono text-sm max-w-2xl mx-auto uppercase tracking-widest">
             Please read the comprehensive rulebook carefully. Failure to comply may result in disqualification.
           </p>
         </div>
         
         <div className="grid gap-4">
           {ruleCategories.map((category, idx) => (
-            <div key={idx} className="glass-panel border border-white/10 rounded-xl overflow-hidden hover:border-white/20 transition-colors">
+            <div key={idx} className="glass-panel border border-black/20 dark:border-white/10 rounded-xl overflow-hidden hover:border-black/30 dark:hover:border-white/20 transition-colors">
               <button
                 onClick={() => setOpenIndex(openIndex === idx ? -1 : idx)}
                 className="w-full px-6 py-5 flex items-center justify-between text-left focus:outline-none"
               >
                 <div className="flex items-center gap-4">
-                  <div className="p-2 bg-black/40 rounded-lg">
+                  <div className="p-2 bg-white/60 dark:bg-black/40 rounded-lg">
                     {category.icon}
                   </div>
                   <h3 className="font-orbitron font-bold text-lg md:text-xl tracking-wide">
@@ -106,7 +106,7 @@ const RulesSection = () => {
                   animate={{ rotate: openIndex === idx ? 180 : 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <ChevronDown className="text-gray-400" />
+                  <ChevronDown className="text-gray-600 dark:text-gray-400" />
                 </motion.div>
               </button>
               
@@ -120,12 +120,12 @@ const RulesSection = () => {
                     className="overflow-hidden"
                   >
                     <div className="px-6 pb-6 pt-2">
-                      <div className="h-px w-full bg-white/5 mb-6" />
+                      <div className="h-px w-full bg-black/5 dark:bg-white/5 mb-6" />
                       <ul className="space-y-4">
                         {category.rules.map((rule, ruleIdx) => (
                           <li key={ruleIdx} className="flex gap-4 items-start group">
                             <div className="mt-1.5 min-w-[6px] h-[6px] rounded-full bg-[#00F3FF]/50 group-hover:bg-[#00F3FF] transition-colors" />
-                            <p className="text-gray-300 font-mono text-sm md:text-base leading-relaxed group-hover:text-white transition-colors">
+                            <p className="text-gray-700 dark:text-gray-300 font-mono text-sm md:text-base leading-relaxed group-hover:text-black dark:group-hover:text-white transition-colors">
                               {rule}
                             </p>
                           </li>

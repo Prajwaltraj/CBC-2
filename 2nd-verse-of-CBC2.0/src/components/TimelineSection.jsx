@@ -1,9 +1,6 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-// ------------------------------------------------------------------
-// GLOBAL CONSTANTS & DESIGN TOKENS
-// ------------------------------------------------------------------
 const BUTTERY_EASE = [0.22, 1, 0.36, 1];
 
 
@@ -26,14 +23,14 @@ const TimelineSection = () => {
           Live <span className="text-[#FBBF24] glow[#FBBF24]-">Schedule</span>
         </h2>
         <div className="relative">
-          <div className="absolute left-5 md:left-1/2 top-0 bottom-0 w-[2px] -translate-x-1/2 bg-white/5" />
+          <div className="absolute left-5 md:left-1/2 top-0 bottom-0 w-[2px] -translate-x-1/2 bg-black/5 dark:bg-white/5" />
           <motion.div 
             style={{ height: lineHeight }}
             className="absolute left-5 md:left-1/2 top-0 w-[2px] -translate-x-1/2 bg-gradient-to-b from-[#00F3FF] to-[#A855F7] will-change-transform shadow-[0_0_15px_#A855F7]" 
           />
           {schedule.map((item, idx) => (
             <div key={idx} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group mb-16 last:mb-0 pl-14 md:pl-0">
-              <div className="absolute left-5 md:left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-[#010103] border-2 border-white/20 flex items-center justify-center z-10 group-hover:border-[#00F3FF] transition-colors shadow-[0_0_10px_rgba(0,0,0,0)] group-hover:shadow-[0_0_15px_#00F3FF]">
+              <div className="absolute left-5 md:left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-[#010103] border-2 border-black/30 dark:border-white/20 flex items-center justify-center z-10 group-hover:border-[#00F3FF] transition-colors shadow-[0_0_10px_rgba(0,0,0,0)] group-hover:shadow-[0_0_15px_#00F3FF]">
                 <div className="w-2.5 h-2.5 rounded-full bg-white/50 group-hover:bg-[#00F3FF] transition-colors" />
               </div>
               <motion.div 
@@ -45,7 +42,7 @@ const TimelineSection = () => {
               >
                 <div className="text-[#00F3FF] text-sm mb-2 font-bold">{item.time}</div>
                 <h4 className="text-xl font-orbitron font-bold mb-2">{item.title}</h4>
-                <p className="text-gray-400 text-sm">{item.desc}</p>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">{item.desc}</p>
               </motion.div>
             </div>
           ))}

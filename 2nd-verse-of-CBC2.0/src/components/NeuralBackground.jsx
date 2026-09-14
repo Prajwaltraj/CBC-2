@@ -26,7 +26,7 @@ const NeuralBackground = () => {
           },
         },
         particles: {
-          color: { value: ["#00F3FF", "#A855F7", "#FBBF24"] }, // Added yellow as requested
+          color: { value: ["#00F3FF", "#A855F7", "#FBBF24"] },
           links: {
             color: "#ffffff",
             distance: 150,
@@ -54,8 +54,5 @@ const NeuralBackground = () => {
   );
 };
 
-// ------------------------------------------------------------------
-// NAVIGATION BAR
-// ------------------------------------------------------------------
 
 export default NeuralBackground;

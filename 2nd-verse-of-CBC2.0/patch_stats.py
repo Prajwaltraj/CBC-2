@@ -1,4 +1,9 @@
-import { motion } from 'framer-motion';
+import re
+
+with open('src/components/StatsSection.jsx', 'r') as f:
+    content = f.read()
+
+new_content = """import { motion } from 'framer-motion';
 
 const StatsSection = () => {
   const legacyStats = [
@@ -86,3 +91,7 @@ const StatsSection = () => {
 };
 
 export default StatsSection;
+"""
+
+with open('src/components/StatsSection.jsx', 'w') as f:
+    f.write(new_content)
