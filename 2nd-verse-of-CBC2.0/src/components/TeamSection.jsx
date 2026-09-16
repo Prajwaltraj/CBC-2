@@ -60,7 +60,7 @@ const TeamSection = () => {
       badge: "MENTOR",
       color: "#FBBF24",
       dept: "GAT Bengaluru",
-      image: "team/likith.png"
+      image: "/team/likith.png"
     },
     
 
@@ -175,7 +175,7 @@ const TeamSection = () => {
       badge: "HOSPITALITY",
       color: "#38BDF8",
       dept: "Dept. of AI & ML, GAT",
-      image: "team/mythri.png"
+      image: "/team/mythri.png"
     },
     {
       name: "Laasya S D",

@@ -3,6 +3,7 @@ import { rtdb } from '../firebase';
 import { ref, onValue } from 'firebase/database';
 import { AlertTriangle, Volume2, VolumeX, BellRing } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ProgressiveImage from '../components/ProgressiveImage';
 
 export const BoardTemplate = ({ data, isPreview = false }) => {
   const [time, setTime] = useState(new Date());
@@ -31,7 +32,7 @@ export const BoardTemplate = ({ data, isPreview = false }) => {
       {/* Header */}
       <header className={`px-8 py-6 border-b flex justify-between items-center transition-colors duration-300 ${isUrgent ? 'border-red-500/50 bg-red-500/20' : 'border-black/20 dark:border-white/10 bg-white/60 dark:bg-black/40'}`}>
         <div className="flex items-center gap-4">
-          <img src="/team/cbc logo.png" alt="CBC 2.0" className="h-12 w-12 object-contain" />
+          <ProgressiveImage src="/team/cbc logo.png" alt="CBC 2.0" className="h-12 w-12 object-contain" />
           <div>
             <h1 className="text-2xl font-orbitron font-bold text-black dark:text-white tracking-widest uppercase">CBC 2.0</h1>
             <p className="text-xs font-mono text-[#00F3FF] tracking-widest uppercase">Live Broadcast System</p>
@@ -66,14 +67,14 @@ export const BoardTemplate = ({ data, isPreview = false }) => {
               <div className="w-full lg:w-1/2 flex justify-center">
                 <div className="relative group p-1 rounded-2xl bg-gradient-to-br from-[#00F3FF]/50 to-[#A855F7]/50 shadow-[0_0_50px_rgba(0,243,255,0.1)]">
                   <div className="absolute inset-0 bg-white dark:bg-black rounded-2xl" />
-                  <img src={data.posterUrl} alt="Broadcast Poster" className="relative z-10 w-full h-auto max-h-[60vh] rounded-xl object-contain" />
+                  <ProgressiveImage src={data.posterUrl} alt="Broadcast Poster" className="relative z-10 w-full h-auto max-h-[60vh] rounded-xl object-contain" />
                 </div>
               </div>
             )}
             
             <div className={`w-full ${hasPoster ? 'lg:w-1/2 text-left' : 'text-center'}`}>
               {!data && (
-                <img src="/team/cbc logo.png" alt="CBC 2.0" className="w-48 h-48 mx-auto mb-12 opacity-20 grayscale" />
+                <ProgressiveImage src="/team/cbc logo.png" alt="CBC 2.0" className="w-48 h-48 mx-auto mb-12 opacity-20 grayscale" />
               )}
               <h2 className={`font-orbitron font-black text-black dark:text-white leading-[1.2] uppercase tracking-wide ${hasPoster ? (isPreview ? 'text-4xl' : 'text-5xl lg:text-7xl') : (isPreview ? 'text-5xl' : 'text-7xl lg:text-9xl')} ${isUrgent ? 'text-red-400 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]' : ''}`}>
                 {statement}
@@ -86,7 +87,7 @@ export const BoardTemplate = ({ data, isPreview = false }) => {
       {/* Footer */}
       <footer className="px-8 py-4 border-t border-black/20 dark:border-white/10 bg-white/60 dark:bg-black/40 flex justify-between items-center text-gray-500 font-mono text-sm uppercase">
         <div className="flex items-center gap-3">
-          <img src="/team/Global logoo.png" alt="GAT" className="h-6 object-contain grayscale opacity-50" />
+          <ProgressiveImage src="/team/Global logoo.png" alt="GAT" className="h-6 object-contain grayscale opacity-50" />
           <span>Global Academy of Technology</span>
         </div>
         <div className="flex gap-4">

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, Menu, X } from 'lucide-react';
+import ProgressiveImage from './ProgressiveImage';
 
 const BUTTERY_EASE = [0.22, 1, 0.36, 1];
 
@@ -74,7 +75,12 @@ const NavigationBar = () => {
       <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-8 flex justify-between items-center w-full">
         {/* Logo */}
         <a href="#" onClick={(e) => handleNavClick(e, '#')} className="flex items-center gap-1.5 sm:gap-2 group z-50 shrink-0">
-          <img src="/team/cbc logo.png" alt="CBC 2.0" className="h-8 w-8 sm:h-9 sm:w-9 nav:h-10 nav:w-10 object-contain transition-transform duration-300 group-hover:scale-110" />
+          <ProgressiveImage 
+            src="/team/cbc logo.png" 
+            alt="CBC 2.0" 
+            priority={true}
+            className="h-8 w-8 sm:h-9 sm:w-9 nav:h-10 nav:w-10 object-contain transition-transform duration-300 group-hover:scale-110" 
+          />
           <span className="font-orbitron font-bold text-base sm:text-lg nav:text-xl tracking-wider text-black dark:text-white group-hover:text-[#00F3FF] transition-colors">CBC 2.0</span>
         </a>
 

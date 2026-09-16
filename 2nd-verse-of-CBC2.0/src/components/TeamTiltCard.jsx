@@ -1,5 +1,6 @@
 import { motion, useTransform, useMotionValue, useSpring } from 'framer-motion';
 import { User } from 'lucide-react';
+import ProgressiveImage from './ProgressiveImage';
 
 
 
@@ -87,7 +88,12 @@ const TeamTiltCard = ({ member, index, isAllSelected }) => {
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#00F3FF0d_1px,transparent_1px),linear-gradient(to_bottom,#00F3FF0d_1px,transparent_1px)] bg-[size:8px_8px] pointer-events-none" />
           
           {member.image ? (
-            <img src={member.image} alt={member.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+            <ProgressiveImage
+              src={member.image}
+              alt={member.name}
+              containerClassName="w-full h-full flex items-center justify-center"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
           ) : (
             <div className="flex flex-col items-center justify-center text-center p-2 z-10">
               <div 

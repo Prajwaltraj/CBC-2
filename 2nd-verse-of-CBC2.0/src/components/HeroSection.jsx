@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Download } from 'lucide-react';
 import NeuralBackground from './NeuralBackground';
 import TerminalWindow from './TerminalWindow';
+import ProgressiveImage from './ProgressiveImage';
 
 const BUTTERY_EASE = [0.22, 1, 0.36, 1];
      
@@ -18,15 +19,26 @@ const HeroSection = () => (
       transition={{ duration: 1.5, ease: BUTTERY_EASE }}
       className="relative z-10 flex flex-wrap justify-center items-center gap-8 mb-10 w-full max-w-4xl"
     >
-      <img 
-  src="/team/Global logoo.png" 
-  alt="Global Academy of Technology" 
-  className="h-16 md:h-20 object-contain bg-[#FDFEFF] p-2 rounded-lg" 
-/>
+      <ProgressiveImage 
+        src="/team/Global logoo.png" 
+        alt="Global Academy of Technology" 
+        priority={true}
+        className="h-16 md:h-20 object-contain bg-[#FDFEFF] p-2 rounded-lg" 
+      />
       <div className="h-12 w-[1px] bg-white/20 hidden md:block" />
-      <img src="/team/cbc logo.png" alt="Code Breaker Challenge 2.0" className="h-16 md:h-20 object-contain" />
+      <ProgressiveImage 
+        src="/team/cbc logo.png" 
+        alt="Code Breaker Challenge 2.0" 
+        priority={true}
+        className="h-16 md:h-20 object-contain" 
+      />
       <div className="h-12 w-[1px] bg-white/20 hidden md:block" />
-      <img src="/team/22.png" alt="Dept of AI & ML" className="h-16 md:h-20 object-contain" />
+      <ProgressiveImage 
+        src="/team/22.png" 
+        alt="Dept of AI & ML" 
+        priority={true}
+        className="h-16 md:h-20 object-contain" 
+      />
     </motion.div>
 
     {/* Organization Text */}
@@ -88,23 +100,23 @@ const HeroSection = () => (
         </h1>
         <div className="flex flex-col items-center gap-4 mb-6 mt-4">
           <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-            <img 
+            <ProgressiveImage 
               src="/team/sdg long.png" 
               alt="Sustainable Development Goals" 
               className="h-12 md:h-16 object-contain opacity-90 hover:opacity-100 transition-opacity drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] rounded-lg" 
             />
             <div className="flex items-center justify-center gap-4">
-              <img 
+              <ProgressiveImage 
                 src="/team/sdg 04.jpeg" 
                 alt="SDG 4 - Quality Education" 
                 className="h-12 md:h-16 object-contain opacity-90 hover:opacity-100 transition-opacity drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] rounded-lg" 
               />
-              <img 
+              <ProgressiveImage 
                 src="/team/sdg 09.jpeg" 
                 alt="SDG 9 - Industry, Innovation and Infrastructure" 
                 className="h-12 md:h-16 object-contain opacity-90 hover:opacity-100 transition-opacity drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] rounded-lg" 
               />
-              <img 
+              <ProgressiveImage 
                 src="/team/sdg 17.jpeg" 
                 alt="SDG 17 - Partnerships for the Goals" 
                 className="h-12 md:h-16 object-contain opacity-90 hover:opacity-100 transition-opacity drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] rounded-lg" 

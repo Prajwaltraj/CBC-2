@@ -1,4 +1,5 @@
 import { Mail, Phone, Instagram, } from 'lucide-react';
+import ProgressiveImage from './ProgressiveImage';
 
 
 
@@ -10,7 +11,7 @@ const Footer = () => (
       {/* Brand & Location */}
       <div className="flex flex-col gap-5">
         <div className="flex items-center gap-3">
-          <img src="/team/cbc logo.png" alt="CBC 2.0" className="h-12 w-12 object-contain" />
+          <ProgressiveImage src="/team/cbc logo.png" alt="CBC 2.0" className="h-12 w-12 object-contain" />
           <span className="font-orbitron font-bold text-2xl tracking-wider">CBC 2.0</span>
         </div>
         <p className="text-gray-600 dark:text-gray-400 text-sm font-mono leading-relaxed">
