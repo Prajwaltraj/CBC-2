@@ -7,7 +7,7 @@ Required environment variables (set these in Vercel project settings):
   GOOGLE_PRIVATE_KEY            - the service account's private key (keep the \n escapes)
   GOOGLE_SHEET_ID               - the spreadsheet ID (from its URL)
 
-Sheet layout (tab name: "CheckIn"), one row per member:
+Sheet layout (tab name: "CheckIn & meals_Tracking"), one row per member:
   A: team_id | B: team_name | C: member_name | D: present (Yes/No)
   E: lunch (Yes/No) | F: tiffin (Yes/No) | G: checked_in_at
   H: project_title | I: table_number | J: leader_email
@@ -15,14 +15,11 @@ Sheet layout (tab name: "CheckIn"), one row per member:
 
 import os
 import datetime
-
+import gspread
 from google.oauth2.service_account import Credentials
-from googleapiclient.discovery import build
 
 SHEET_NAME = "CheckIn & meals_Tracking"
-DATA_RANGE = f"{SHEET_NAME}!A2:J"
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
-
 
 def get_sheets_client():
     email = os.environ.get("GOOGLE_SERVICE_ACCOUNT_EMAIL")
@@ -39,7 +36,7 @@ def get_sheets_client():
         "token_uri": "https://oauth2.googleapis.com/token",
     }
     creds = Credentials.from_service_account_info(info, scopes=SCOPES)
-    return build("sheets", "v4", credentials=creds, cache_discovery=False)
+    return gspread.authorize(creds)
 
 
 def get_sheet_id():
@@ -50,16 +47,11 @@ def get_sheet_id():
 
 
 def get_team_members(team_id):
-    """Reads every member row for a given team_id.
-    Returns { team_id, team_name, project_title, table_number, members: [...] }
-    Each member includes `row`, the real 1-indexed sheet row number (for updates later).
-    """
-    service = get_sheets_client()
+    client = get_sheets_client()
     spreadsheet_id = get_sheet_id()
-    result = service.spreadsheets().values().get(
-        spreadsheetId=spreadsheet_id, range=DATA_RANGE
-    ).execute()
-    rows = result.get("values", [])
+    sheet = client.open_by_key(spreadsheet_id).worksheet(SHEET_NAME)
+    
+    rows = sheet.get("A2:J")
 
     members = []
     team_name = project_title = table_number = ""
@@ -94,29 +86,30 @@ def get_team_members(team_id):
 
 def set_attendance(row, present):
     """Updates a single member's Present status + timestamp (columns D, G)."""
-    service = get_sheets_client()
+    client = get_sheets_client()
     spreadsheet_id = get_sheet_id()
+    sheet = client.open_by_key(spreadsheet_id).worksheet(SHEET_NAME)
+    
     now = (datetime.datetime.utcnow().isoformat() + "Z") if present else ""
-    service.spreadsheets().values().batchUpdate(
-        spreadsheetId=spreadsheet_id,
-        body={
-            "valueInputOption": "RAW",
-            "data": [
-                {"range": f"{SHEET_NAME}!D{row}", "values": [["Yes" if present else "No"]]},
-                {"range": f"{SHEET_NAME}!G{row}", "values": [[now]]},
-            ],
+    
+    # Use batch_update for performance
+    sheet.batch_update([
+        {
+            'range': f'D{row}',
+            'values': [["Yes" if present else "No"]]
         },
-    ).execute()
+        {
+            'range': f'G{row}',
+            'values': [[now]]
+        }
+    ])
 
 
 def set_meal(row, meal, taken):
     """Updates a single member's meal status (column E for lunch, F for tiffin)."""
     col = "E" if meal == "lunch" else "F"
-    service = get_sheets_client()
+    client = get_sheets_client()
     spreadsheet_id = get_sheet_id()
-    service.spreadsheets().values().update(
-        spreadsheetId=spreadsheet_id,
-        range=f"{SHEET_NAME}!{col}{row}",
-        valueInputOption="RAW",
-        body={"values": [["Yes" if taken else "No"]]},
-    ).execute()
+    sheet = client.open_by_key(spreadsheet_id).worksheet(SHEET_NAME)
+    
+    sheet.update_acell(f'{col}{row}', "Yes" if taken else "No")
