@@ -19,7 +19,7 @@
   ],
   "functions": {
     "api/**/*.py": {
-      "excludeFiles": ["node_modules/**", "public/**", "dist/**", "src/**", ".git/**"]
+      "excludeFiles": "{node_modules,public,dist,src,.git}/**"
     }
   }
 }
