@@ -1,7 +1,7 @@
 
 import { motion } from 'framer-motion';
 import { Download } from 'lucide-react';
-import NeuralBackground from './NeuralBackground';
+import { Link } from 'react-router-dom';
 import TerminalWindow from './TerminalWindow';
 import ProgressiveImage from './ProgressiveImage';
 
@@ -9,7 +9,6 @@ const BUTTERY_EASE = [0.22, 1, 0.36, 1];
      
 const HeroSection = () => (
   <section id="hero" className="relative min-h-screen flex flex-col items-center justify-center pt-20 pb-10 px-4 overflow-hidden">
-    <NeuralBackground />
     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#010103]/50 to-[#010103] pointer-events-none z-0" />
 
     {/* University & Department Logos */}
@@ -145,12 +144,11 @@ const HeroSection = () => (
       >
         <Download size={18} /> The Brochure
       </a>
-      <button 
-        onClick={() => document.getElementById('rules')?.scrollIntoView({ behavior: 'smooth' })}
+      <Link to="/rulebook" 
         className="flex items-center gap-2 px-8 py-3.5 bg-[#A855F7]/10 border border-[#A855F7]/50 text-[#A855F7] rounded-full hover:bg-[#A855F7]/20 transition-all duration-300 font-mono font-bold tracking-widest text-sm uppercase cursor-pointer shadow-[0_0_20px_rgba(168,85,247,0.2)] hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] hover:-translate-y-1"
       >
         The Rule Book
-      </button>
+      </Link>
     </motion.div>
   </section>
 );

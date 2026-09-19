@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, Menu, X } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ProgressiveImage from './ProgressiveImage';
 
 const BUTTERY_EASE = [0.22, 1, 0.36, 1];
@@ -9,6 +10,8 @@ const BUTTERY_EASE = [0.22, 1, 0.36, 1];
 const NavigationBar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -42,23 +45,36 @@ const NavigationBar = () => {
     setMobileMenuOpen(false);
 
     if (href === '#' || href === '#hero') {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      });
+      if (location.pathname !== '/') {
+        navigate('/');
+        setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
       return;
     }
 
     if (href.startsWith('#')) {
-      const targetId = href.substring(1);
-      const element = document.getElementById(targetId);
-      if (element) {
+      if (location.pathname !== '/') {
+        navigate('/' + href);
         setTimeout(() => {
-          element.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start',
-          });
-        }, 50);
+          const targetId = href.substring(1);
+          const element = document.getElementById(targetId);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100);
+      } else {
+        const targetId = href.substring(1);
+        const element = document.getElementById(targetId);
+        if (element) {
+          setTimeout(() => {
+            element.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
+            });
+          }, 50);
+        }
       }
     }
   };

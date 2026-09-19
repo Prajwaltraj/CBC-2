@@ -194,4 +194,43 @@ h1, h2, h3, h4, h5, h6, .font-orbitron {
 }
 
 
-
+
+/* Swiper Customizations */
+.swiper-button-next,
+.swiper-button-prev {
+  color: #00F3FF !important;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 0 5px rgba(0, 243, 255, 0.5));
+}
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  transform: scale(1.1);
+}
+.swiper-pagination-bullet {
+  background: #A855F7 !important;
+  opacity: 0.5 !important;
+}
+.swiper-pagination-bullet-active {
+  background: #00F3FF !important;
+  opacity: 1 !important;
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.8);
+}
+
+/* Fullscreen Swiper Overrides */
+.swiper-button-next,
+.swiper-button-prev {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 243, 255, 0.3);
+}
+.swiper-button-next:after,
+.swiper-button-prev:after {
+  font-size: 20px !important;
+  font-weight: bold;
+}
+.swiper-pagination {
+  bottom: 30px !important;
+}

@@ -9,7 +9,7 @@ const StatsSection = () => {
   ];
 
   return (
-    <section className="py-16 md:py-24 border-y border-black/10 dark:border-white/5 bg-[#010103] relative z-10">
+    <section className="py-16 md:py-24 border-y border-black/10 dark:border-white/5 bg-transparent relative z-10">
       <div className="max-w-6xl mx-auto px-4">
         
         {/* EVENT HIGHLIGHT BADGES */}

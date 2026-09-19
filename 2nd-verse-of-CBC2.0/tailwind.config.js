@@ -20,6 +20,15 @@ export default {
       fontFamily: {
         sans: ['Orbitron', 'sans-serif'],
         mono: ['Share Tech Mono', 'monospace'],
+      },
+      keyframes: {
+        marquee: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(calc(-100% / 3))' }
+        }
+      },
+      animation: {
+        'marquee-fast': 'marquee 20s linear infinite',
       }
     },
   },
