@@ -1,3 +1,4 @@
+import sys; print("FLASK APP LOADED", file=sys.stderr, flush=True)
 from flask import Flask, request, jsonify
 
 try:
@@ -43,3 +44,43 @@ def api_mark():
     except Exception as err:
         print(err)
         return jsonify({"error": str(err) or "Server error"}), 500
+
+# Chatbot imports and routes
+try:
+    from .chatbot.engine import get_engine
+except ImportError:
+    from chatbot.engine import get_engine
+
+@app.route("/api/chat", methods=["POST"])
+def chat():
+    data = request.get_json(silent=True) or {}
+    message = (data.get("message") or "").strip()
+    if not message:
+        return jsonify({"error": "Empty message"}), 400
+
+    try:
+        engine = get_engine()
+        result = engine.answer(message)
+        return jsonify(result)
+    except Exception as e:
+        print("Chatbot error:", str(e))
+        return jsonify({"error": "Internal chatbot error"}), 500
+
+@app.route("/api/suggestions")
+def suggestions():
+    return jsonify([
+        "When is the event?",
+        "What is the registration fee?",
+        "What is the team size?",
+        "Who is the convenor?",
+        "How do I register?",
+        "What is the prize money?",
+    ])
+
+@app.route("/", defaults={"path": ""}, methods=["GET", "POST"])
+@app.route("/<path:path>", methods=["GET", "POST"])
+def catch_all(path):
+    return jsonify({"caught": True, "path": request.path}), 404
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)

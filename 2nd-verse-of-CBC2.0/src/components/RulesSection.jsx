@@ -85,6 +85,11 @@ const RulesSection = () => {
           <p className="text-gray-600 dark:text-gray-400 font-mono text-sm max-w-2xl mx-auto uppercase tracking-widest">
             Please read the comprehensive rulebook carefully. Failure to comply may result in disqualification.
           </p>
+          <div className="mt-8 flex justify-center">
+            <a href="/assistant/index.html" className="flex items-center gap-2 px-8 py-3.5 bg-[#3B82F6]/10 border border-[#3B82F6]/50 text-[#3B82F6] rounded-full hover:bg-[#3B82F6]/20 transition-all duration-300 font-mono font-bold tracking-widest text-sm uppercase cursor-pointer shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] hover:-translate-y-1">
+              Launch Assistant
+            </a>
+          </div>
         </div>
         
         <div className="grid gap-4">

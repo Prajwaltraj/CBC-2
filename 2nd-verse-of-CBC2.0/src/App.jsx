@@ -5,6 +5,7 @@ import FixedTimer from './components/FixedTimer';
 import HeroSection from './components/HeroSection';
 import StatsSection from './components/StatsSection';
 import AboutSection from './components/AboutSection';
+import RulesSection from "./components/RulesSection";
 import ThemesSection from './components/ThemesSection';
 import PrizesSection from './components/PrizesSection';
 import TimelineSection from './components/TimelineSection';
@@ -17,6 +18,7 @@ import SmartBoard from './pages/SmartBoard';
 import GlimpsesSection from './components/GlimpsesSection';
 import NeuralBackground from './components/NeuralBackground';
 import RulebookPage from './pages/RulebookPage';
+import ChatbotWidget from './components/ChatbotWidget';
 import { Analytics } from '@vercel/analytics/react';
 
 function LandingPage() {
@@ -34,6 +36,7 @@ function LandingPage() {
         <ThemesSection />
         <PrizesSection />
         <TimelineSection />
+        <RulesSection />
         <ProblemStatementsSection />
         <SponsorsSection />
         <TeamSection />
@@ -54,6 +57,7 @@ export default function App() {
         <Route path="/rulebook" element={<RulebookPage />} />
       </Routes>
       <Analytics />
+      <ChatbotWidget />
     </Router>
   );
 }

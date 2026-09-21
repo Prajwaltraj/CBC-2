@@ -13,6 +13,10 @@
       "destination": "/attendance.html"
     },
     {
+      "source": "/assistant",
+      "destination": "/assistant/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
