@@ -23,7 +23,7 @@ const TerminalWindow = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1, ease: BUTTERY_EASE, delay: 0.5 }}
-      className="glass-panel w-full max-w-[600px] rounded-lg overflow-hidden mx-auto mt-8 will-change-transform shadow-[0_0_30px_rgba(0,243,255,0.15)]"
+      className="terminal-window glass-panel w-full max-w-[600px] rounded-lg overflow-hidden mx-auto mt-8 will-change-transform shadow-[0_0_30px_rgba(0,243,255,0.15)]"
     >
       <div className="bg-[#0a0a0f] px-4 py-2 flex items-center border-b border-black/20 dark:border-white/10">
         <div className="flex gap-2">

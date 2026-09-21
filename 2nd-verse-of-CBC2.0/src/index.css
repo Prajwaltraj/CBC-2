@@ -234,3 +234,15 @@ h1, h2, h3, h4, h5, h6, .font-orbitron {
 .swiper-pagination {
   bottom: 30px !important;
 }
+
+/* Light Mode Magic - Inverts lightness but preserves hues! */
+html.light-theme {
+  filter: invert(1) hue-rotate(180deg) brightness(0.96) contrast(1.05);
+  background-color: white;
+}
+html.light-theme img, 
+html.light-theme video,
+html.light-theme .glitch,
+html.light-theme .terminal-window {
+  filter: invert(1) hue-rotate(180deg);
+}

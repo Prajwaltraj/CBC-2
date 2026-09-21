@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, Menu, X } from 'lucide-react';
+import { Zap, Menu, X, Sun, Moon } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ProgressiveImage from './ProgressiveImage';
 
@@ -10,6 +10,31 @@ const BUTTERY_EASE = [0.22, 1, 0.36, 1];
 const NavigationBar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isLight, setIsLight] = useState(false);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+    if (savedTheme === 'light' || (!savedTheme && prefersLight)) {
+      setIsLight(true);
+      document.documentElement.classList.add('light-theme');
+    } else {
+      setIsLight(false);
+      document.documentElement.classList.remove('light-theme');
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    setIsLight(!isLight);
+    if (!isLight) {
+      document.documentElement.classList.add('light-theme');
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.documentElement.classList.remove('light-theme');
+      localStorage.setItem('theme', 'dark');
+    }
+  };
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -107,8 +132,16 @@ const NavigationBar = () => {
           ))}
         </div>
 
-        {/* Right Controls: Register Button + Mobile Menu Toggle (Toggle visible only below 1200px) */}
+        {/* Right Controls: Theme Toggle + Register Button + Mobile Menu Toggle */}
         <div className="flex items-center gap-1.5 sm:gap-2 min-[1200px]:gap-4 shrink-0">
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            className="p-1.5 sm:p-2 rounded-md bg-[#0a0a0f]/80 border border-white/10 hover:border-[#00F3FF]/50 text-gray-300 hover:text-[#00F3FF] transition-all focus:outline-none shrink-0 cursor-pointer"
+          >
+            {isLight ? <Moon size={18} /> : <Sun size={18} className="text-[#00F3FF]" />}
+          </button>
+
           <a href="https://forms.gle/idBVSyU5E7HQpkop9" target="_blank" rel="noopener noreferrer" className="relative inline-flex items-center justify-center px-3 sm:px-4 min-[1200px]:px-6 py-1.5 sm:py-2 min-[1200px]:py-2.5 overflow-hidden font-orbitron font-bold text-black dark:text-white bg-[#010103] border border-[#00F3FF] rounded-md hover:bg-[#00F3FF]/10 transition-colors group shadow-[0_0_10px_rgba(0,243,255,0.15)] shrink-0">
             <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-[#00F3FF] rounded-full group-hover:w-56 group-hover:h-56 opacity-10"></span>
             <span className="relative flex items-center gap-1 sm:gap-1.5 min-[1200px]:gap-2 text-[10px] sm:text-[11px] min-[1200px]:text-sm whitespace-nowrap">
