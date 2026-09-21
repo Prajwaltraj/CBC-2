@@ -80,9 +80,9 @@ const RulesSection = () => {
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-6xl font-orbitron font-bold uppercase mb-4">
-            Rules & <span className="text-black dark:text-white">Regulations</span>
+            Rules & <span className="text-white">Regulations</span>
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 font-mono text-sm max-w-2xl mx-auto uppercase tracking-widest">
+          <p className="text-gray-400 font-mono text-sm max-w-2xl mx-auto uppercase tracking-widest">
             Please read the comprehensive rulebook carefully. Failure to comply may result in disqualification.
           </p>
           <div className="mt-8 flex justify-center">
@@ -111,7 +111,7 @@ const RulesSection = () => {
                   animate={{ rotate: openIndex === idx ? 180 : 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <ChevronDown className="text-gray-600 dark:text-gray-400" />
+                  <ChevronDown className="text-gray-400" />
                 </motion.div>
               </button>
               
@@ -130,7 +130,7 @@ const RulesSection = () => {
                         {category.rules.map((rule, ruleIdx) => (
                           <li key={ruleIdx} className="flex gap-4 items-start group">
                             <div className="mt-1.5 min-w-[6px] h-[6px] rounded-full bg-[#00F3FF]/50 group-hover:bg-[#00F3FF] transition-colors" />
-                            <p className="text-gray-700 dark:text-gray-300 font-mono text-sm md:text-base leading-relaxed group-hover:text-black dark:group-hover:text-white transition-colors">
+                            <p className="text-gray-300 font-mono text-sm md:text-base leading-relaxed group-hover:text-black dark:group-hover:text-white transition-colors">
                               {rule}
                             </p>
                           </li>

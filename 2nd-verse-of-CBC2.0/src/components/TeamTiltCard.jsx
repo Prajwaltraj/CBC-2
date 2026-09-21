@@ -106,7 +106,7 @@ const TeamTiltCard = ({ member, index, isAllSelected }) => {
               >
                 <User size={24} style={{ color: member.color }} />
               </div>
-              <span className="text-[9px] font-mono text-gray-600 dark:text-gray-400 uppercase tracking-widest font-semibold">
+              <span className="text-[9px] font-mono text-gray-400 uppercase tracking-widest font-semibold">
                 PHOTO
               </span>
             </div>
@@ -119,7 +119,7 @@ const TeamTiltCard = ({ member, index, isAllSelected }) => {
 
         {/* Member Name & Designation */}
         <div className="text-center mt-3" style={{ transform: "translateZ(18px)" }}>
-          <h4 className="text-base font-orbitron font-bold text-black dark:text-white group-hover:text-[#00F3FF] transition-colors tracking-wide truncate">
+          <h4 className="text-base font-orbitron font-bold text-white group-hover:text-[#00F3FF] transition-colors tracking-wide truncate">
             {member.name}
           </h4>
           <p 

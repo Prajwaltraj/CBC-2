@@ -19,7 +19,7 @@ const AboutSection = () => {
           <h2 className="text-4xl md:text-6xl font-orbitron font-bold mb-4">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00F3FF] to-white">Think.</span>{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-yellow-400">Build.</span>{' '}
-            <span className="text-black dark:text-white">Break Limits.</span>
+            <span className="text-white">Break Limits.</span>
           </h2>
         </motion.div>
 

@@ -42,7 +42,7 @@ const TimelineSection = () => {
               >
                 <div className="text-[#00F3FF] text-sm mb-2 font-bold">{item.time}</div>
                 <h4 className="text-xl font-orbitron font-bold mb-2">{item.title}</h4>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">{item.desc}</p>
+                <p className="text-gray-400 text-sm">{item.desc}</p>
               </motion.div>
             </div>
           ))}

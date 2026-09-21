@@ -31,7 +31,7 @@ const TerminalWindow = () => {
           <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
           <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
         </div>
-        <div className="mx-auto text-xs text-gray-600 dark:text-gray-400 font-orbitron tracking-wider">root@codebreaker:~</div>
+        <div className="mx-auto text-xs text-gray-400 font-orbitron tracking-wider">root@codebreaker:~</div>
       </div>
       <div className="p-6 text-sm md:text-base text-[#00F3FF] min-h-[120px] text-left leading-relaxed">
         {text.split('\n').map((line, i) => <div key={i}>{line}</div>)}

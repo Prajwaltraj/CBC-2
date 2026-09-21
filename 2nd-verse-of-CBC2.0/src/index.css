@@ -242,7 +242,6 @@ html.light-theme {
 }
 html.light-theme img, 
 html.light-theme video,
-html.light-theme .glitch,
 html.light-theme .terminal-window {
   filter: invert(1) hue-rotate(180deg);
 }

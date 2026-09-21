@@ -44,7 +44,7 @@ const ThemesSection = () => {
                 {track.icon}
               </div>
               <h3 className="text-2xl font-orbitron font-bold mb-4">{track.title}</h3>
-              <p className="text-gray-600 dark:text-gray-400">{track.desc}</p>
+              <p className="text-gray-400">{track.desc}</p>
             </TiltCard>
           ))}
         </div>

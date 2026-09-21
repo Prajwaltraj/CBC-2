@@ -96,7 +96,7 @@ const PrizesSection = () => {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-6xl font-orbitron font-black uppercase tracking-wider text-black dark:text-white"
+            className="text-4xl md:text-6xl font-orbitron font-black uppercase tracking-wider text-white"
           >
             <span className="text-[#00F3FF] glow-cyan">Prizes</span> & Perks
           </motion.h2>
@@ -113,13 +113,13 @@ const PrizesSection = () => {
               <h3 className="relative z-10 text-5xl md:text-7xl font-black font-orbitron tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-400 dark:from-white dark:to-gray-500 drop-shadow-lg">
                 <span className="text-[#00F3FF]">₹</span>60K<span className="text-[#A855F7]">+</span>
               </h3>
-              <p className="relative z-10 mt-2 text-lg md:text-2xl font-orbitron font-bold tracking-widest uppercase text-gray-700 dark:text-gray-300">
+              <p className="relative z-10 mt-2 text-lg md:text-2xl font-orbitron font-bold tracking-widest uppercase text-gray-300">
                 Total Cash Pool
               </p>
             </div>
           </motion.div>
 
-          <p className="mt-4 text-gray-600 dark:text-gray-400 font-mono text-sm max-w-xl mx-auto">
+          <p className="mt-4 text-gray-400 font-mono text-sm max-w-xl mx-auto">
             Organized by Department of AI & ML, Global Academy of Technology. Compete for verified trophies, direct placements, and elite industry opportunities.
           </p>
         </div>
@@ -192,12 +192,12 @@ const PrizesSection = () => {
 
                 {/* Perks Checklist */}
                 <div className="border-t border-black/20 dark:border-white/10 pt-4 mt-2">
-                  <div className="text-[11px] font-mono uppercase tracking-widest text-gray-600 dark:text-gray-400 mb-2.5">
+                  <div className="text-[11px] font-mono uppercase tracking-widest text-gray-400 mb-2.5">
                     Tier Privileges & Rewards
                   </div>
                   <ul className="space-y-2">
                     {prize.perks.map((perk, perkIdx) => (
-                      <li key={perkIdx} className="flex items-start gap-2 text-xs font-mono text-gray-700 dark:text-gray-300">
+                      <li key={perkIdx} className="flex items-start gap-2 text-xs font-mono text-gray-300">
                         <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: prize.themeColor }} />
                         <span className="leading-snug">{perk}</span>
                       </li>
@@ -250,7 +250,7 @@ const PrizesSection = () => {
                     <Briefcase className="w-3.5 h-3.5" />
                     In Collaboration With Dyashin • Innovate · Collaborate · Accelerate
                   </div>
-                  <h4 className="text-2xl md:text-3xl font-orbitron font-bold text-black dark:text-white">
+                  <h4 className="text-2xl md:text-3xl font-orbitron font-bold text-white">
                     Exclusive Opportunities at Dyashin Technologies
                   </h4>
                 </div>
@@ -266,8 +266,8 @@ const PrizesSection = () => {
                 <div className="w-8 h-8 rounded-lg bg-[#00F3FF]/20 text-[#00F3FF] flex items-center justify-center font-bold font-orbitron text-sm mb-3">
                   01
                 </div>
-                <h5 className="font-orbitron font-bold text-black dark:text-white text-sm mb-1.5">Direct Placement Offer</h5>
-                <p className="text-gray-600 dark:text-gray-400 font-mono text-xs leading-relaxed">
+                <h5 className="font-orbitron font-bold text-white text-sm mb-1.5">Direct Placement Offer</h5>
+                <p className="text-gray-400 font-mono text-xs leading-relaxed">
                   Winning team members receive direct full-time hiring & engineering onboarding at Dyashin.
                 </p>
               </div>
@@ -276,8 +276,8 @@ const PrizesSection = () => {
                 <div className="w-8 h-8 rounded-lg bg-[#00B4D8]/20 text-[#00B4D8] flex items-center justify-center font-bold font-orbitron text-sm mb-3">
                   02
                 </div>
-                <h5 className="font-orbitron font-bold text-black dark:text-white text-sm mb-1.5">1-4 Month Paid Internship</h5>
-                <p className="text-gray-600 dark:text-gray-400 font-mono text-xs leading-relaxed">
+                <h5 className="font-orbitron font-bold text-white text-sm mb-1.5">1-4 Month Paid Internship</h5>
+                <p className="text-gray-400 font-mono text-xs leading-relaxed">
                   Both 1st & 2nd runner-up teams gain hands-on &
                   1-4 month engineering internship roles.
                 </p>
