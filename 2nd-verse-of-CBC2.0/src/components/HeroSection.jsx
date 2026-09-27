@@ -8,7 +8,7 @@ import ProgressiveImage from './ProgressiveImage';
 const BUTTERY_EASE = [0.22, 1, 0.36, 1];
      
 const HeroSection = () => (
-  <section id="hero" className="relative min-h-screen flex flex-col items-center justify-center pt-20 pb-10 px-4 overflow-hidden">
+  <section id="hero" className="relative min-h-screen flex flex-col items-center justify-center pt-28 pb-10 px-4 overflow-hidden">
     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#010103]/50 to-[#010103] pointer-events-none z-0" />
 
     {/* University & Department Logos */}

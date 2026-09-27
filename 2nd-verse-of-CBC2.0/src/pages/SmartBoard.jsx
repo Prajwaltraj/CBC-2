@@ -14,6 +14,7 @@ export const BoardTemplate = ({ data, isPreview = false }) => {
   }, []);
 
   const hasPoster = !!data?.posterUrl;
+  const isVideo = hasPoster && (data.posterUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/))([^&?]*)/) || data.posterUrl.match(/\.(mp4|webm|mov|ogg|m4v)(\?.*)?$/i));
   const statement = data?.statement || "AWAITING DIRECTIVES...";
   const isUrgent = !!data?.triggerSiren;
 
@@ -53,7 +54,7 @@ export const BoardTemplate = ({ data, isPreview = false }) => {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex items-center justify-center p-12 relative z-10">
+      <main className="flex-1 flex items-center justify-center p-8 relative z-10">
         <AnimatePresence mode="wait">
           <motion.div 
             key={data?.timestamp || 'empty'}
@@ -61,22 +62,49 @@ export const BoardTemplate = ({ data, isPreview = false }) => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, scale: 1.02 }}
             transition={{ duration: 0.5 }}
-            className={`w-full max-w-7xl flex flex-col ${hasPoster ? 'lg:flex-row' : ''} items-center gap-16`}
+            className={`w-full ${isVideo ? 'max-w-[95vw]' : 'max-w-7xl'} flex flex-col ${hasPoster && !isVideo ? 'lg:flex-row' : ''} items-center justify-center gap-10`}
           >
             {hasPoster && (
-              <div className="w-full lg:w-1/2 flex justify-center">
-                <div className="relative group p-1 rounded-2xl bg-gradient-to-br from-[#00F3FF]/50 to-[#A855F7]/50 shadow-[0_0_50px_rgba(0,243,255,0.1)]">
+              <div className={`w-full ${isVideo ? 'lg:w-[85%] max-w-6xl' : 'lg:w-1/2'} flex justify-center`}>
+                <div className={`relative group p-1 rounded-2xl bg-gradient-to-br from-[#00F3FF]/50 to-[#A855F7]/50 shadow-[0_0_50px_rgba(0,243,255,0.1)] ${isVideo ? 'w-full' : ''}`}>
                   <div className="absolute inset-0 bg-white dark:bg-black rounded-2xl" />
-                  <ProgressiveImage src={data.posterUrl} alt="Broadcast Poster" className="relative z-10 w-full h-auto max-h-[60vh] rounded-xl object-contain" />
+                  {(() => {
+                    const ytMatch = data.posterUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/))([^&?]*)/);
+                    if (ytMatch && ytMatch[1]) {
+                      return (
+                        <iframe 
+                          className="relative z-10 w-full aspect-video max-h-[60vh] rounded-xl border-none shadow-[0_0_30px_rgba(0,0,0,0.5)] pointer-events-none"
+                          src={`https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&mute=1&loop=1&playlist=${ytMatch[1]}&controls=0&showinfo=0&rel=0&modestbranding=1`}
+                          allow="autoplay; encrypted-media"
+                          allowFullScreen
+                        />
+                      );
+                    }
+                    if (data.posterUrl.match(/\.(mp4|webm|mov|ogg|m4v)(\?.*)?$/i)) {
+                      return (
+                        <video 
+                          src={data.posterUrl} 
+                          autoPlay 
+                          loop 
+                          muted 
+                          playsInline
+                          className="relative z-10 w-full h-auto max-h-[60vh] rounded-xl object-contain"
+                        />
+                      );
+                    }
+                    return (
+                      <ProgressiveImage src={data.posterUrl} alt="Broadcast Poster" className="relative z-10 w-full h-auto max-h-[60vh] rounded-xl object-contain" />
+                    );
+                  })()}
                 </div>
               </div>
             )}
             
-            <div className={`w-full ${hasPoster ? 'lg:w-1/2 text-left' : 'text-center'}`}>
+            <div className={`w-full ${hasPoster && !isVideo ? 'lg:w-1/2 text-left' : 'text-center'}`}>
               {!data && (
                 <ProgressiveImage src="/team/cbc logo.png" alt="CBC 2.0" className="w-48 h-48 mx-auto mb-12 opacity-20 grayscale" />
               )}
-              <h2 className={`font-orbitron font-black text-white leading-[1.2] uppercase tracking-wide ${hasPoster ? (isPreview ? 'text-4xl' : 'text-5xl lg:text-7xl') : (isPreview ? 'text-5xl' : 'text-7xl lg:text-9xl')} ${isUrgent ? 'text-red-400 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]' : ''}`}>
+              <h2 className={`font-orbitron font-black text-white leading-[1.2] uppercase tracking-wide ${hasPoster && !isVideo ? (isPreview ? 'text-4xl' : 'text-5xl lg:text-7xl') : (isPreview ? 'text-5xl' : 'text-7xl lg:text-9xl')} ${isUrgent ? 'text-red-400 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]' : ''}`}>
                 {statement}
               </h2>
             </div>

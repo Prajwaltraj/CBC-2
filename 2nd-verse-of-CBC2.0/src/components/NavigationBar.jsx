@@ -109,11 +109,26 @@ const NavigationBar = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.8, ease: BUTTERY_EASE }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled || mobileMenuOpen ? 'bg-[#010103]/90 backdrop-blur-md border-b border-black/20 dark:border-white/10 py-2.5 sm:py-3' : 'bg-transparent py-3 sm:py-4 nav:py-5'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 flex flex-col ${
+        isScrolled || mobileMenuOpen ? 'bg-[#010103]/90 backdrop-blur-md border-b border-black/20 dark:border-white/10' : 'bg-transparent'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-8 flex justify-between items-center w-full">
+      {/* Notification Banner */}
+      <div className="bg-gradient-to-r from-[#8B5CF6] via-[#00F3FF] to-[#8B5CF6] text-black font-bold font-mono text-xs sm:text-sm py-2 px-0 overflow-hidden whitespace-nowrap shadow-[0_0_20px_rgba(0,243,255,0.4)] relative">
+        <div className="smooth-marquee flex gap-4">
+          <span className="px-4">
+            <span className="siren-icon">🚨</span> URGENT: REGISTRATIONS CLOSING ON TUESDAY, 29TH! <span className="siren-icon">🚨</span> Don't just watch the future unfold—build it. Your code, your legacy! ⚡ Innovate. Collaborate. Accelerate. ⚡ Secure your spot at Code Breaker 2.0 before it's too late! 🚀 
+          </span>
+          {/* Duplicate for seamless infinite scroll */}
+          <span className="px-4">
+            <span className="siren-icon">🚨</span> URGENT: REGISTRATIONS CLOSING ON TUESDAY, 29TH! <span className="siren-icon">🚨</span> Don't just watch the future unfold—build it. Your code, your legacy! ⚡ Innovate. Collaborate. Accelerate. ⚡ Secure your spot at Code Breaker 2.0 before it's too late! 🚀 
+          </span>
+        </div>
+      </div>
+
+      <div className={`max-w-7xl mx-auto px-3 sm:px-4 md:px-8 flex justify-between items-center w-full transition-all duration-300 ${
+        isScrolled || mobileMenuOpen ? 'py-2.5 sm:py-3' : 'py-3 sm:py-4 nav:py-5'
+      }`}>
         {/* Logo */}
         <a href="#" onClick={(e) => handleNavClick(e, '#')} className="flex items-center gap-1.5 sm:gap-2 group z-50 shrink-0">
           <ProgressiveImage 

@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
-import { auth, loginWithGoogle, loginWithEmail, logout, rtdb } from '../firebase';
+import { useState, useEffect, useRef } from 'react';
+import { auth, loginWithGoogle, loginWithEmail, logout, rtdb, storage } from '../firebase';
 import { ref, set } from 'firebase/database';
-import { LogOut, Send, AlertTriangle, Monitor, XCircle, CheckCircle2 } from 'lucide-react';
+import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { LogOut, Send, AlertTriangle, Monitor, XCircle, CheckCircle2, Upload } from 'lucide-react';
 import { BoardTemplate } from './SmartBoard'; // Import the template for live preview
 
 // List of emails allowed to access the Admin Portal
@@ -23,6 +24,8 @@ const AdminPortal = () => {
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((u) => {
@@ -250,14 +253,15 @@ const AdminPortal = () => {
             
             <div className="space-y-5">
               <div>
-                <label className="block text-xs font-bold text-gray-500 tracking-wider mb-2 uppercase">Poster Image URL (Optional)</label>
+                <label className="block text-xs font-bold text-gray-500 tracking-wider mb-2 uppercase">Media URL (Image, MP4, or YouTube Link)</label>
                 <input 
                   type="text" 
                   value={posterUrl} 
                   onChange={(e) => setPosterUrl(e.target.value)} 
-                  placeholder="https://example.com/poster.png" 
+                  placeholder="https://youtu.be/..." 
                   className="w-full bg-white/60 dark:bg-black/40 border border-gray-700/50 rounded-lg p-3 text-white outline-none focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6] transition-all text-sm"
                 />
+                <p className="text-[10px] text-gray-500 mt-1.5 uppercase tracking-wider">Paste a direct image link, mp4 link, or any YouTube video URL</p>
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-500 tracking-wider mb-2 uppercase">Announcement Statement</label>
