@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { auth, loginWithGoogle, loginWithEmail, logout, rtdb, storage } from '../firebase';
+import { auth, loginWithGoogle, loginWithEmail, logout, rtdb } from '../firebase';
 import { ref, set } from 'firebase/database';
-import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { LogOut, Send, AlertTriangle, Monitor, XCircle, CheckCircle2, Upload } from 'lucide-react';
+import { LogOut, Send, AlertTriangle, Monitor, XCircle, CheckCircle2, Play, Pause, RotateCcw } from 'lucide-react';
 import { BoardTemplate } from './SmartBoard'; // Import the template for live preview
 
 // List of emails allowed to access the Admin Portal
@@ -20,6 +19,7 @@ const AdminPortal = () => {
   const [posterUrl, setPosterUrl] = useState('');
   const [statement, setStatement] = useState('');
   const [status, setStatus] = useState({ type: '', msg: '' });
+  const [isVideoPlaying, setIsVideoPlaying] = useState(true);
   
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
@@ -49,11 +49,13 @@ const AdminPortal = () => {
     setStatus({ type: 'loading', msg: 'Broadcasting...' });
     try {
       const broadcastRef = ref(rtdb, 'broadcast/current');
+      setIsVideoPlaying(true);
       await set(broadcastRef, {
         posterUrl,
         statement,
         timestamp: Date.now(),
-        triggerSiren
+        triggerSiren,
+        videoState: { playing: true }
       });
       setStatus({ type: 'success', msg: triggerSiren ? 'Emergency Broadcast Sent!' : 'Silent Broadcast Sent!' });
       setTimeout(() => setStatus({ type: '', msg: '' }), 3000);
@@ -92,6 +94,20 @@ const AdminPortal = () => {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const togglePlayPause = async (play) => {
+    setIsVideoPlaying(play);
+    try {
+      await set(ref(rtdb, 'broadcast/current/videoState/playing'), play);
+    } catch (error) { console.error(error); }
+  };
+
+  const restartVideo = async () => {
+    try {
+      await set(ref(rtdb, 'broadcast/current/videoState/lastSeek'), { time: 0, id: Date.now() });
+      togglePlayPause(true);
+    } catch (error) { console.error(error); }
   };
 
   const handleEmailLogin = async (e) => {
@@ -204,7 +220,7 @@ const AdminPortal = () => {
   const previewData = {
     posterUrl,
     statement,
-    timestamp: Date.now(),
+    timestamp: 'preview',
     triggerSiren: false
   };
 
@@ -321,6 +337,38 @@ const AdminPortal = () => {
               </div>
             )}
           </div>
+
+          {/* Video Controls (Only visible when posterUrl exists) */}
+          {(posterUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/))([^&?]*)/) || posterUrl.match(/\.(mp4|webm|mov|ogg|m4v)(\?.*)?$/i)) && (
+            <div className="bg-[#0F1014] p-6 rounded-2xl border border-[#3B82F6]/30 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
+              <h2 className="text-sm font-bold text-white mb-4 tracking-wide flex items-center gap-2 uppercase">
+                <Play size={16} className="text-[#3B82F6]" /> Remote Playback
+              </h2>
+              <div className="grid grid-cols-3 gap-3">
+                <button 
+                  onClick={() => togglePlayPause(true)}
+                  className={`py-2 rounded-lg flex flex-col items-center justify-center gap-1 transition-colors ${isVideoPlaying ? 'bg-[#3B82F6] text-white' : 'bg-black/40 text-gray-400 border border-gray-700/50 hover:bg-[#3B82F6]/20'}`}
+                >
+                  <Play size={18} />
+                  <span className="text-[10px] font-bold uppercase tracking-wider">Play</span>
+                </button>
+                <button 
+                  onClick={() => togglePlayPause(false)}
+                  className={`py-2 rounded-lg flex flex-col items-center justify-center gap-1 transition-colors ${!isVideoPlaying ? 'bg-yellow-500 text-black' : 'bg-black/40 text-gray-400 border border-gray-700/50 hover:bg-yellow-500/20'}`}
+                >
+                  <Pause size={18} />
+                  <span className="text-[10px] font-bold uppercase tracking-wider">Pause</span>
+                </button>
+                <button 
+                  onClick={restartVideo}
+                  className="py-2 rounded-lg flex flex-col items-center justify-center gap-1 transition-colors bg-black/40 text-gray-400 border border-gray-700/50 hover:bg-white/10 hover:text-white"
+                >
+                  <RotateCcw size={18} />
+                  <span className="text-[10px] font-bold uppercase tracking-wider">Restart</span>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right Column: Live Preview (Span 8) */}
@@ -337,7 +385,7 @@ const AdminPortal = () => {
           
           <div className="flex-1 bg-[#0F1014] rounded-2xl border border-black/10 dark:border-white/5 overflow-hidden relative min-h-[500px] flex items-center justify-center shadow-2xl p-6">
             <div className="w-full h-full rounded-xl overflow-hidden border border-gray-800 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-              <BoardTemplate data={previewData} isPreview={true} />
+              <BoardTemplate data={previewData} isPreview={true} isMuted={true} />
             </div>
           </div>
         </div>

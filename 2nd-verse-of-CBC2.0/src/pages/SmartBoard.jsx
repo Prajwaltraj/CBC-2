@@ -4,9 +4,21 @@ import { ref, onValue } from 'firebase/database';
 import { AlertTriangle, Volume2, VolumeX, BellRing } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProgressiveImage from '../components/ProgressiveImage';
+import ReactPlayer from 'react-player';
 
-export const BoardTemplate = ({ data, isPreview = false }) => {
+export const BoardTemplate = ({ data, isPreview = false, isMuted = false }) => {
   const [time, setTime] = useState(new Date());
+  const playerRef = useRef(null);
+  const prevSeekRef = useRef(null);
+
+  useEffect(() => {
+    if (data?.videoState?.lastSeek && data.videoState.lastSeek.id !== prevSeekRef.current) {
+      if (playerRef.current) {
+        playerRef.current.seekTo(data.videoState.lastSeek.time, 'seconds');
+      }
+      prevSeekRef.current = data.videoState.lastSeek.id;
+    }
+  }, [data?.videoState?.lastSeek]);
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -69,27 +81,26 @@ export const BoardTemplate = ({ data, isPreview = false }) => {
                 <div className={`relative group p-1 rounded-2xl bg-gradient-to-br from-[#00F3FF]/50 to-[#A855F7]/50 shadow-[0_0_50px_rgba(0,243,255,0.1)] ${isVideo ? 'w-full' : ''}`}>
                   <div className="absolute inset-0 bg-white dark:bg-black rounded-2xl" />
                   {(() => {
-                    const ytMatch = data.posterUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/))([^&?]*)/);
-                    if (ytMatch && ytMatch[1]) {
+                    if (isVideo) {
                       return (
-                        <iframe 
-                          className="relative z-10 w-full aspect-video max-h-[60vh] rounded-xl border-none shadow-[0_0_30px_rgba(0,0,0,0.5)] pointer-events-none"
-                          src={`https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&mute=1&loop=1&playlist=${ytMatch[1]}&controls=0&showinfo=0&rel=0&modestbranding=1`}
-                          allow="autoplay; encrypted-media"
-                          allowFullScreen
-                        />
-                      );
-                    }
-                    if (data.posterUrl.match(/\.(mp4|webm|mov|ogg|m4v)(\?.*)?$/i)) {
-                      return (
-                        <video 
-                          src={data.posterUrl} 
-                          autoPlay 
-                          loop 
-                          muted 
-                          playsInline
-                          className="relative z-10 w-full h-auto max-h-[60vh] rounded-xl object-contain"
-                        />
+                        <div className="relative z-10 w-full aspect-video max-h-[60vh] rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+                          <ReactPlayer 
+                            ref={playerRef}
+                            url={data.posterUrl}
+                            playing={data?.videoState?.playing ?? true}
+                            muted={isMuted}
+                            loop={true}
+                            controls={false}
+                            width="100%"
+                            height="100%"
+                            style={{ pointerEvents: 'none' }}
+                            onReady={(player) => {
+                              if (data?.videoState?.lastSeek) {
+                                player.seekTo(data.videoState.lastSeek.time, 'seconds');
+                              }
+                            }}
+                          />
+                        </div>
                       );
                     }
                     return (
@@ -104,7 +115,7 @@ export const BoardTemplate = ({ data, isPreview = false }) => {
               {!data && (
                 <ProgressiveImage src="/team/cbc logo.png" alt="CBC 2.0" className="w-48 h-48 mx-auto mb-12 opacity-20 grayscale" />
               )}
-              <h2 className={`font-orbitron font-black text-white leading-[1.2] uppercase tracking-wide ${hasPoster && !isVideo ? (isPreview ? 'text-4xl' : 'text-5xl lg:text-7xl') : (isPreview ? 'text-5xl' : 'text-7xl lg:text-9xl')} ${isUrgent ? 'text-red-400 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]' : ''}`}>
+              <h2 className={`font-orbitron font-black text-white leading-[1.2] uppercase tracking-wide break-words max-w-full px-4 ${hasPoster && !isVideo ? (isPreview ? 'text-4xl' : 'text-5xl lg:text-7xl') : (isPreview ? 'text-3xl' : 'text-5xl lg:text-6xl max-w-5xl mx-auto')} ${isUrgent ? 'text-red-400 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]' : ''}`}>
                 {statement}
               </h2>
             </div>
@@ -282,7 +293,7 @@ const SmartBoard = () => {
         </button>
       </div>
 
-      <BoardTemplate data={data} />
+      <BoardTemplate data={data} isMuted={muted} />
     </div>
   );
 };
