@@ -11,7 +11,7 @@ const TimelineSection = () => {
 
   const schedule = [
     { time: "07 Sep 2026", title: "Registration Starts", desc: "Form your team and initiate your registration." },
-    { time: "02 Oct 2026", title: "Registration Ends", desc: "Last chance to join the ultimate hackathon." },
+    { time: "29 Sep 2026", title: "Registration Ends", desc: "Last chance to join the ultimate hackathon." },
     { time: "10 Oct 2026", title: "Event Day 1 / Hacking Commences", desc: "Opening keynote, problem statement reveal, and the 24-hour timer starts!" },
     { time: "11 Oct 2026", title: "Event Day 2 / Final Submission", desc: "Stop coding, prepare pitch decks, and present your solutions." }
   ];
