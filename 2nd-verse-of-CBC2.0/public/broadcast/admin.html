@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Console — Hackathon Broadcast</title>
+  <style>
+    :root {
+      --bg: #0b0d10;
+      --panel: #14171b;
+      --line: #242a30;
+      --text: #e8ecef;
+      --dim: #7c8891;
+      --accent: #7c5cff;
+      --accent2: #33e0a1;
+      --warn: #ffb454;
+      --urgent: #ff5c68;
+      --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+      --sans: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: 1180px;
+    }
+
+    /* Top Logos & Title Header */
+    .brand-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .brand-header img {
+      height: 42px;
+      object-fit: contain;
+    }
+
+    .logo-divider {
+      width: 1px;
+      height: 28px;
+      background: var(--line);
+    }
+
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent2);
+      box-shadow: 0 0 8px var(--accent2);
+    }
+
+    .tag {
+      display: inline-block;
+      background: rgba(124, 92, 255, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(124, 92, 255, 0.3);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin: 0 0 4px;
+      letter-spacing: -0.01em;
+    }
+
+    .slogan {
+      font-family: var(--mono);
+      color: var(--accent2);
+      font-size: 13px;
+      margin-bottom: 8px;
+      font-style: italic;
+    }
+
+    .sub {
+      color: var(--dim);
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+
+    /* Two-Side Grid Layout */
+    .grid-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-title {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin: 18px 0 8px;
+    }
+
+    label:first-of-type {
+      margin-top: 0;
+    }
+
+    input[type=text],
+    textarea {
+      width: 100%;
+      background: #0f1215;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 12px 14px;
+      font-family: var(--sans);
+      font-size: 15px;
+      outline: none;
+      transition: border-color .15s;
+    }
+
+    input[type=text]:focus,
+    textarea:focus {
+      border-color: var(--accent);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 85px;
+    }
+
+    .types {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .type-btn {
+      flex: 1;
+      min-width: 90px;
+      padding: 10px 8px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #0f1215;
+      color: var(--dim);
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .type-btn.active[data-type=info] {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(124, 92, 255, .08);
+    }
+
+    .type-btn.active[data-type=success] {
+      border-color: var(--accent2);
+      color: var(--accent2);
+      background: rgba(51, 224, 161, .08);
+    }
+
+    .type-btn.active[data-type=warning] {
+      border-color: var(--warn);
+      color: var(--warn);
+      background: rgba(255, 180, 84, .08);
+    }
+
+    .type-btn.active[data-type=urgent] {
+      border-color: var(--urgent);
+      color: var(--urgent);
+      background: rgba(255, 92, 104, .08);
+    }
+
+    .send-btn {
+      width: 100%;
+      margin-top: 22px;
+      padding: 15px;
+      border-radius: 8px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .1s, background .15s;
+    }
+
+    .send-btn:hover {
+      background: #8f72ff;
+    }
+
+    .send-btn:active {
+      transform: scale(.98);
+    }
+
+    .clear-btn {
+      width: 100%;
+      margin-top: 10px;
+      padding: 11px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--dim);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .clear-btn:hover {
+      color: var(--urgent);
+      border-color: var(--urgent);
+    }
+
+    .status {
+      margin-top: 16px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--dim);
+      min-height: 16px;
+    }
+
+    .status.ok {
+      color: var(--accent2);
+    }
+
+    /* Right Side: Predefined Commands List */
+    .presets-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+      max-height: 480px;
+      padding-right: 4px;
+    }
+
+    .preset-card {
+      background: #0f1215;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      transition: border-color .15s;
+    }
+
+    .preset-card:hover {
+      border-color: var(--accent);
+    }
+
+    .preset-info {
+      flex: 1;
+    }
+
+    .preset-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .preset-desc {
+      font-size: 12px;
+      color: var(--dim);
+    }
+
+    .preset-tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+
+    .preset-tag.info {
+      background: rgba(124, 92, 255, 0.15);
+      color: var(--accent);
+    }
+
+    .preset-tag.warning {
+      background: rgba(255, 180, 84, 0.15);
+      color: var(--warn);
+    }
+
+    .preset-tag.urgent {
+      background: rgba(255, 92, 104, 0.15);
+      color: var(--urgent);
+    }
+
+    .preset-tag.success {
+      background: rgba(51, 224, 161, 0.15);
+      color: var(--accent2);
+    }
+
+    .quick-send-btn {
+      background: var(--line);
+      color: var(--text);
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-size: 11px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .15s, color .15s;
+    }
+
+    .quick-send-btn:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .link {
+      display: inline-block;
+      margin-top: 20px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--dim);
+    }
+
+    .link a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .conn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--dim);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .conn .dot {
+      background: var(--urgent);
+      box-shadow: 0 0 8px var(--urgent);
+    }
+
+    .conn.live .dot {
+      background: var(--accent2);
+      box-shadow: 0 0 8px var(--accent2);
+    }
+
+    @media (max-width: 900px) {
+      .grid-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="conn" id="conn"><span class="dot"></span><span id="connText">connecting…</span></div>
+
+  <div class="wrap">
+    <!-- Top Branding Header -->
+    <div class="brand-header">
+      <img src="logos/gatlockuplogo.png" alt="GAT Logo" />
+      <div class="logo-divider"></div>
+      <img src="logos/aimldeptlogo.png" alt="AIML Dept Logo" />
+      <div class="logo-divider"></div>
+      <img src="logos/cbc2ologo.PNG" alt="Code Breakers Challenge 2.0 Logo" />
+    </div>
+
+    <div class="eyebrow"><span class="dot"></span>Broadcast Console</div>
+    <span class="tag">A National-Level 24-Hour Hackathon</span>
+    <h1>CODE BREAKER CHALLENGE 2.0</h1>
+    <div class="slogan">“Think. Build. Break Limits.” &bull; #AIforchange</div>
+    <div class="sub">Whatever you send here appears instantly on every /display screen, with sound.</div>
+
+    <div class="grid-container">
+      <!-- LEFT SIDE: Custom Broadcast Form -->
+      <div class="panel">
+        <div class="panel-title">Custom Broadcast Form</div>
+
+        <label for="title">Headline</label>
+        <input type="text" id="title" placeholder="e.g. Judging starts in 15 minutes" maxlength="80" />
+
+        <label for="message">Details <span style="text-transform:none;opacity:.6;">(optional)</span></label>
+        <textarea id="message" placeholder="Extra context to show under the headline…" maxlength="200"></textarea>
+
+        <label>Priority</label>
+        <div class="types" id="types">
+          <button class="type-btn active" data-type="info">Info</button>
+          <button class="type-btn" data-type="success">Success</button>
+          <button class="type-btn" data-type="warning">Warning</button>
+          <button class="type-btn" data-type="urgent">Urgent</button>
+        </div>
+
+        <button class="send-btn" id="sendBtn">Send to display screen</button>
+        <button class="clear-btn" id="clearBtn">Clear display history</button>
+        <div class="status" id="status"></div>
+      </div>
+
+      <!-- RIGHT SIDE: Predefined Commands -->
+      <div class="panel">
+        <div class="panel-title">Predefined Hackathon Commands</div>
+
+        <div class="presets-list">
+
+          <div class="preset-card">
+            <div class="preset-info">
+              <span class="preset-tag warning">Warning</span>
+              <div class="preset-title">Judging Starts in 15 Mins</div>
+              <div class="preset-desc">Please return to your assigned bays with project demos ready.</div>
+            </div>
+            <button class="quick-send-btn"
+              onclick="sendPreset('Judging Starts in 15 Minutes', 'Please return to your assigned bays with project demos ready.', 'warning')">Send</button>
+          </div>
+
+          <div class="preset-card">
+            <div class="preset-info">
+              <span class="preset-tag urgent">Urgent</span>
+              <div class="preset-title">Hacking Time Ended</div>
+              <div class="preset-desc">Stop all coding! Submit your GitHub repo links on the portal now.</div>
+            </div>
+            <button class="quick-send-btn"
+              onclick="sendPreset('Hacking Time Has Ended!', 'Stop all coding! Submit your GitHub repo links on the portal now.', 'urgent')">Send</button>
+          </div>
+
+          <div class="preset-card">
+            <div class="preset-info">
+              <span class="preset-tag success">Success</span>
+              <div class="preset-title">Dinner is Served</div>
+              <div class="preset-desc">Head to the food court area for dinner. Badges required.</div>
+            </div>
+            <button class="quick-send-btn"
+              onclick="sendPreset('Dinner is Served 🍽️', 'Head to the main food court area. Keep your hackathon badges visible.', 'success')">Send</button>
+          </div>
+
+          <div class="preset-card">
+            <div class="preset-info">
+              <span class="preset-tag info">Info</span>
+              <div class="preset-title">Mid-Hack Review Starting</div>
+              <div class="preset-desc">Mentors are approaching your tables for round 1 evaluation.</div>
+            </div>
+            <button class="quick-send-btn"
+              onclick="sendPreset('Mid-Hack Mentorship Round', 'Mentors are visiting team tables now for preliminary feedback.', 'info')">Send</button>
+          </div>
+
+          <div class="preset-card">
+            <div class="preset-info">
+              <span class="preset-tag warning">Warning</span>
+              <div class="preset-title">Midnight Energy Drinks</div>
+              <div class="preset-desc">Snacks & drinks available at the registration desk!</div>
+            </div>
+            <button class="quick-send-btn"
+              onclick="sendPreset('Midnight Snacks & Refreshments ☕', 'Grab snacks and energy drinks at the central registration area.', 'warning')">Send</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="link">Display screen lives at <a href="/display" target="_blank">/display</a> — open it on the
+      projector.</div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const connEl = document.getElementById('conn');
+    const connText = document.getElementById('connText');
+    socket.on('connect', () => { connEl.classList.add('live'); connText.textContent = 'live'; });
+    socket.on('disconnect', () => { connEl.classList.remove('live'); connText.textContent = 'disconnected'; });
+
+    let selectedType = 'info';
+    document.querySelectorAll('.type-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedType = btn.dataset.type;
+      });
+    });
+
+    const titleInput = document.getElementById('title');
+    const messageInput = document.getElementById('message');
+    const status = document.getElementById('status');
+
+    function send() {
+      const title = titleInput.value.trim();
+      const message = messageInput.value.trim();
+      if (!title) {
+        status.textContent = 'add a headline first';
+        status.classList.remove('ok');
+        titleInput.focus();
+        return;
+      }
+      socket.emit('send-notification', { title, message, type: selectedType });
+      status.textContent = 'sent to display screen ✓';
+      status.classList.add('ok');
+      titleInput.value = '';
+      messageInput.value = '';
+      titleInput.focus();
+      setTimeout(() => { status.textContent = ''; }, 2500);
+    }
+
+    function sendPreset(title, message, type) {
+      socket.emit('send-notification', { title, message, type });
+      status.textContent = `sent preset "${title}" ✓`;
+      status.classList.add('ok');
+      setTimeout(() => { status.textContent = ''; }, 2500);
+    }
+
+    document.getElementById('sendBtn').addEventListener('click', send);
+    titleInput.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      socket.emit('clear-notifications');
+      status.textContent = 'display history cleared';
+      status.classList.add('ok');
+      setTimeout(() => { status.textContent = ''; }, 2000);
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Display — Code Breakers Challenge 2.0</title>
+  <style>
+    :root {
+      --bg: #0b0d10;
+      --panel: #14171b;
+      --line: #242a30;
+      --text: #e8ecef;
+      --dim: #7c8891;
+      --accent: #7c5cff;
+      --accent2: #33e0a1;
+      --warn: #ffb454;
+      --urgent: #ff5c68;
+      --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+      --sans: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(124, 92, 255, .10), transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(51, 224, 161, .08), transparent 45%),
+        var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .clock {
+      position: fixed;
+      top: 28px;
+      right: 36px;
+      font-family: var(--mono);
+      font-size: 16px;
+      color: var(--dim);
+      letter-spacing: .05em;
+      z-index: 10;
+    }
+
+    .brand {
+      position: fixed;
+      top: 28px;
+      left: 36px;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--dim);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 10;
+    }
+
+    .brand img {
+      height: 32px;
+      object-fit: contain;
+    }
+
+    .logo-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--line);
+    }
+
+    .brand .live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 8px;
+      color: var(--accent2);
+      font-weight: 600;
+    }
+
+    .brand .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent2);
+      box-shadow: 0 0 8px var(--accent2);
+    }
+
+    .brand .dot.alerting {
+      animation: blinkDot .3s infinite;
+    }
+
+    @keyframes blinkDot {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: .2;
+      }
+    }
+
+    #soundGate {
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 7, 9, .92);
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 18px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    #soundGate .icon {
+      font-size: 56px;
+    }
+
+    #soundGate .headline2 {
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    #soundGate .sub2 {
+      color: var(--dim);
+      font-family: var(--mono);
+      font-size: 14px;
+    }
+
+    #soundGate button {
+      margin-top: 6px;
+      padding: 14px 28px;
+      border-radius: 10px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    #soundGate button:hover {
+      background: #8f72ff;
+    }
+
+    #soundGate.hidden {
+      display: none;
+    }
+
+    .idle {
+      text-align: center;
+      color: var(--dim);
+      font-family: var(--mono);
+      font-size: 18px;
+      letter-spacing: .04em;
+    }
+
+    .idle .big {
+      font-family: var(--sans);
+      font-size: 44px;
+      color: var(--text);
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+    }
+
+    #stage {
+      width: 100%;
+      max-width: 1100px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .card {
+      width: 100%;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-left: 6px solid var(--accent);
+      border-radius: 18px;
+      padding: 48px 56px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, .5);
+      animation: slideIn .5s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .card.success {
+      border-left-color: var(--accent2);
+    }
+
+    .card.warning {
+      border-left-color: var(--warn);
+    }
+
+    .card.urgent {
+      border-left-color: var(--urgent);
+      animation: slideIn .5s cubic-bezier(.16, 1, .3, 1), pulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(28px) scale(.98);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        box-shadow: 0 30px 80px rgba(0, 0, 0, .5), 0 0 0 0 rgba(255, 92, 104, .35);
+      }
+
+      50% {
+        box-shadow: 0 30px 80px rgba(0, 0, 0, .5), 0 0 0 14px rgba(255, 92, 104, 0);
+      }
+    }
+
+    .tag {
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card.info .tag {
+      color: var(--accent);
+    }
+
+    .card.success .tag {
+      color: var(--accent2);
+    }
+
+    .card.warning .tag {
+      color: var(--warn);
+    }
+
+    .card.urgent .tag {
+      color: var(--urgent);
+    }
+
+    .headline {
+      font-size: 52px;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      margin: 0 0 14px;
+      min-height: 1.15em;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 4px;
+      height: 0.85em;
+      background: currentColor;
+      margin-left: 4px;
+      vertical-align: -0.05em;
+      animation: blinkCursor .8s step-end infinite;
+    }
+
+    .cursor.hidden {
+      display: none;
+    }
+
+    @keyframes blinkCursor {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    .message {
+      font-size: 22px;
+      color: var(--dim);
+      line-height: 1.5;
+      margin: 0;
+      opacity: 0;
+      transition: opacity .4s ease;
+    }
+
+    .message.show {
+      opacity: 1;
+    }
+
+    .time {
+      margin-top: 22px;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--dim);
+      opacity: .7;
+    }
+
+    /* SPONSORS ROUNDED PANEL BELOW */
+    .sponsors-card {
+      width: 100%;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 20px 36px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .sponsors-title {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    .sponsors-grid {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      width: 100%;
+      flex-wrap: wrap;
+    }
+
+    .sponsor-logo {
+      height: 40px;
+      max-width: 160px;
+      object-fit: contain;
+      filter: grayscale(20%) opacity(0.85);
+      transition: filter 0.2s ease, transform 0.2s ease;
+    }
+
+    .sponsor-logo:hover {
+      filter: grayscale(0%) opacity(1);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="brand">
+    <img src="logos/gatlockuplogo.png" alt="GAT Logo" />
+    <div class="logo-divider"></div>
+    <img src="logos/aimldeptlogo.png" alt="AIML Dept Logo" />
+    <div class="logo-divider"></div>
+    <img src="logos/cbc2ologo.PNG" alt="Code Breakers 2.0" />
+    <div class="live-indicator"><span class="dot" id="brandDot"></span> LIVE</div>
+  </div>
+
+  <div class="clock" id="clock">--:--:--</div>
+
+  <div id="soundGate">
+    <div class="icon">🔈</div>
+    <div class="headline2">Click anywhere to enable sound & projection audio</div>
+    <div class="sub2">Browsers block audio alerts until this display screen is clicked once</div>
+    <button id="enableSoundBtn">Enable Sound & Start</button>
+  </div>
+
+  <div id="stage">
+    <div class="idle" id="idle">
+      <div class="big">Code Breaker Challenge 2.0</div>
+      Waiting for announcements &mdash; this projector display updates instantly.
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const stage = document.getElementById('stage');
+    const idle = document.getElementById('idle');
+    const brandDot = document.getElementById('brandDot');
+
+    // ---------- Live clock ----------
+    function tick() {
+      document.getElementById('clock').textContent = new Date().toLocaleTimeString();
+    }
+    tick(); setInterval(tick, 1000);
+
+    // ---------- WebAudio helpers ----------
+    let audioCtx;
+    let audioUnlocked = false;
+    const soundGate = document.getElementById('soundGate');
+
+    function markAudioUnlocked() {
+      audioUnlocked = true;
+      soundGate.classList.add('hidden');
+    }
+
+    function ensureAudio() {
+      if (!audioCtx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) { return null; }
+        audioCtx = new AC();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume().then(() => {
+          if (audioCtx.state === 'running') markAudioUnlocked();
+        }).catch(() => { });
+      } else if (audioCtx.state === 'running') {
+        markAudioUnlocked();
+      }
+      return audioCtx;
+    }
+
+    ['click', 'touchstart', 'keydown'].forEach(evt => {
+      document.addEventListener(evt, () => ensureAudio(), { once: true });
+    });
+    document.getElementById('enableSoundBtn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      ensureAudio();
+    });
+    soundGate.addEventListener('click', () => ensureAudio());
+
+    function playTone(freq, start, duration, waveform, volume) {
+      if (!audioCtx || audioCtx.state !== 'running') return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = waveform;
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(volume, start + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
+      osc.connect(gain).connect(audioCtx.destination);
+      osc.start(start);
+      osc.stop(start + duration + 0.02);
+    }
+
+    const patterns = {
+      info: { wave: 'sine', notes: [[660, 0, 0.18], [880, 0.15, 0.22]], gap: 0.15 },
+      success: { wave: 'triangle', notes: [[523, 0, 0.14], [659, 0.12, 0.14], [784, 0.24, 0.14], [1047, 0.38, 0.30]], gap: 0.15 },
+      warning: { wave: 'square', notes: [[700, 0, 0.13], [500, 0.16, 0.13], [700, 0.32, 0.13], [500, 0.48, 0.13]], gap: 0.15 },
+      urgent: { wave: 'sawtooth', notes: [[880, 0, 0.11], [660, 0.11, 0.11], [880, 0.22, 0.11], [660, 0.33, 0.11], [880, 0.44, 0.11], [660, 0.55, 0.11]], gap: 0.1 }
+    };
+
+    function playAlertForDuration(type, totalSeconds) {
+      ensureAudio();
+      const pattern = patterns[type] || patterns.info;
+      const lastNote = pattern.notes[pattern.notes.length - 1];
+      const repeatLength = lastNote[1] + lastNote[2] + pattern.gap;
+      const now = audioCtx.currentTime;
+      let t = 0;
+      while (t < totalSeconds) {
+        pattern.notes.forEach(([freq, offset, duration]) => {
+          if (t + offset < totalSeconds) {
+            playTone(freq, now + t + offset, duration, pattern.wave, 0.15);
+          }
+        });
+        t += repeatLength;
+      }
+    }
+
+    function typingTick() {
+      ensureAudio();
+      const now = audioCtx.currentTime;
+      const freq = 180 + Math.random() * 90;
+      playTone(freq, now, 0.025, 'square', 0.05);
+    }
+
+    function typeText(el, fullText, onDone) {
+      el.textContent = '';
+      const cursor = document.createElement('span');
+      cursor.className = 'cursor';
+      el.appendChild(cursor);
+
+      let i = 0;
+      const speed = 45;
+
+      function step() {
+        if (i < fullText.length) {
+          const ch = fullText[i];
+          cursor.insertAdjacentText('beforebegin', ch);
+          if (ch.trim() !== '') typingTick();
+          i++;
+          setTimeout(step, speed);
+        } else {
+          cursor.classList.add('hidden');
+          if (onDone) onDone();
+        }
+      }
+      step();
+    }
+
+    const labels = { info: 'Announcement', success: 'Good news', warning: 'Heads up', urgent: 'Urgent Notice' };
+    const ALERT_SECONDS = 3;
+
+    function showNotification(n, animate) {
+      idle.style.display = 'none';
+      stage.innerHTML = '';
+
+      // Announcement Card
+      const card = document.createElement('div');
+      card.className = 'card ' + n.type;
+      card.innerHTML = `
+      <div class="tag"><span class="status-word" id="statusWord">${animate ? 'Incoming…' : (labels[n.type] || 'Announcement')}</span></div>
+      <div class="headline" id="headlineEl"></div>
+      ${n.message ? `<p class="message" id="messageEl">${escapeHtml(n.message)}</p>` : ''}
+      <div class="time">received ${n.time}</div>
+    `;
+      stage.appendChild(card);
+
+      // Sponsors Panel below
+      const sponsorsCard = document.createElement('div');
+      sponsorsCard.className = 'sponsors-card';
+      sponsorsCard.innerHTML = `
+      <div class="sponsors-title">Our Event Sponsors</div>
+      <div class="sponsors-grid">
+        <img src="logos/gatlockuplogo.png" alt="Sponsor 1" class="sponsor-logo" />
+        <img src="logos/gatlockuplogo.png" alt="Sponsor 2" class="sponsor-logo" />
+        <img src="logos/sponsor3.png" alt="Sponsor 3" class="sponsor-logo" />
+      </div>
+    `;
+      stage.appendChild(sponsorsCard);
+
+      const headlineEl = document.getElementById('headlineEl');
+      const statusWord = document.getElementById('statusWord');
+      const messageEl = document.getElementById('messageEl');
+
+      if (!animate) {
+        headlineEl.textContent = n.title;
+        statusWord.textContent = labels[n.type] || 'Announcement';
+        if (messageEl) messageEl.classList.add('show');
+        return;
+      }
+
+      brandDot.classList.add('alerting');
+      playAlertForDuration(n.type, ALERT_SECONDS);
+
+      setTimeout(() => {
+        brandDot.classList.remove('alerting');
+        statusWord.textContent = labels[n.type] || 'Announcement';
+
+        typeText(headlineEl, n.title, () => {
+          if (messageEl) messageEl.classList.add('show');
+        });
+      }, ALERT_SECONDS * 1000);
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    socket.on('notification', (n) => {
+      showNotification(n, true);
+    });
+
+    socket.on('history', (list) => {
+      if (list && list.length) showNotification(list[0], false);
+    });
+
+    socket.on('cleared', () => {
+      stage.innerHTML = '';
+      idle.style.display = 'block';
+      stage.appendChild(idle);
+    });
+
+    ensureAudio();
+  </script>
+</body>
+
+</html>

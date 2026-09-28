@@ -1,15 +1,129 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { rtdb } from '../firebase';
 import { ref, onValue } from 'firebase/database';
-import { AlertTriangle, Volume2, VolumeX, BellRing } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import ProgressiveImage from '../components/ProgressiveImage';
+import { Volume2, VolumeX, AlertTriangle, BellRing } from 'lucide-react';
 import ReactPlayer from 'react-player';
 
-export const BoardTemplate = ({ data, isPreview = false, isMuted = false }) => {
+// Sound frequencies and patterns matching the Hackathon Broadcast display
+const PATTERNS = {
+  info: { wave: 'sine', notes: [[660, 0, 0.18], [880, 0.15, 0.22]], gap: 0.15 },
+  success: { wave: 'triangle', notes: [[523, 0, 0.14], [659, 0.12, 0.14], [784, 0.24, 0.14], [1047, 0.38, 0.30]], gap: 0.15 },
+  warning: { wave: 'square', notes: [[700, 0, 0.13], [500, 0.16, 0.13], [700, 0.32, 0.13], [500, 0.48, 0.13]], gap: 0.15 },
+  urgent: { wave: 'sawtooth', notes: [[880, 0, 0.11], [660, 0.11, 0.11], [880, 0.22, 0.11], [660, 0.33, 0.11], [880, 0.44, 0.11], [660, 0.55, 0.11]], gap: 0.1 }
+};
+
+const LABELS = {
+  info: 'Announcement',
+  success: 'Good news',
+  warning: 'Heads up',
+  urgent: 'Urgent Notice'
+};
+
+const ALERT_DURATION_SECONDS = 3;
+
+/**
+ * Web Audio Engine Hook / Helper
+ */
+function useAudioEngine() {
+  const audioCtxRef = useRef(null);
+  const [isAudioUnlocked, setIsAudioUnlocked] = useState(false);
+
+  const getAudioContext = useCallback(() => {
+    if (!audioCtxRef.current) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) {
+        audioCtxRef.current = new AudioCtx();
+      }
+    }
+    if (audioCtxRef.current) {
+      if (audioCtxRef.current.state === 'suspended') {
+        audioCtxRef.current.resume().then(() => {
+          if (audioCtxRef.current?.state === 'running') {
+            setIsAudioUnlocked(true);
+          }
+        }).catch(() => {});
+      } else if (audioCtxRef.current.state === 'running') {
+        setIsAudioUnlocked(true);
+      }
+    }
+    return audioCtxRef.current;
+  }, []);
+
+  const playTone = useCallback((freq, start, duration, waveform, volume = 0.15) => {
+    const ctx = getAudioContext();
+    if (!ctx || ctx.state !== 'running') return;
+
+    try {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = waveform;
+      osc.frequency.setValueAtTime(freq, start);
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(volume, start + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(start);
+      osc.stop(start + duration + 0.02);
+    } catch (err) {
+      console.warn('Audio tone play error:', err);
+    }
+  }, [getAudioContext]);
+
+  const playAlertForDuration = useCallback((type = 'info', totalSeconds = ALERT_DURATION_SECONDS) => {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    const pattern = PATTERNS[type] || PATTERNS.info;
+    const lastNote = pattern.notes[pattern.notes.length - 1];
+    const repeatLength = lastNote[1] + lastNote[2] + pattern.gap;
+    const now = ctx.currentTime;
+    let t = 0;
+    while (t < totalSeconds) {
+      pattern.notes.forEach(([freq, offset, duration]) => {
+        if (t + offset < totalSeconds) {
+          playTone(freq, now + t + offset, duration, pattern.wave, 0.15);
+        }
+      });
+      t += repeatLength;
+    }
+  }, [getAudioContext, playTone]);
+
+  const playTypingTick = useCallback(() => {
+    const ctx = getAudioContext();
+    if (!ctx || ctx.state !== 'running') return;
+    const now = ctx.currentTime;
+    const freq = 180 + Math.random() * 90;
+    playTone(freq, now, 0.025, 'square', 0.04);
+  }, [getAudioContext, playTone]);
+
+  return {
+    getAudioContext,
+    isAudioUnlocked,
+    setIsAudioUnlocked,
+    playAlertForDuration,
+    playTypingTick
+  };
+}
+
+/**
+ * BoardTemplate - Used both on /board and in /admin live preview
+ */
+export const BoardTemplate = ({
+  data,
+  isPreview = false,
+  isMuted = false,
+  isAlerting = false,
+  typedHeadline = '',
+  isTyping = false,
+  showMessage = true
+}) => {
   const [time, setTime] = useState(new Date());
   const playerRef = useRef(null);
   const prevSeekRef = useRef(null);
+
+  useEffect(() => {
+    const timer = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (data?.videoState?.lastSeek && data.videoState.lastSeek.id !== prevSeekRef.current) {
@@ -20,284 +134,418 @@ export const BoardTemplate = ({ data, isPreview = false, isMuted = false }) => {
     }
   }, [data?.videoState?.lastSeek]);
 
-  useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
+  // Extract fields with full backward compatibility
+  const hasData = !!(data && (data.title || data.statement || data.posterUrl));
+  const rawTitle = data?.title || data?.statement || '';
+  // Only show secondary message if it's explicitly provided and distinct from the title
+  const rawMessage = (data?.message && data.message !== rawTitle && data.message !== data?.statement) ? data.message : '';
+  const type = data?.type || (data?.triggerSiren ? 'urgent' : 'info');
+  const posterUrl = data?.posterUrl || '';
 
-  const hasPoster = !!data?.posterUrl;
-  const isVideo = hasPoster && (data.posterUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/))([^&?]*)/) || data.posterUrl.match(/\.(mp4|webm|mov|ogg|m4v)(\?.*)?$/i));
-  const statement = data?.statement || "AWAITING DIRECTIVES...";
-  const isUrgent = !!data?.triggerSiren;
+  // Safe time formatting to prevent "Invalid Date"
+  let receivedTime = time.toLocaleTimeString();
+  if (data?.time) {
+    receivedTime = data.time;
+  } else if (data?.timestamp && typeof data.timestamp === 'number') {
+    receivedTime = new Date(data.timestamp).toLocaleTimeString();
+  } else if (data?.timestamp && typeof data.timestamp === 'string' && data.timestamp !== 'preview') {
+    const parsed = Date.parse(data.timestamp);
+    if (!isNaN(parsed)) {
+      receivedTime = new Date(parsed).toLocaleTimeString();
+    }
+  }
+
+  const isVideo = posterUrl && (
+    posterUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/))([^&?]*)/) ||
+    posterUrl.match(/\.(mp4|webm|mov|ogg|m4v)(\?.*)?$/i)
+  );
+
+  // When actively typing in sequence, show partial text; otherwise always show full title
+  const displayTitle = isPreview
+    ? rawTitle
+    : (isTyping ? typedHeadline : (rawTitle || ''));
+
+  const statusLabel = isAlerting ? 'Incoming…' : (LABELS[type] || 'Announcement');
+
+  const themeColors = {
+    info: {
+      border: 'border-[#7c5cff]',
+      tag: 'text-[#7c5cff] bg-[#7c5cff]/15 border-[#7c5cff]/30',
+      glow: 'shadow-[0_20px_60px_rgba(124,92,255,0.15)]'
+    },
+    success: {
+      border: 'border-[#33e0a1]',
+      tag: 'text-[#33e0a1] bg-[#33e0a1]/15 border-[#33e0a1]/30',
+      glow: 'shadow-[0_20px_60px_rgba(51,224,161,0.15)]'
+    },
+    warning: {
+      border: 'border-[#ffb454]',
+      tag: 'text-[#ffb454] bg-[#ffb454]/15 border-[#ffb454]/30',
+      glow: 'shadow-[0_20px_60px_rgba(255,180,84,0.15)]'
+    },
+    urgent: {
+      border: 'border-[#ff5c68]',
+      tag: 'text-[#ff5c68] bg-[#ff5c68]/15 border-[#ff5c68]/30',
+      glow: 'shadow-[0_20px_70px_rgba(255,92,104,0.35)] animate-pulse'
+    }
+  };
+
+  const currentTheme = themeColors[type] || themeColors.info;
 
   return (
-    <div className={`w-full h-full bg-[#010103] flex flex-col relative overflow-hidden ${isUrgent ? 'border-8 border-red-500' : ''}`}>
-      {/* Background Effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#00F3FF]/5 via-transparent to-[#A855F7]/5 pointer-events-none" />
-      {isUrgent && (
-        <motion.div 
-          animate={{ opacity: [0, 0.25, 0] }} 
-          transition={{ repeat: Infinity, duration: 0.8 }}
-          className="absolute inset-0 bg-red-500 pointer-events-none"
-        />
-      )}
-
-      {/* Header */}
-      <header className={`px-8 py-6 border-b flex justify-between items-center transition-colors duration-300 ${isUrgent ? 'border-red-500/50 bg-red-500/20' : 'border-black/20 dark:border-white/10 bg-white/60 dark:bg-black/40'}`}>
-        <div className="flex items-center gap-4">
-          <ProgressiveImage src="/team/cbc logo.png" alt="CBC 2.0" className="h-12 w-12 object-contain" />
-          <div>
-            <h1 className="text-2xl font-orbitron font-bold text-white tracking-widest uppercase">CBC 2.0</h1>
-            <p className="text-xs font-mono text-[#00F3FF] tracking-widest uppercase">Live Broadcast System</p>
+    <div
+      className="w-full h-full min-h-screen bg-[#0b0d10] text-[#e8ecef] flex flex-col justify-between items-center relative overflow-hidden select-none p-6 md:p-10 font-sans"
+      style={{
+        background: 'radial-gradient(circle at 20% 15%, rgba(124, 92, 255, .10), transparent 45%), radial-gradient(circle at 85% 80%, rgba(51, 224, 161, .08), transparent 45%), #0b0d10'
+      }}
+    >
+      {/* Top Header / Branding Bar */}
+      <header className="w-full flex justify-between items-center z-10">
+        <div className="flex items-center gap-3 md:gap-4">
+          <img src="/logos/gatlockuplogo.png" alt="GAT Logo" className="h-8 md:h-10 object-contain" />
+          <div className="w-px h-6 bg-[#242a30]" />
+          <img src="/logos/aimldeptlogo.png" alt="AIML Dept Logo" className="h-8 md:h-10 object-contain" />
+          <div className="w-px h-6 bg-[#242a30]" />
+          <img src="/logos/cbc2ologo.PNG" alt="CBC 2.0" className="h-8 md:h-10 object-contain" />
+          
+          <div className="flex items-center gap-2 ml-2 md:ml-3 text-xs font-mono font-bold tracking-widest text-[#33e0a1] uppercase">
+            <span className={`w-2.5 h-2.5 rounded-full bg-[#33e0a1] shadow-[0_0_8px_#33e0a1] ${isAlerting ? 'animate-ping' : 'animate-pulse'}`} />
+            LIVE
           </div>
         </div>
-        
-        <div className="flex items-center gap-6">
-          {isUrgent && (
-            <div className="flex items-center gap-2 bg-red-600 text-white px-5 py-2.5 rounded-full font-bold font-mono tracking-wider animate-pulse shadow-[0_0_25px_rgba(239,68,68,0.6)]">
-              <AlertTriangle size={22} className="animate-bounce" /> EMERGENCY BROADCAST
-            </div>
-          )}
-          <div className="text-right">
-            <div className="text-2xl font-mono font-bold text-white tracking-wider">{time.toLocaleTimeString()}</div>
-            <div className="text-xs font-mono text-gray-400 uppercase">{time.toLocaleDateString()}</div>
-          </div>
+
+        <div className="font-mono text-sm md:text-base text-[#7c8891] tracking-wider">
+          {time.toLocaleTimeString()}
         </div>
       </header>
 
-      {/* Main Content Area */}
-      <main className="flex-1 flex items-center justify-center p-8 relative z-10">
-        <AnimatePresence mode="wait">
-          <motion.div 
-            key={data?.timestamp || 'empty'}
-            initial={{ opacity: 0, y: 20, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.02 }}
-            transition={{ duration: 0.5 }}
-            className={`w-full ${isVideo ? 'max-w-[95vw]' : 'max-w-7xl'} flex flex-col ${hasPoster && !isVideo ? 'lg:flex-row' : ''} items-center justify-center gap-10`}
-          >
-            {hasPoster && (
-              <div className={`w-full ${isVideo ? 'lg:w-[85%] max-w-6xl' : 'lg:w-1/2'} flex justify-center`}>
-                <div className={`relative group p-1 rounded-2xl bg-gradient-to-br from-[#00F3FF]/50 to-[#A855F7]/50 shadow-[0_0_50px_rgba(0,243,255,0.1)] ${isVideo ? 'w-full' : ''}`}>
-                  <div className="absolute inset-0 bg-white dark:bg-black rounded-2xl" />
-                  {(() => {
-                    if (isVideo) {
-                      return (
-                        <div className="relative z-10 w-full aspect-video max-h-[60vh] rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-                          <ReactPlayer 
-                            ref={playerRef}
-                            url={data.posterUrl}
-                            playing={data?.videoState?.playing ?? true}
-                            muted={isMuted}
-                            loop={true}
-                            controls={false}
-                            width="100%"
-                            height="100%"
-                            style={{ pointerEvents: 'none' }}
-                            onReady={(player) => {
-                              if (data?.videoState?.lastSeek) {
-                                player.seekTo(data.videoState.lastSeek.time, 'seconds');
-                              }
-                            }}
-                          />
-                        </div>
-                      );
-                    }
-                    return (
-                      <ProgressiveImage src={data.posterUrl} alt="Broadcast Poster" className="relative z-10 w-full h-auto max-h-[60vh] rounded-xl object-contain" />
-                    );
-                  })()}
-                </div>
+      {/* Main Stage */}
+      <main className="w-full max-w-5xl my-auto flex flex-col items-center justify-center gap-8 z-10 py-6">
+        {!hasData ? (
+          /* IDLE STATE */
+          <div className="text-center flex flex-col items-center justify-center py-16 animate-fade-in">
+            <h1 className="text-4xl md:text-6xl font-extrabold text-[#e8ecef] tracking-tight mb-4 font-sans">
+              Code Breaker Challenge 2.0
+            </h1>
+            <p className="font-mono text-base md:text-xl text-[#7c8891] tracking-wide max-w-xl">
+              Waiting for announcements &mdash; this projector display updates instantly.
+            </p>
+          </div>
+        ) : (
+          /* ACTIVE ANNOUNCEMENT CARD */
+          <div className="w-full flex flex-col items-center gap-6">
+            <div
+              className={`w-full bg-[#14171b] border border-[#242a30] border-l-[6px] ${currentTheme.border} rounded-2xl p-8 md:p-12 ${currentTheme.glow} transition-all duration-500`}
+            >
+              {/* Tag / Priority Badge */}
+              <div className="flex items-center gap-2 mb-4">
+                <span className={`font-mono text-xs md:text-sm font-semibold tracking-widest uppercase px-3 py-1 rounded-md border ${currentTheme.tag}`}>
+                  {statusLabel}
+                </span>
+                {type === 'urgent' && (
+                  <span className="flex items-center gap-1 text-[#ff5c68] text-xs font-mono font-bold animate-bounce ml-2">
+                    <AlertTriangle size={16} /> EMERGENCY ALERT
+                  </span>
+                )}
               </div>
-            )}
-            
-            <div className={`w-full ${hasPoster && !isVideo ? 'lg:w-1/2 text-left' : 'text-center'}`}>
-              {!data && (
-                <ProgressiveImage src="/team/cbc logo.png" alt="CBC 2.0" className="w-48 h-48 mx-auto mb-12 opacity-20 grayscale" />
-              )}
-              <h2 className={`font-orbitron font-black text-white leading-[1.2] uppercase tracking-wide break-words max-w-full px-4 ${hasPoster && !isVideo ? (isPreview ? 'text-4xl' : 'text-5xl lg:text-7xl') : (isPreview ? 'text-3xl' : 'text-5xl lg:text-6xl max-w-5xl mx-auto')} ${isUrgent ? 'text-red-400 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]' : ''}`}>
-                {statement}
+
+              {/* Headline */}
+              <h2 className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-[#e8ecef] leading-tight tracking-tight mb-4 min-h-[1.2em]">
+                {displayTitle}
+                {isTyping && (
+                  <span className="inline-block w-1 md:w-1.5 h-[0.85em] bg-current ml-1.5 align-middle animate-pulse" />
+                )}
               </h2>
+
+              {/* Message Details (Only if distinct) */}
+              {rawMessage && (
+                <p className={`text-lg md:text-2xl text-[#7c8891] leading-relaxed transition-opacity duration-500 ${showMessage || isPreview ? 'opacity-100' : 'opacity-0'}`}>
+                  {rawMessage}
+                </p>
+              )}
+
+              {/* Media Attachment if present */}
+              {posterUrl && (
+                <div className="mt-6 rounded-xl overflow-hidden border border-[#242a30] bg-[#0b0d10]/80 max-h-[45vh] flex justify-center items-center">
+                  {isVideo ? (
+                    <div className="w-full aspect-video">
+                      <ReactPlayer
+                        ref={playerRef}
+                        url={posterUrl}
+                        playing={data?.videoState?.playing ?? true}
+                        muted={isMuted}
+                        loop={true}
+                        controls={false}
+                        width="100%"
+                        height="100%"
+                      />
+                    </div>
+                  ) : (
+                    <img
+                      src={posterUrl}
+                      alt="Broadcast Media"
+                      className="w-full h-auto max-h-[45vh] object-contain rounded-lg"
+                    />
+                  )}
+                </div>
+              )}
+
+              {/* Received Time */}
+              <div className="mt-6 font-mono text-xs md:text-sm text-[#7c8891]/70 tracking-wider">
+                received {receivedTime}
+              </div>
             </div>
-          </motion.div>
-        </AnimatePresence>
+
+            {/* SPONSORS PANEL (Commented out for later use)
+            <div className="w-full bg-[#14171b] border border-[#242a30] rounded-2xl py-4 px-8 flex flex-col items-center gap-3 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
+              <span className="font-mono text-[11px] tracking-[0.2em] text-[#7c8891] uppercase">
+                Our Event Sponsors & Partners
+              </span>
+              <div className="flex items-center justify-center gap-8 md:gap-12 flex-wrap">
+                <img src="/logos/gatlockuplogo.png" alt="Sponsor GAT" className="h-7 md:h-9 object-contain opacity-80 hover:opacity-100 transition-opacity" />
+                <img src="/logos/aimldeptlogo.png" alt="Sponsor AIML" className="h-7 md:h-9 object-contain opacity-80 hover:opacity-100 transition-opacity" />
+                <img src="/logos/cbc2ologo.PNG" alt="CBC 2.0" className="h-7 md:h-9 object-contain opacity-80 hover:opacity-100 transition-opacity" />
+              </div>
+            </div>
+            */}
+          </div>
+        )}
       </main>
 
-      {/* Footer */}
-      <footer className="px-8 py-4 border-t border-black/20 dark:border-white/10 bg-white/60 dark:bg-black/40 flex justify-between items-center text-gray-500 font-mono text-sm uppercase">
-        <div className="flex items-center gap-3">
-          <ProgressiveImage src="/team/Global logoo.png" alt="GAT" className="h-6 object-contain grayscale opacity-50" />
-          <span>Global Academy of Technology</span>
-        </div>
-        <div className="flex gap-4">
-          <span>Dept of AI & ML</span>
-          <span>•</span>
-        </div>
+      {/* Footer credits */}
+      <footer className="w-full flex justify-between items-center text-[11px] font-mono text-[#7c8891] uppercase tracking-wider z-10 pt-2 border-t border-[#242a30]/50">
+        <div>Global Academy of Technology &bull; Dept. of AI & ML</div>
+        <div>Code Breakers Challenge 2.0 &bull; #AIforchange</div>
       </footer>
     </div>
   );
 };
 
+/**
+ * SmartBoard Full Page
+ */
 const SmartBoard = () => {
   const [data, setData] = useState(null);
-  const [interacted, setInteracted] = useState(false);
   const [muted, setMuted] = useState(false);
+  const [isAlerting, setIsAlerting] = useState(false);
+  const [typedHeadline, setTypedHeadline] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [showMessage, setShowMessage] = useState(true);
   const [isTesting, setIsTesting] = useState(false);
 
-  const audioRef = useRef(null);
+  const prevBroadcastTimestampRef = useRef(null);
+  const isInitialMountRef = useRef(true);
+  const typingTimerRef = useRef(null);
+  const alertTimeoutRef = useRef(null);
+  const mutedRef = useRef(muted);
 
-  // Helper to start siren audio (single source)
-  const startSirenSound = useCallback(() => {
-    if (muted) return;
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0;
-      audioRef.current.play().catch(e => console.warn("Audio playback blocked/error:", e));
-    }
+  useEffect(() => {
+    mutedRef.current = muted;
   }, [muted]);
 
-  // Helper to stop siren audio
-  const stopSirenSound = useCallback(() => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
+  const {
+    getAudioContext,
+    isAudioUnlocked,
+    setIsAudioUnlocked,
+    playAlertForDuration,
+    playTypingTick
+  } = useAudioEngine();
+
+  const playAlertRef = useRef(playAlertForDuration);
+  const playTickRef = useRef(playTypingTick);
+
+  useEffect(() => {
+    playAlertRef.current = playAlertForDuration;
+    playTickRef.current = playTypingTick;
+  }, [playAlertForDuration, playTypingTick]);
+
+  // Clean up any ongoing timers
+  const cleanupTimers = () => {
+    if (alertTimeoutRef.current) {
+      clearTimeout(alertTimeoutRef.current);
+      alertTimeoutRef.current = null;
     }
+    if (typingTimerRef.current) {
+      clearInterval(typingTimerRef.current);
+      typingTimerRef.current = null;
+    }
+  };
+
+  // Trigger alert chime and typewriter sequence for NEW broadcasts
+  const triggerNotificationSequence = useCallback((broadcastData) => {
+    const rawTitle = broadcastData?.title || broadcastData?.statement || '';
+    const type = broadcastData?.type || (broadcastData?.triggerSiren ? 'urgent' : 'info');
+
+    cleanupTimers();
+
+    if (!rawTitle) {
+      setIsAlerting(false);
+      setIsTyping(false);
+      setShowMessage(true);
+      return;
+    }
+
+    // 1. Start Alert Tone & flashing dot
+    setIsAlerting(true);
+    setIsTyping(true);
+    setShowMessage(false);
+    setTypedHeadline('');
+
+    if (!mutedRef.current) {
+      playAlertRef.current(type, ALERT_DURATION_SECONDS);
+    }
+
+    // 2. After alert chime completes, run typewriter
+    alertTimeoutRef.current = setTimeout(() => {
+      setIsAlerting(false);
+      let idx = 0;
+      const speed = 40; // ms per char
+
+      typingTimerRef.current = setInterval(() => {
+        if (idx < rawTitle.length) {
+          const nextChar = rawTitle[idx];
+          setTypedHeadline(prev => prev + nextChar);
+          if (nextChar.trim() !== '' && !mutedRef.current) {
+            playTickRef.current();
+          }
+          idx++;
+        } else {
+          if (typingTimerRef.current) {
+            clearInterval(typingTimerRef.current);
+            typingTimerRef.current = null;
+          }
+          setIsTyping(false);
+          setShowMessage(true);
+        }
+      }, speed);
+    }, ALERT_DURATION_SECONDS * 1000);
   }, []);
 
-  // Sync with Firebase Realtime Database
+  // Sync with Firebase RTDB - Registered ONCE
   useEffect(() => {
     const broadcastRef = ref(rtdb, 'broadcast/current');
     const unsubscribe = onValue(broadcastRef, (snapshot) => {
       const val = snapshot.val();
       setData(val);
-      
-      if (val?.triggerSiren && !muted) {
-        startSirenSound();
-      } else if (!val?.triggerSiren && !isTesting) {
-        stopSirenSound();
+
+      if (val && (val.title || val.statement || val.posterUrl)) {
+        if (isInitialMountRef.current) {
+          // On first load, display instantly without chime or typing delay
+          isInitialMountRef.current = false;
+          prevBroadcastTimestampRef.current = val.timestamp || Date.now();
+          setIsAlerting(false);
+          setIsTyping(false);
+          setShowMessage(true);
+        } else if (val.timestamp && val.timestamp !== prevBroadcastTimestampRef.current) {
+          // New incoming broadcast from admin
+          prevBroadcastTimestampRef.current = val.timestamp;
+          triggerNotificationSequence(val);
+        }
+      } else {
+        // Board cleared
+        isInitialMountRef.current = false;
+        prevBroadcastTimestampRef.current = null;
+        cleanupTimers();
+        setTypedHeadline('');
+        setIsTyping(false);
+        setIsAlerting(false);
+        setShowMessage(true);
       }
     });
+
     return () => {
       unsubscribe();
-      stopSirenSound();
+      cleanupTimers();
     };
-  }, [muted, isTesting, startSirenSound, stopSirenSound]);
+  }, [triggerNotificationSequence]);
 
-  // Handle mute changes
-  useEffect(() => {
-    if (muted) {
-      stopSirenSound();
-    } else if (data?.triggerSiren) {
-      startSirenSound();
-    }
-  }, [muted, data?.triggerSiren, startSirenSound, stopSirenSound]);
+  // Unlock Audio interaction
+  const handleUnlockAudio = useCallback(() => {
+    getAudioContext();
+    setIsAudioUnlocked(true);
+  }, [getAudioContext, setIsAudioUnlocked]);
 
-  // Handle screen interaction/unlock
-  const handleInteraction = () => {
-    if (!interacted) {
-      setInteracted(true);
-    }
-    if (audioRef.current) {
-      if (data?.triggerSiren && !muted) {
-        audioRef.current.play().catch(e => console.warn("Audio play error:", e));
-      } else if (!isTesting) {
-        // Silent unlock for browser autoplay policy
-        audioRef.current.play().then(() => {
-          if (!data?.triggerSiren && !isTesting) {
-            audioRef.current.pause();
-            audioRef.current.currentTime = 0;
-          }
-        }).catch(e => console.warn("Audio unlock attempted:", e));
-      }
-    }
-  };
-
-  // Test siren sound for 3 seconds
-  const handleTestSiren = (e) => {
-    e.stopPropagation();
-    handleInteraction();
+  // Test sound function
+  const handleTestChime = (type = 'info') => {
+    handleUnlockAudio();
     if (isTesting) return;
-
     setIsTesting(true);
-    startSirenSound();
-
-    setTimeout(() => {
-      setIsTesting(false);
-      if (!data?.triggerSiren) {
-        stopSirenSound();
-      }
-    }, 3000);
+    playAlertForDuration(type, 2.5);
+    setTimeout(() => setIsTesting(false), 2500);
   };
-
-  const isUrgent = !!data?.triggerSiren;
 
   return (
-    <div className="w-screen h-screen overflow-hidden relative select-none" onClick={handleInteraction}>
-      {/* Hidden Audio Element */}
-      <audio ref={audioRef} src="/siren.mp3" loop preload="auto" />
-
-      {/* Unlocked overlay / Prompt */}
-      {!interacted && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white dark:bg-black/80 backdrop-blur-md text-white font-mono cursor-pointer transition-all">
-          <div className="bg-[#0F1014] border border-black/30 dark:border-white/20 p-8 rounded-2xl shadow-2xl flex flex-col items-center text-center max-w-lg mx-4">
-            <div className="w-16 h-16 rounded-full bg-[#00F3FF]/10 text-[#00F3FF] flex items-center justify-center mb-5 animate-pulse">
-              <BellRing size={32} />
-            </div>
-            <h3 className="text-xl font-bold font-orbitron mb-2 uppercase tracking-wider text-white">
-              Initialize Display Audio
-            </h3>
-            <p className="text-gray-400 text-sm mb-6">
-              Click anywhere to activate the sound engine and enable emergency siren alerts for live broadcasts.
-            </p>
-            <button className="px-6 py-3 bg-gradient-to-r from-[#00F3FF] to-[#A855F7] text-black font-bold rounded-lg tracking-wider uppercase text-sm shadow-[0_0_20px_rgba(0,243,255,0.4)] hover:opacity-90 transition-opacity">
-              Enable Audio Output
-            </button>
+    <div className="w-screen h-screen overflow-hidden relative select-none bg-[#0b0d10]" onClick={handleUnlockAudio}>
+      {/* Sound Gate Overlay */}
+      {!isAudioUnlocked && (
+        <div
+          id="soundGate"
+          className="fixed inset-0 z-50 bg-[#060709]/95 backdrop-blur-md flex flex-col items-center justify-center gap-5 text-center p-6 cursor-pointer"
+          onClick={handleUnlockAudio}
+        >
+          <div className="w-20 h-20 rounded-full bg-[#7c5cff]/15 text-[#7c5cff] flex items-center justify-center mb-2 animate-pulse text-4xl">
+            <BellRing size={40} />
           </div>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-[#e8ecef] tracking-tight">
+            Click anywhere to enable sound & projection audio
+          </h2>
+          <p className="font-mono text-sm text-[#7c8891] max-w-md">
+            Browsers block audio alerts until this display screen is clicked once.
+          </p>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleUnlockAudio();
+            }}
+            className="mt-2 px-8 py-3.5 bg-[#7c5cff] hover:bg-[#8f72ff] text-white font-semibold rounded-xl text-base tracking-wide transition-all shadow-[0_0_25px_rgba(124,92,255,0.4)]"
+          >
+            Enable Sound & Start
+          </button>
         </div>
       )}
 
-      {/* If siren is triggered while user hasn't interacted yet */}
-      {isUrgent && !interacted && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-red-600 text-white px-6 py-3 rounded-full font-bold font-mono tracking-wider animate-bounce shadow-[0_0_30px_rgba(239,68,68,0.9)] cursor-pointer flex items-center gap-3">
-          <AlertTriangle size={24} /> CLICK TO UNMUTE EMERGENCY SIREN!
-        </div>
-      )}
-
-      {/* HUD Audio Controls (Discrete bottom-right panel) */}
-      <div 
-        className="fixed bottom-4 right-6 z-40 flex items-center gap-2 bg-white/80 dark:bg-black/60 backdrop-blur-md border border-black/20 dark:border-white/10 px-3 py-1.5 rounded-full text-xs font-mono text-gray-300 shadow-lg"
+      {/* Discrete HUD Controls for Operator / Setup (Bottom Right) */}
+      <div
+        className="fixed bottom-4 right-6 z-40 flex items-center gap-2 bg-[#14171b]/90 backdrop-blur-md border border-[#242a30] px-3.5 py-1.5 rounded-full text-xs font-mono text-[#7c8891] shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <button 
+        <button
           onClick={() => setMuted(!muted)}
-          title={muted ? "Unmute Siren" : "Mute Siren"}
+          title={muted ? 'Unmute Audio' : 'Mute Audio'}
           className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full transition-colors ${
-            muted ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'hover:bg-black/10 dark:hover:bg-white/10 text-gray-300'
+            muted ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'hover:bg-white/10 text-[#33e0a1]'
           }`}
         >
           {muted ? <VolumeX size={14} /> : <Volume2 size={14} />}
-          <span>{muted ? "Muted" : (isUrgent || isTesting ? "Siren Active" : "Audio On")}</span>
+          <span>{muted ? 'Muted' : 'Audio On'}</span>
         </button>
 
-        <span className="text-white/20">|</span>
+        <span className="text-white/10">|</span>
 
-        <button 
-          onClick={handleTestSiren}
+        <button
+          onClick={() => handleTestChime('info')}
           disabled={isTesting}
-          className={`px-2.5 py-1 rounded-full transition-colors text-[11px] uppercase tracking-wider ${
-            isTesting 
-              ? 'bg-red-600 text-white animate-pulse' 
-              : 'hover:bg-black/10 dark:hover:bg-white/10 text-[#00F3FF]'
-          }`}
+          className="px-2 py-0.5 rounded transition-colors text-[10px] uppercase tracking-wider hover:bg-white/10 text-[#7c5cff]"
         >
-          {isTesting ? "Testing (3s)..." : "Test Siren"}
+          {isTesting ? 'Playing…' : 'Test Sound'}
         </button>
       </div>
 
-      <BoardTemplate data={data} isMuted={muted} />
+      {/* Main Board Template */}
+      <BoardTemplate
+        data={data}
+        isMuted={muted}
+        isAlerting={isAlerting}
+        typedHeadline={typedHeadline}
+        isTyping={isTyping}
+        showMessage={showMessage}
+      />
     </div>
   );
 };
 
 export default SmartBoard;
+
+
 
 

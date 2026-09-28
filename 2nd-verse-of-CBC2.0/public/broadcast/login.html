@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Login — Broadcast Console</title>
+<style>
+  :root {
+    --bg: #0b0d10;
+    --panel: #14171b;
+    --line: #242a30;
+    --text: #e8ecef;
+    --dim: #7c8891;
+    --accent: #7c5cff;
+    --accent2: #33e0a1;
+    --urgent: #ff5c68;
+    --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+    --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  .split-container {
+    display: flex;
+    width: 100vw;
+    min-height: 100vh;
+  }
+
+  /* Left Side: Branding / Features */
+  .brand-section {
+    flex: 1;
+    background: linear-gradient(135deg, #10141d 0%, #0b0d10 100%);
+    border-right: 1px solid var(--line);
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .brand-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .brand-header img {
+    height: 48px;
+    object-fit: contain;
+  }
+
+  .logo-divider {
+    width: 1px;
+    height: 32px;
+    background: var(--line);
+  }
+
+  .brand-content {
+    max-width: 460px;
+    margin: 40px 0;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent2);
+    box-shadow: 0 0 8px var(--accent2);
+  }
+
+  .brand-content .tag {
+    display: inline-block;
+    background: rgba(124, 92, 255, 0.15);
+    color: var(--accent);
+    border: 1px solid rgba(124, 92, 255, 0.3);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .brand-content h1 {
+    font-size: 38px;
+    line-height: 1.15;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+
+  .slogan {
+    font-family: var(--mono);
+    color: var(--accent2);
+    font-size: 15px;
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+
+  .brand-content p {
+    color: var(--dim);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .brand-footer {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--dim);
+  }
+
+  /* Right Side: Authentication Form */
+  .auth-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: var(--bg);
+  }
+
+  .login-card {
+    width: 100%;
+    max-width: 380px;
+  }
+
+  .login-card h2 {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+
+  .login-card .sub {
+    color: var(--dim);
+    font-size: 14px;
+    margin-bottom: 28px;
+  }
+
+  label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin: 18px 0 8px;
+  }
+
+  input[type=text], input[type=password] {
+    width: 100%;
+    background: #0f1215;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 12px 14px;
+    font-family: var(--sans);
+    font-size: 14px;
+    outline: none;
+    transition: border-color .15s;
+  }
+
+  input:focus { border-color: var(--accent); }
+
+  .btn {
+    width: 100%;
+    margin-top: 24px;
+    padding: 13px;
+    border-radius: 8px;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s;
+  }
+
+  .btn:hover { background: #8f72ff; }
+
+  .error {
+    display: none;
+    margin-top: 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--urgent);
+    text-align: center;
+  }
+
+  /* Responsive adjustment for small screens */
+  @media (max-width: 768px) {
+    .split-container { flex-direction: column; }
+    .brand-section { padding: 32px 24px; border-right: none; border-bottom: 1px solid var(--line); }
+    .auth-section { padding: 32px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="split-container">
+  <!-- Left Side: Brand & Logos -->
+  <div class="brand-section">
+    <div class="brand-header">
+      <img src="../logos/gatlockuplogo.png" alt="GAT Logo" />
+      <div class="logo-divider"></div>
+      <img src="../logos/aimldeptlogo.png" alt="AIML Dept Logo" />
+      <div class="logo-divider"></div>
+      <img src="../logos/cbc2ologo.PNG" alt="Code Breakers Challenge 2.0 Logo" />
+    </div>
+
+    <div class="brand-content">
+      <div class="eyebrow"><span class="dot"></span>Live Console Access</div>
+      <span class="tag">A National-Level 24-Hour Hackathon</span>
+      <h1>CODE BREAKER CHALLENGE 2.0</h1>
+      <div class="slogan">“Think. Build. Break Limits.” &bull; #AIforchange</div>
+      <p>Broadcast live announcements, schedule updates, and notifications directly to stage display screens during the hackathon.</p>
+    </div>
+
+    <div class="brand-footer">
+      Protected System &bull; Unauthorized access restricted
+    </div>
+  </div>
+
+  <!-- Right Side: Login Form -->
+  <div class="auth-section">
+    <div class="login-card">
+      <h2>Admin Sign In</h2>
+      <div class="sub">Enter your credentials to control the broadcast console</div>
+
+      <form action="/login" method="POST">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required autofocus placeholder="admin" />
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required placeholder="••••••••" />
+
+        <button type="submit" class="btn">Sign In to Console</button>
+      </form>
+
+      <div class="error" id="errorMsg">Invalid username or password</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  if (window.location.search.includes('error=invalid')) {
+    document.getElementById('errorMsg').style.display = 'block';
+  }
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import CustomCursor from './components/CustomCursor';
 import NavigationBar from './components/NavigationBar';
 import FixedTimer from './components/FixedTimer';
@@ -53,7 +53,9 @@ export default function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/admin" element={<AdminPortal />} />
+        <Route path="/login" element={<Navigate to="/admin" replace />} />
         <Route path="/board" element={<SmartBoard />} />
+        <Route path="/display" element={<Navigate to="/board" replace />} />
         <Route path="/rulebook" element={<RulebookPage />} />
       </Routes>
       <Analytics />
@@ -61,3 +63,4 @@ export default function App() {
     </Router>
   );
 }
+
