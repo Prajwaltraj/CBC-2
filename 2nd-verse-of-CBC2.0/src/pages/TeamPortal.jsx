@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth, useUser } from '@clerk/react';
+import { useNavigate } from 'react-router-dom';
 import { LogOut, Eye, Users } from 'lucide-react';
 import { ref, get, set, increment, serverTimestamp } from 'firebase/database';
 import { rtdb } from '../firebase';
@@ -12,6 +13,7 @@ import NeuralBackground from '../components/NeuralBackground';
 export default function TeamPortal() {
   const { isLoaded, isSignedIn, signOut } = useAuth();
   const { user } = useUser();
+  const navigate = useNavigate();
   const [teamData, setTeamData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -20,14 +22,13 @@ export default function TeamPortal() {
   const isAuthenticated = isSignedIn || !!fallbackEmail;
 
   useEffect(() => {
-    // If auth is loaded and user is NOT signed in, kick them out
-    if (isLoaded && !isSignedIn) {
+    if (isLoaded && !isAuthenticated) {
       navigate('/');
     }
-  }, [isLoaded, isSignedIn, navigate]);
+  }, [isLoaded, isAuthenticated, navigate]);
 
   useEffect(() => {
-    if (isSignedIn && user?.primaryEmailAddress?.emailAddress) {
+    if (isAuthenticated) {
       const fetchTeam = async () => {
         try {
           const userEmail = (isSignedIn && user?.primaryEmailAddress?.emailAddress) ? user.primaryEmailAddress.emailAddress : fallbackEmail;
@@ -40,7 +41,6 @@ export default function TeamPortal() {
             const data = snapshot.val();
             setTeamData(data);
             
-            // Log view for admin
             const viewRef = ref(rtdb, `teamViews/${emailHash}`);
             await set(viewRef, {
               teamName: data['Team Name'] || data['TeamName'] || 'Unknown Team',
@@ -59,16 +59,17 @@ export default function TeamPortal() {
         }
       };
       fetchTeam();
-    } else if (!isSignedIn) {
+    } else if (!isAuthenticated) {
       setLoading(false);
     }
-  }, [isLoaded, isSignedIn, user]);
+  }, [isLoaded, isAuthenticated, isSignedIn, user, fallbackEmail]);
 
   const handleLogout = async () => {
     localStorage.removeItem('verifiedEmail');
-    await signOut();
+    try { await signOut(); } catch(e) {}
     setTeamData(null);
     setError('');
+    navigate('/');
   };
 
   if (!isLoaded) {
@@ -79,7 +80,7 @@ export default function TeamPortal() {
     );
   }
 
-  if (!isSignedIn) {
+  if (!isAuthenticated) {
     return (
       <div className="w-full min-h-screen bg-[#F4F6F9] dark:bg-[#010103] text-gray-900 dark:text-[#F0F0F0] selection:bg-[#00F3FF]/30 selection:text-black dark:selection:text-white relative transition-colors duration-300 flex flex-col">
         <NeuralBackground />
