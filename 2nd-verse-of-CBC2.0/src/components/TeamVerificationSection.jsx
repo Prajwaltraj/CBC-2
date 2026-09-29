@@ -39,7 +39,7 @@ const TeamVerificationSection = () => {
       setPendingVerification(true);
       setStatus({
         type: 'success',
-        msg: `Verification code sent to ${cleanEmail}! Please check your inbox and spam folder.`,
+        msg: 'Verification code sent! Please check your inbox and spam folder.',
       });
     } catch (error) {
       console.error('[DEBUG] Error sending code:', error);
@@ -180,9 +180,12 @@ const TeamVerificationSection = () => {
                     <KeyRound size={28} className="text-[#10B981]" />
                   </div>
                   <h3 className="text-2xl font-bold mb-2 dark:text-white text-black font-orbitron">Verify Code</h3>
-                  <p className="text-gray-400 text-sm font-mono">
-                    Enter the 6-digit code sent to <span className="text-[#00F3FF] break-all">{email}</span>
+                  <p className="text-gray-400 text-xs sm:text-sm font-mono mb-2">
+                    Enter the 6-digit code sent to:
                   </p>
+                  <div className="inline-block max-w-full px-3.5 py-1.5 rounded-lg bg-black/60 border border-[#00F3FF]/40 text-[#00F3FF] text-xs sm:text-sm font-mono font-medium break-all shadow-[0_0_15px_rgba(0,243,255,0.1)]">
+                    {email}
+                  </div>
                 </div>
                 
                 <form onSubmit={handleVerifyCode} className="space-y-5">
@@ -234,13 +237,13 @@ const TeamVerificationSection = () => {
             )}
 
             {status.msg && (
-              <div className={`mt-6 p-4 rounded-lg border text-sm font-medium flex items-center gap-2 font-mono ${
+              <div className={`mt-6 p-4 rounded-lg border text-sm font-medium flex items-start gap-2.5 font-mono ${
                 status.type === 'success' ? 'bg-[#10B981]/10 border-[#10B981]/30 text-[#10B981]' : 
                 status.type === 'error' ? 'bg-red-500/10 border-red-500/30 text-red-400' : 
                 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400'
               }`}>
-                {status.type === 'success' ? <CheckCircle2 size={18} className="shrink-0" /> : <AlertTriangle size={18} className="shrink-0" />}
-                <span>{status.msg}</span>
+                {status.type === 'success' ? <CheckCircle2 size={18} className="shrink-0 mt-0.5" /> : <AlertTriangle size={18} className="shrink-0 mt-0.5" />}
+                <span className="leading-snug break-words flex-1">{status.msg}</span>
               </div>
             )}
           </div>
