@@ -72,7 +72,7 @@ export default function TeamPortal() {
     navigate('/');
   };
 
-  if (!isLoaded) {
+  if (!isLoaded && !fallbackEmail) {
     return (
       <div className="w-full min-h-screen bg-[#F4F6F9] dark:bg-[#010103] flex justify-center items-center">
         <div className="text-[#00F3FF] animate-pulse font-bold tracking-widest uppercase">Initializing Secure Portal...</div>
