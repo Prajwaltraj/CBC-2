@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth, useUser } from '@clerk/react';
-import { useNavigate } from 'react-router-dom';
 import { LogOut, Eye, Users } from 'lucide-react';
 import { ref, get, set, increment, serverTimestamp } from 'firebase/database';
 import { rtdb } from '../firebase';
 import CustomCursor from '../components/CustomCursor';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '../components/Footer';
+import TeamVerificationSection from '../components/TeamVerificationSection';
+import NeuralBackground from '../components/NeuralBackground';
 
 export default function TeamPortal() {
   const { isLoaded, isSignedIn, signOut } = useAuth();
   const { user } = useUser();
-  const navigate = useNavigate();
   const [teamData, setTeamData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -20,14 +20,14 @@ export default function TeamPortal() {
   const isAuthenticated = isSignedIn || !!fallbackEmail;
 
   useEffect(() => {
-    // If auth is loaded and user is NOT signed in via Clerk OR localStorage, kick them out
-    if (isLoaded && !isAuthenticated) {
+    // If auth is loaded and user is NOT signed in, kick them out
+    if (isLoaded && !isSignedIn) {
       navigate('/');
     }
-  }, [isLoaded, isAuthenticated, navigate]);
+  }, [isLoaded, isSignedIn, navigate]);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isSignedIn && user?.primaryEmailAddress?.emailAddress) {
       const fetchTeam = async () => {
         try {
           const userEmail = (isSignedIn && user?.primaryEmailAddress?.emailAddress) ? user.primaryEmailAddress.emailAddress : fallbackEmail;
@@ -49,26 +49,29 @@ export default function TeamPortal() {
               lastViewed: serverTimestamp()
             });
           } else {
-            setError('Team data not found for your email.');
+            setError(`No registered team found for "${userEmail}". Please ensure you sign in with the email address used during team registration.`);
           }
         } catch (err) {
           console.error(err);
-          setError('Failed to load team data.');
+          setError('Failed to load team data. Please try again.');
         } finally {
           setLoading(false);
         }
       };
       fetchTeam();
+    } else if (!isSignedIn) {
+      setLoading(false);
     }
-  }, [isSignedIn, user]);
+  }, [isLoaded, isSignedIn, user]);
 
   const handleLogout = async () => {
     localStorage.removeItem('verifiedEmail');
     await signOut();
-    navigate('/');
+    setTeamData(null);
+    setError('');
   };
 
-  if (!isLoaded || loading) {
+  if (!isLoaded) {
     return (
       <div className="w-full min-h-screen bg-[#F4F6F9] dark:bg-[#010103] flex justify-center items-center">
         <div className="text-[#00F3FF] animate-pulse font-bold tracking-widest uppercase">Initializing Secure Portal...</div>
@@ -76,8 +79,31 @@ export default function TeamPortal() {
     );
   }
 
+  if (!isSignedIn) {
+    return (
+      <div className="w-full min-h-screen bg-[#F4F6F9] dark:bg-[#010103] text-gray-900 dark:text-[#F0F0F0] selection:bg-[#00F3FF]/30 selection:text-black dark:selection:text-white relative transition-colors duration-300 flex flex-col">
+        <NeuralBackground />
+        <CustomCursor />
+        <NavigationBar />
+        <div className="flex-1 pt-24 pb-12 flex flex-col justify-center items-center">
+          <TeamVerificationSection />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="w-full min-h-screen bg-[#F4F6F9] dark:bg-[#010103] flex justify-center items-center">
+        <div className="text-[#00F3FF] animate-pulse font-bold tracking-widest uppercase">Loading Team Details...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full min-h-screen bg-[#F4F6F9] dark:bg-[#010103] text-gray-900 dark:text-[#F0F0F0] selection:bg-[#00F3FF]/30 selection:text-black dark:selection:text-white relative transition-colors duration-300 flex flex-col">
+      <NeuralBackground />
       <CustomCursor />
       <NavigationBar />
       
@@ -90,12 +116,12 @@ export default function TeamPortal() {
               </h2>
               <h3 className="text-xl font-bold flex items-center gap-2 text-gray-400">
                 <Users className="text-[#00F3FF]" size={20} /> 
-                {teamData ? (teamData['Team Name'] || teamData['TeamName'] || 'Your Team') : 'Loading...'}
+                {teamData ? (teamData['Team Name'] || teamData['TeamName'] || 'Your Team') : 'Your Team'}
               </h3>
             </div>
             <button 
               onClick={handleLogout} 
-              className="flex items-center gap-2 text-red-400 hover:text-white transition-colors text-sm font-bold uppercase tracking-wider bg-red-500/10 hover:bg-red-500/30 px-6 py-3 rounded-lg border border-red-500/20"
+              className="flex items-center gap-2 text-red-400 hover:text-white transition-colors text-sm font-bold uppercase tracking-wider bg-red-500/10 hover:bg-red-500/30 px-6 py-3 rounded-lg border border-red-500/20 cursor-pointer"
             >
               <LogOut size={18} /> Sign Out
             </button>
@@ -103,8 +129,14 @@ export default function TeamPortal() {
         </div>
         
         {error ? (
-          <div className="text-red-400 text-center py-12 bg-red-500/10 rounded-2xl border border-red-500/20">
-            {error}
+          <div className="text-red-400 text-center py-12 bg-red-500/10 rounded-2xl border border-red-500/20 flex flex-col items-center gap-4">
+            <p className="text-base">{error}</p>
+            <button 
+              onClick={handleLogout}
+              className="px-6 py-2 bg-red-500/20 hover:bg-red-500/30 text-white rounded-lg border border-red-500/30 text-sm font-bold uppercase tracking-wider transition-colors cursor-pointer"
+            >
+              Sign In With Different Email
+            </button>
           </div>
         ) : teamData ? (
           <div className="bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 shadow-[0_0_50px_rgba(0,243,255,0.05)] overflow-hidden flex-1">

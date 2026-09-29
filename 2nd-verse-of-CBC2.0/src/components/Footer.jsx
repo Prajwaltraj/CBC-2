@@ -10,10 +10,10 @@ const Footer = () => (
       
       {/* Brand & Location */}
       <div className="flex flex-col gap-5">
-        <div className="flex items-center gap-3">
-          <ProgressiveImage src="/team/cbc logo.png" alt="CBC 2.0" className="h-12 w-12 object-contain" />
-          <span className="font-orbitron font-bold text-2xl tracking-wider">CBC 2.0</span>
-        </div>
+        <a href="/" className="flex items-center gap-3 group cursor-pointer">
+          <ProgressiveImage src="/team/cbc logo.png" alt="CBC 2.0" className="h-12 w-12 object-contain transition-transform duration-300 group-hover:scale-105" />
+          <span className="font-orbitron font-bold text-2xl tracking-wider group-hover:text-[#00F3FF] transition-colors">CBC 2.0</span>
+        </a>
         <p className="text-gray-400 text-sm font-mono leading-relaxed">
           AI For Change <br/>
           Think. Build. Break Limits.<br/>
@@ -30,11 +30,12 @@ const Footer = () => (
       <div className="flex flex-col gap-4 lg:pl-8">
         <h4 className="font-orbitron font-bold text-[#00F3FF] tracking-wider mb-2 uppercase">Quick Links</h4>
         <div className="flex flex-col gap-3 text-sm font-mono text-gray-400">
-          <a href="#" className="hover:text-[#00F3FF] transition-colors w-max">Home</a>
+          <a href="/" className="hover:text-[#00F3FF] transition-colors w-max">Home</a>
           <a href="#about" className="hover:text-[#00F3FF] transition-colors w-max">About Us</a>
           <a href="#themes" className="hover:text-[#00F3FF] transition-colors w-max">Domains</a>
           <a href="#timeline" className="hover:text-[#00F3FF] transition-colors w-max">Timeline</a>
           <a href="/rulebook" className="hover:text-[#00F3FF] transition-colors w-max">Rules & FAQs</a>
+          {/* <a href="/team" className="hover:text-[#00F3FF] transition-colors w-max">Team Portal</a> */}
           <a href="#sponsors" className="hover:text-[#00F3FF] transition-colors w-max">Sponsors</a>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useSignIn, useSignUp, useAuth } from '@clerk/react';
 import { Search, CheckCircle2, AlertTriangle, KeyRound } from 'lucide-react';
 import { ref, get } from 'firebase/database';
@@ -9,95 +9,183 @@ const TeamVerificationSection = () => {
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [status, setStatus] = useState({ type: '', msg: '' });
+  const [authMode, setAuthMode] = useState('signup'); // 'signup' | 'signin'
   
+  // References to keep active resource between renders
+  const activeSignUpRef = useRef(null);
+  const activeSignInRef = useRef(null);
+
   // Clerk Hooks
-  const { signIn, setActive } = useSignIn();
-  const { signUp } = useSignUp();
+  const { isLoaded: isSignInLoaded, signIn, setActive } = useSignIn();
+  const { isLoaded: isSignUpLoaded, signUp } = useSignUp();
   const { isLoaded: isAuthLoaded, isSignedIn } = useAuth();
   
   const navigate = useNavigate();
-
   const [pendingVerification, setPendingVerification] = useState(false);
 
-  // We intentionally do NOT auto-redirect on mount anymore, so users can still read the homepage!
+  const waitForClerk = async (maxMs = 5000) => {
+    if (isSignInLoaded && isSignUpLoaded) return true;
+    if (typeof window !== 'undefined' && window.Clerk?.loaded) return true;
+    const start = Date.now();
+    while (Date.now() - start < maxMs) {
+      await new Promise((r) => setTimeout(r, 200));
+      if (typeof window !== 'undefined' && window.Clerk?.loaded) {
+        return true;
+      }
+    }
+    return isSignInLoaded && isSignUpLoaded;
+  };
 
   const handleSendCode = async (e) => {
     e.preventDefault();
     if (!email) return;
-    
-    if (!isAuthLoaded) {
-      setStatus({ type: 'error', msg: 'Authentication service is blocked by your browser. Please disable shields/adblockers or try Chrome.' });
-      return;
-    }
 
-    setStatus({ type: 'loading', msg: 'Sending code...' });
+    const cleanEmail = email.toLowerCase().trim();
+    setStatus({ type: 'loading', msg: 'Verifying registered team...' });
 
     try {
-      console.log("[DEBUG] Fetching team from Firebase for:", email);
-      const emailHash = email.toLowerCase().trim().replace(/[.#$\[\]\/]/g, '_');
+      // 1. Verify email exists in registeredTeams in Firebase RTDB
+      const emailHash = cleanEmail.replace(/[.#$\[\]\/]/g, '_');
       const teamRef = ref(rtdb, `registeredTeams/${emailHash}`);
       
       const snapshot = await Promise.race([
         get(teamRef),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Firebase Timeout')), 10000))
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Database Timeout')), 8000))
       ]);
-      console.log("[DEBUG] Firebase result:", snapshot.exists());
       
-      // if (!snapshot.exists()) {
-      //   setStatus({ type: 'error', msg: 'Email not found in registered teams list.' });
-      //   return;
-      // }
+      if (!snapshot.exists()) {
+        setStatus({ 
+          type: 'error', 
+          msg: `No registered team found for "${cleanEmail}". Please check your email or contact support.` 
+        });
+        return;
+      }
 
-      console.log("[DEBUG] Initiating Clerk signIn.create with strategy: email_code");
-      try {
-        const createResult = await Promise.race([
-          signIn.create({ 
-            identifier: email,
-            strategy: 'email_code'
-          }),
-          new Promise((_, reject) => setTimeout(() => reject(new Error('Clerk signIn.create Timeout - Is your browser blocking Clerk scripts?')), 10000))
-        ]);
-        console.log("[DEBUG] Clerk signIn.create result:", createResult);
+      setStatus({ type: 'loading', msg: 'Connecting to authentication service...' });
+      await waitForClerk();
 
-        // Clerk v6 sometimes returns the error directly in the resolved object instead of throwing!
-        if (createResult && createResult.error) {
-          throw createResult.error;
+      const clientSignUp = signUp || (typeof window !== 'undefined' ? window.Clerk?.client?.signUp : null);
+      const clientSignIn = signIn || (typeof window !== 'undefined' ? window.Clerk?.client?.signIn : null);
+
+      if (!clientSignUp && !clientSignIn) {
+        setStatus({ 
+          type: 'error', 
+          msg: 'Authentication service is initializing. Please wait a moment and try again.' 
+        });
+        return;
+      }
+
+      setStatus({ type: 'loading', msg: 'Sending 6-digit verification code...' });
+
+      // Helper to prepare signup verification safely
+      const prepareSignUp = async (resource) => {
+        if (resource && typeof resource.prepareEmailAddressVerification === 'function') {
+          return await resource.prepareEmailAddressVerification({ strategy: 'email_code' });
         }
+        if (resource && typeof resource.prepareVerification === 'function') {
+          return await resource.prepareVerification({ strategy: 'email_code' });
+        }
+        if (clientSignUp && typeof clientSignUp.prepareEmailAddressVerification === 'function') {
+          return await clientSignUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+        }
+        if (clientSignUp && typeof clientSignUp.prepareVerification === 'function') {
+          return await clientSignUp.prepareVerification({ strategy: 'email_code' });
+        }
+      };
 
+      // Helper to prepare signin verification safely
+      const prepareSignIn = async (resource, factorId) => {
+        const payload = factorId ? { strategy: 'email_code', emailAddressId: factorId } : { strategy: 'email_code' };
+        if (resource && typeof resource.prepareFirstFactor === 'function') {
+          return await resource.prepareFirstFactor(payload);
+        }
+        if (clientSignIn && typeof clientSignIn.prepareFirstFactor === 'function') {
+          return await clientSignIn.prepareFirstFactor(payload);
+        }
+      };
+
+      // 2. Try signUp flow first (creates new account or detects existing)
+      try {
+        if (clientSignUp && typeof clientSignUp.create === 'function') {
+          const signUpAttempt = await clientSignUp.create({ emailAddress: cleanEmail });
+          activeSignUpRef.current = signUpAttempt;
+          await prepareSignUp(signUpAttempt);
+          setAuthMode('signup');
+          setPendingVerification(true);
+          setStatus({ type: 'success', msg: 'Code sent! Check your inbox and spam folder.' });
+          return;
+        }
+      } catch (signUpErr) {
+        console.log("[DEBUG] signUp error, falling back to signIn:", signUpErr);
+        
+        // If user already exists or requirements missing, try signIn flow
+        if (clientSignIn && typeof clientSignIn.create === 'function') {
+          try {
+            const signInAttempt = await clientSignIn.create({ identifier: cleanEmail });
+            activeSignInRef.current = signInAttempt;
+            
+            const emailCodeFactor = signInAttempt.supportedFirstFactors?.find(
+              (factor) => factor.strategy === 'email_code'
+            );
+
+            if (emailCodeFactor) {
+              await prepareSignIn(signInAttempt, emailCodeFactor.emailAddressId);
+              setAuthMode('signin');
+              setPendingVerification(true);
+              setStatus({ type: 'success', msg: 'Code sent! Check your inbox and spam folder.' });
+              return;
+            } else {
+              await prepareSignIn(signInAttempt);
+              setAuthMode('signin');
+              setPendingVerification(true);
+              setStatus({ type: 'success', msg: 'Code sent! Check your inbox and spam folder.' });
+              return;
+            }
+          } catch (signInErr) {
+            console.log("[DEBUG] signIn error:", signInErr);
+            // If already in needs_first_factor state
+            const targetSignIn = clientSignIn.status === 'needs_first_factor' ? clientSignIn : activeSignInRef.current;
+            if (targetSignIn && targetSignIn.status === 'needs_first_factor') {
+              const emailCodeFactor = targetSignIn.supportedFirstFactors?.find(
+                (factor) => factor.strategy === 'email_code'
+              );
+              await prepareSignIn(targetSignIn, emailCodeFactor?.emailAddressId);
+              activeSignInRef.current = targetSignIn;
+              setAuthMode('signin');
+              setPendingVerification(true);
+              setStatus({ type: 'success', msg: 'Code sent! Check your inbox and spam folder.' });
+              return;
+            }
+            throw signInErr;
+          }
+        }
+        throw signUpErr;
+      }
+
+      // If only signIn is available
+      if (clientSignIn && typeof clientSignIn.create === 'function') {
+        const signInAttempt = await clientSignIn.create({ identifier: cleanEmail });
+        activeSignInRef.current = signInAttempt;
+        const emailCodeFactor = signInAttempt.supportedFirstFactors?.find(
+          (factor) => factor.strategy === 'email_code'
+        );
+        await prepareSignIn(signInAttempt, emailCodeFactor?.emailAddressId);
+        setAuthMode('signin');
         setPendingVerification(true);
         setStatus({ type: 'success', msg: 'Code sent! Check your inbox and spam folder.' });
-        return;
-      } catch (err) {
-        console.log("[DEBUG] Clerk error caught during signIn:", err);
-        const clerkErrorCode = err.errors?.[0]?.code;
-        
-        // If the user doesn't exist, or doesn't have OTP enabled, Clerk throws various errors.
-        // We will aggressively fallback to signUp.create() for ANY Clerk error during signIn.
-        if (err.errors && err.errors.length > 0) {
-          console.log("[DEBUG] Falling back to signUp.create because signIn failed with:", clerkErrorCode);
-          
-          try {
-            await signUp.create({ emailAddress: email });
-            await signUp.sendEmailCode();
-            setPendingVerification(true);
-            setStatus({ type: 'success', msg: 'Code sent! Check your inbox and spam folder.' });
-            return;
-          } catch (signUpErr) {
-            console.error("[DEBUG] signUp fallback also failed:", signUpErr);
-            throw signUpErr;
-          }
-        } else {
-          throw err;
-        }
       }
     } catch (error) {
-      console.error("[DEBUG] Final Catch:", error);
-      setStatus({ type: 'error', msg: error.errors?.[0]?.longMessage || error.message || 'Failed to send code.' });
+      console.error("[DEBUG] Error sending code:", error);
+      const errMsg = error.errors?.[0]?.longMessage || error.errors?.[0]?.message || error.message || 'Failed to send OTP code.';
+      setStatus({ type: 'error', msg: errMsg });
     }
   };
 
   const handleVerifyCode = async (e) => {
     e.preventDefault();
+    const cleanCode = code.replace(/\s+/g, '').trim();
+    if (!cleanCode) return;
+
     setStatus({ type: 'loading', msg: 'Verifying code...' });
 
     console.log("[DEBUG] Verifying code with:", code);
@@ -115,18 +203,13 @@ const TeamVerificationSection = () => {
         }
 
         console.log("[DEBUG] Verification succeeded! Clerk handles session automatically in v6.");
-        
-        // V6 BUG WORKAROUND: Clerk sometimes keeps status='missing_requirements' forever
-        // if the dashboard requires first_name/last_name but we only ask for email.
-        // Since we only need the email for the TeamPortal, we manually save it to localStorage 
-        // to bypass the session bug and guarantee they can enter the portal.
-        localStorage.setItem('verifiedEmail', email);
-
         if (completeSignUp && completeSignUp.createdSessionId) {
           await setActive({ session: completeSignUp.createdSessionId });
         } else if (window.Clerk && window.Clerk.client && window.Clerk.client.signUp && window.Clerk.client.signUp.createdSessionId) {
           await setActive({ session: window.Clerk.client.signUp.createdSessionId });
         } else {
+          // If Clerk handles it automatically, let's just wait for isSignedIn to flip,
+          // or force a hard reload to pick up the new auth state.
           setTimeout(() => {
             window.location.href = '/team';
           }, 1500);
@@ -155,16 +238,15 @@ const TeamVerificationSection = () => {
             window.location.href = '/team';
           }, 1500);
         }
-        
-        localStorage.setItem('verifiedEmail', email);
         setStatus({ type: 'success', msg: 'Verification complete! Redirecting...' });
       } else {
         console.log("[DEBUG] Neither signUp nor signIn are in expected states.");
         setStatus({ type: 'error', msg: 'Invalid authentication state. Try going back and requesting a new code.' });
       }
     } catch (error) {
-      console.error("[DEBUG] Error during verification:", error);
-      setStatus({ type: 'error', msg: error.errors?.[0]?.longMessage || 'Invalid code.' });
+      console.error("[DEBUG] Error verifying code:", error);
+      const errMsg = error.errors?.[0]?.longMessage || error.errors?.[0]?.message || error.message || 'Invalid code. Please check and try again.';
+      setStatus({ type: 'error', msg: errMsg });
     }
   };
 
@@ -263,13 +345,26 @@ const TeamVerificationSection = () => {
                   >
                     {status.type === 'loading' ? 'Verifying...' : 'Verify Code'}
                   </button>
-                  <button 
-                    type="button"
-                    onClick={() => setPendingVerification(false)}
-                    className="w-full mt-4 text-gray-400 hover:text-white text-sm"
-                  >
-                    Back to Email
-                  </button>
+                  <div className="flex items-center justify-between mt-4 text-xs font-mono">
+                    <button 
+                      type="button"
+                      onClick={() => setPendingVerification(false)}
+                      className="text-gray-400 hover:text-white transition-colors underline cursor-pointer"
+                    >
+                      ← Change Email
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSendCode}
+                      disabled={status.type === 'loading'}
+                      className="text-[#00F3FF] hover:underline disabled:opacity-50 cursor-pointer"
+                    >
+                      Resend Code ↻
+                    </button>
+                  </div>
+                  <p className="text-center text-[11px] text-gray-500 mt-3 font-mono">
+                    💡 If not in Inbox, please check your <span className="text-yellow-400">Spam / Junk</span> or <span className="text-yellow-400">Promotions</span> folder.
+                  </p>
                 </form>
               </>
             )}

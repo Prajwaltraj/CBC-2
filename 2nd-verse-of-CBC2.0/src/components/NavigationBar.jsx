@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, Menu, X, Sun, Moon } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import ProgressiveImage from './ProgressiveImage';
 
 const BUTTERY_EASE = [0.22, 1, 0.36, 1];
@@ -65,17 +65,23 @@ const NavigationBar = () => {
     { name: 'Team', href: '#team' },
   ];
 
+  const handleLogoClick = (e) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    if (location.pathname !== '/') {
+      navigate('/');
+      setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   const handleNavClick = (e, href) => {
     e.preventDefault();
     setMobileMenuOpen(false);
 
-    if (href === '#' || href === '#hero') {
-      if (location.pathname !== '/') {
-        navigate('/');
-        setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
-      } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
+    if (href === '#' || href === '#hero' || href === '/') {
+      handleLogoClick(e);
       return;
     }
 
@@ -88,7 +94,7 @@ const NavigationBar = () => {
           if (element) {
             element.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
-        }, 100);
+        }, 150);
       } else {
         const targetId = href.substring(1);
         const element = document.getElementById(targetId);
@@ -130,7 +136,7 @@ const NavigationBar = () => {
         isScrolled || mobileMenuOpen ? 'py-2.5 sm:py-3' : 'py-3 sm:py-4 nav:py-5'
       }`}>
         {/* Logo */}
-        <a href="#" onClick={(e) => handleNavClick(e, '#')} className="flex items-center gap-1.5 sm:gap-2 group z-50 shrink-0">
+        <Link to="/" onClick={handleLogoClick} className="flex items-center gap-1.5 sm:gap-2 group z-50 shrink-0 cursor-pointer">
           <ProgressiveImage 
             src="/team/cbc logo.png" 
             alt="CBC 2.0" 
@@ -138,7 +144,7 @@ const NavigationBar = () => {
             className="h-8 w-8 sm:h-9 sm:w-9 nav:h-10 nav:w-10 object-contain transition-transform duration-300 group-hover:scale-110" 
           />
           <span className="font-orbitron font-bold text-base sm:text-lg nav:text-xl tracking-wider text-white group-hover:text-[#00F3FF] transition-colors">CBC 2.0</span>
-        </a>
+        </Link>
 
         {/* Desktop Nav Links (Expands above 1200px) */}
         <div className="hidden min-[1200px]:flex items-center gap-5 xl:gap-7 font-orbitron text-[11px] tracking-wider transition-all">

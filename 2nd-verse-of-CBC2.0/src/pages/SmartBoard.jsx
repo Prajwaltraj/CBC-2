@@ -114,7 +114,9 @@ export const BoardTemplate = ({
   isAlerting = false,
   typedHeadline = '',
   isTyping = false,
-  showMessage = true
+  showMessage = true,
+  isPlaying = true,
+  forceSkipToken = 0
 }) => {
   const [time, setTime] = useState(new Date());
   const playerRef = useRef(null);
@@ -128,17 +130,17 @@ export const BoardTemplate = ({
   useEffect(() => {
     if (data?.videoState?.lastSeek && data.videoState.lastSeek.id !== prevSeekRef.current) {
       if (playerRef.current) {
-  useEffect(() => {
-    if (playerRef.current && forceSkipToken > 0) {
-      playerRef.current.seekTo(playerRef.current.getCurrentTime() + 10, "seconds");
-    }
-  }, [forceSkipToken]);
-
         playerRef.current.seekTo(data.videoState.lastSeek.time, 'seconds');
       }
       prevSeekRef.current = data.videoState.lastSeek.id;
     }
   }, [data?.videoState?.lastSeek]);
+
+  useEffect(() => {
+    if (playerRef.current && forceSkipToken > 0) {
+      playerRef.current.seekTo(playerRef.current.getCurrentTime() + 10, "seconds");
+    }
+  }, [forceSkipToken]);
 
   // Extract fields with full backward compatibility
   const hasData = !!(data && (data.title || data.statement || data.posterUrl));
@@ -319,7 +321,7 @@ export const BoardTemplate = ({
       </main>
 
       {/* Footer credits */}
-      <footer className="w-full flex justify-between items-center text-[11px] font-mono text-[#7c8891] uppercase tracking-wider z-10 pt-2 border-t border-[#242a30]/50">
+      <footer className="w-full flex flex-col sm:flex-row justify-between items-center text-[11px] font-mono text-[#7c8891] uppercase tracking-wider z-10 pt-2 border-t border-[#242a30]/50 gap-2 sm:gap-0 sm:pr-56">
         <div>Global Academy of Technology &bull; Dept. of AI & ML</div>
         <div>Code Breakers Challenge 2.0 &bull; #AIforchange</div>
       </footer>
