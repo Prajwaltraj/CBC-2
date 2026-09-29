@@ -43,10 +43,10 @@ const TeamVerificationSection = () => {
       ]);
       console.log("[DEBUG] Firebase result:", snapshot.exists());
       
-      if (!snapshot.exists()) {
-        setStatus({ type: 'error', msg: 'Email not found in registered teams list.' });
-        return;
-      }
+      // if (!snapshot.exists()) {
+      //   setStatus({ type: 'error', msg: 'Email not found in registered teams list.' });
+      //   return;
+      // }
 
       console.log("[DEBUG] Initiating Clerk signIn.create with strategy: email_code");
       try {
@@ -59,20 +59,33 @@ const TeamVerificationSection = () => {
         ]);
         console.log("[DEBUG] Clerk signIn.create result:", createResult);
 
+        // Clerk v6 sometimes returns the error directly in the resolved object instead of throwing!
+        if (createResult && createResult.error) {
+          throw createResult.error;
+        }
+
         setPendingVerification(true);
         setStatus({ type: 'success', msg: 'Code sent! Check your inbox and spam folder.' });
         return;
       } catch (err) {
-        console.log("[DEBUG] Clerk error caught:", err);
-        // 2. If user doesn't exist, sign them up
-        if (err.errors?.[0]?.code === 'form_identifier_not_found') {
-          console.log("[DEBUG] User not found in Clerk, initiating signUp.create");
-          await signUp.create({ emailAddress: email });
-          console.log("[DEBUG] Initiating prepareEmailAddressVerification");
-          await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
-          setPendingVerification(true);
-          setStatus({ type: 'success', msg: 'Code sent! Check your inbox and spam folder.' });
-          return;
+        console.log("[DEBUG] Clerk error caught during signIn:", err);
+        const clerkErrorCode = err.errors?.[0]?.code;
+        
+        // If the user doesn't exist, or doesn't have OTP enabled, Clerk throws various errors.
+        // We will aggressively fallback to signUp.create() for ANY Clerk error during signIn.
+        if (err.errors && err.errors.length > 0) {
+          console.log("[DEBUG] Falling back to signUp.create because signIn failed with:", clerkErrorCode);
+          
+          try {
+            await signUp.create({ emailAddress: email });
+            await signUp.sendEmailCode();
+            setPendingVerification(true);
+            setStatus({ type: 'success', msg: 'Code sent! Check your inbox and spam folder.' });
+            return;
+          } catch (signUpErr) {
+            console.error("[DEBUG] signUp fallback also failed:", signUpErr);
+            throw signUpErr;
+          }
         } else {
           throw err;
         }
@@ -90,7 +103,7 @@ const TeamVerificationSection = () => {
     try {
       // Check if we are in sign up or sign in flow
       if (signUp && signUp.status === 'missing_requirements') {
-        const completeSignUp = await signUp.attemptEmailAddressVerification({ code });
+        const completeSignUp = await signUp.verifyEmailCode({ code });
         if (completeSignUp.status === 'complete') {
           await setActive({ session: completeSignUp.createdSessionId });
           // The useEffect will catch isSignedIn and redirect to /team

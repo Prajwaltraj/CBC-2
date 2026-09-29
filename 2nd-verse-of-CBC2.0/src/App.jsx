@@ -7,6 +7,7 @@ import HeroSection from './components/HeroSection';
 import StatsSection from './components/StatsSection';
 import AboutSection from './components/AboutSection';
 import RulesSection from "./components/RulesSection";
+import TestClerk from "./components/TestClerk";
 import TeamVerificationSection from './components/TeamVerificationSection';
 import ThemesSection from './components/ThemesSection';
 import PrizesSection from './components/PrizesSection';
@@ -46,6 +47,7 @@ function LandingPage() {
         <PrizesSection />
         <TimelineSection />
         <RulesSection />
+        <TestClerk />
         <TeamVerificationSection />
         <ProblemStatementsSection />
         <SponsorsSection />
