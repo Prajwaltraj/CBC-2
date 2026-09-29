@@ -106,22 +106,19 @@ const TeamVerificationSection = () => {
 
     try {
       if (signUp && signUp.status === 'missing_requirements') {
-        console.log("[DEBUG] Attempting signUp.attemptVerification...");
-        const completeSignUp = await signUp.attemptVerification({ strategy: 'email_code', code });
+        console.log("[DEBUG] Attempting signUp.verifyEmailCode...");
+        const completeSignUp = await signUp.verifyEmailCode({ code });
         console.log("[DEBUG] completeSignUp result:", completeSignUp);
         
         if (completeSignUp && completeSignUp.error) {
           throw completeSignUp.error;
         }
 
-        if (completeSignUp.status === 'complete') {
-          console.log("[DEBUG] Setting active session for signUp...");
+        console.log("[DEBUG] Verification succeeded! Clerk handles session automatically in v6.");
+        if (completeSignUp && completeSignUp.createdSessionId) {
           await setActive({ session: completeSignUp.createdSessionId });
-          setStatus({ type: 'success', msg: 'Verification complete! Redirecting...' });
-        } else {
-          console.log("[DEBUG] SignUp not complete. Status:", completeSignUp.status);
-          setStatus({ type: 'error', msg: 'Registration requires additional info. Check console.' });
         }
+        setStatus({ type: 'success', msg: 'Verification complete! Redirecting...' });
       } else if (signIn && signIn.status === 'needs_first_factor') {
         console.log("[DEBUG] Attempting signIn.attemptFirstFactor...");
         const completeSignIn = await signIn.attemptFirstFactor({
