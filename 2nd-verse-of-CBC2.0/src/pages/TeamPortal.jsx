@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth, useUser } from '@clerk/react';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, Eye, Users } from 'lucide-react';
 import { ref, get, set, increment, serverTimestamp } from 'firebase/database';
@@ -11,75 +10,68 @@ import TeamVerificationSection from '../components/TeamVerificationSection';
 import NeuralBackground from '../components/NeuralBackground';
 
 export default function TeamPortal() {
-  const { isLoaded, isSignedIn, signOut } = useAuth();
-  const { user } = useUser();
   const navigate = useNavigate();
   const [teamData, setTeamData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const fallbackEmail = typeof window !== 'undefined' ? localStorage.getItem('verifiedEmail') : null;
-  const clerkEmail = (isSignedIn && user?.primaryEmailAddress?.emailAddress) ? user.primaryEmailAddress.emailAddress : null;
-  const activeEmail = clerkEmail || fallbackEmail;
-  const isAuthenticated = isSignedIn || !!fallbackEmail;
+  const verifiedEmail = typeof window !== 'undefined' ? localStorage.getItem('verifiedEmail') : null;
 
   useEffect(() => {
-    if (isAuthenticated && activeEmail) {
+    if (verifiedEmail) {
       const fetchTeam = async () => {
         try {
-          const emailHash = activeEmail.toLowerCase().trim().replace(/[.#$\[\]\/]/g, '_');
+          // Check if we have cached team in localStorage first
+          const cached = localStorage.getItem('verifiedTeam');
+          if (cached) {
+            try {
+              setTeamData(JSON.parse(cached));
+            } catch(e) {}
+          }
+
+          const emailHash = verifiedEmail.toLowerCase().trim().replace(/[.#$\[\]\/]/g, '_');
           const teamRef = ref(rtdb, `registeredTeams/${emailHash}`);
           const snapshot = await get(teamRef);
           
           if (snapshot.exists()) {
             const data = snapshot.val();
             setTeamData(data);
+            localStorage.setItem('verifiedTeam', JSON.stringify(data));
             
             const viewRef = ref(rtdb, `teamViews/${emailHash}`);
             await set(viewRef, {
-              teamName: data['Team Name'] || data['TeamName'] || 'Unknown Team',
-              email: activeEmail,
+              teamName: data['Team Name'] || data['TeamName'] || data["Team Leader's Name:"] || 'Unknown Team',
+              email: verifiedEmail,
               views: increment(1),
               lastViewed: serverTimestamp()
             });
-          } else {
-            setError(`No registered team found for "${activeEmail}". Please verify using the email address submitted during team registration.`);
+          } else if (!cached) {
+            setError(`No registered team found for "${verifiedEmail}". Please verify using the email address submitted during team registration.`);
           }
         } catch (err) {
           console.error(err);
-          setError('Failed to load team data. Please try again.');
+          if (!teamData) {
+            setError('Failed to load team data. Please try again.');
+          }
         } finally {
           setLoading(false);
         }
       };
       fetchTeam();
-    } else if (isLoaded && !isAuthenticated) {
+    } else {
       setLoading(false);
     }
-  }, [isLoaded, isAuthenticated, activeEmail]);
+  }, [verifiedEmail]);
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     localStorage.removeItem('verifiedEmail');
     localStorage.removeItem('verifiedTeam');
-    try {
-      if (signOut) await signOut();
-    } catch (e) {
-      console.error(e);
-    }
     setTeamData(null);
     setError('');
     navigate('/');
   };
 
-  if (!isLoaded && !fallbackEmail) {
-    return (
-      <div className="w-full min-h-screen bg-[#F4F6F9] dark:bg-[#010103] flex justify-center items-center">
-        <div className="text-[#00F3FF] animate-pulse font-bold tracking-widest uppercase font-mono">Initializing Secure Portal...</div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
+  if (!verifiedEmail) {
     return (
       <div className="w-full min-h-screen bg-[#F4F6F9] dark:bg-[#010103] text-gray-900 dark:text-[#F0F0F0] selection:bg-[#00F3FF]/30 selection:text-black dark:selection:text-white relative transition-colors duration-300 flex flex-col">
         <NeuralBackground />
@@ -93,7 +85,7 @@ export default function TeamPortal() {
     );
   }
 
-  if (loading) {
+  if (loading && !teamData) {
     return (
       <div className="w-full min-h-screen bg-[#F4F6F9] dark:bg-[#010103] flex justify-center items-center">
         <div className="text-[#00F3FF] animate-pulse font-bold tracking-widest uppercase font-mono">Loading Team Details...</div>
@@ -116,7 +108,7 @@ export default function TeamPortal() {
               </h2>
               <h3 className="text-xl font-bold flex items-center gap-2 text-gray-400 font-mono">
                 <Users className="text-[#00F3FF]" size={20} /> 
-                {teamData ? (teamData['Team Name'] || teamData['TeamName'] || 'Your Team') : 'Your Team'}
+                {teamData ? (teamData['Team Name:'] || teamData['Team Name'] || teamData['TeamName'] || 'Your Team') : 'Your Team'}
               </h3>
             </div>
             <button 

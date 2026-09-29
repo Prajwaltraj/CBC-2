@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ClerkProvider } from '@clerk/react';
 import CustomCursor from './components/CustomCursor';
 import NavigationBar from './components/NavigationBar';
 import FixedTimer from './components/FixedTimer';
@@ -21,8 +20,6 @@ import NeuralBackground from './components/NeuralBackground';
 import RulebookPage from './pages/RulebookPage';
 import TeamPortal from './pages/TeamPortal';
 import { Analytics } from '@vercel/analytics/react';
-
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || "pk_test_c3RlYWR5LWRvYmVybWFuLTI5NTkuY2xlcmsuYWNjb3VudHMuZGV2JA";
 
 function LandingPage() {
   return (
@@ -53,20 +50,18 @@ function LandingPage() {
 
 export default function App() {
   return (
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-      <Router>
-        <CustomCursor />
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/admin" element={<AdminPortal />} />
-          <Route path="/login" element={<Navigate to="/admin" replace />} />
-          <Route path="/board" element={<SmartBoard />} />
-          <Route path="/display" element={<Navigate to="/board" replace />} />
-          <Route path="/rulebook" element={<RulebookPage />} />
-          <Route path="/team" element={<TeamPortal />} />
-        </Routes>
-        <Analytics />
-      </Router>
-    </ClerkProvider>
+    <Router>
+      <CustomCursor />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/admin" element={<AdminPortal />} />
+        <Route path="/login" element={<Navigate to="/admin" replace />} />
+        <Route path="/board" element={<SmartBoard />} />
+        <Route path="/display" element={<Navigate to="/board" replace />} />
+        <Route path="/rulebook" element={<RulebookPage />} />
+        <Route path="/team" element={<TeamPortal />} />
+      </Routes>
+      <Analytics />
+    </Router>
   );
 }
