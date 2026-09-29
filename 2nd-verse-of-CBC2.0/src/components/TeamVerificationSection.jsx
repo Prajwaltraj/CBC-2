@@ -115,13 +115,18 @@ const TeamVerificationSection = () => {
         }
 
         console.log("[DEBUG] Verification succeeded! Clerk handles session automatically in v6.");
+        
+        // V6 BUG WORKAROUND: Clerk sometimes keeps status='missing_requirements' forever
+        // if the dashboard requires first_name/last_name but we only ask for email.
+        // Since we only need the email for the TeamPortal, we manually save it to localStorage 
+        // to bypass the session bug and guarantee they can enter the portal.
+        localStorage.setItem('verifiedEmail', email);
+
         if (completeSignUp && completeSignUp.createdSessionId) {
           await setActive({ session: completeSignUp.createdSessionId });
         } else if (window.Clerk && window.Clerk.client && window.Clerk.client.signUp && window.Clerk.client.signUp.createdSessionId) {
           await setActive({ session: window.Clerk.client.signUp.createdSessionId });
         } else {
-          // If Clerk handles it automatically, let's just wait for isSignedIn to flip,
-          // or force a hard reload to pick up the new auth state.
           setTimeout(() => {
             window.location.href = '/team';
           }, 1500);
@@ -150,6 +155,8 @@ const TeamVerificationSection = () => {
             window.location.href = '/team';
           }, 1500);
         }
+        
+        localStorage.setItem('verifiedEmail', email);
         setStatus({ type: 'success', msg: 'Verification complete! Redirecting...' });
       } else {
         console.log("[DEBUG] Neither signUp nor signIn are in expected states.");

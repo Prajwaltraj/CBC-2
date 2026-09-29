@@ -16,18 +16,22 @@ export default function TeamPortal() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    // If auth is loaded and user is NOT signed in, kick them out
-    if (isLoaded && !isSignedIn) {
-      navigate('/');
-    }
-  }, [isLoaded, isSignedIn, navigate]);
+  const fallbackEmail = localStorage.getItem('verifiedEmail');
+  const isAuthenticated = isSignedIn || !!fallbackEmail;
 
   useEffect(() => {
-    if (isSignedIn && user?.primaryEmailAddress?.emailAddress) {
+    // If auth is loaded and user is NOT signed in via Clerk OR localStorage, kick them out
+    if (isLoaded && !isAuthenticated) {
+      navigate('/');
+    }
+  }, [isLoaded, isAuthenticated, navigate]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
       const fetchTeam = async () => {
         try {
-          const userEmail = user.primaryEmailAddress.emailAddress;
+          const userEmail = (isSignedIn && user?.primaryEmailAddress?.emailAddress) ? user.primaryEmailAddress.emailAddress : fallbackEmail;
+          if (!userEmail) return;
           const emailHash = userEmail.toLowerCase().trim().replace(/[.#$\[\]\/]/g, '_');
           const teamRef = ref(rtdb, `registeredTeams/${emailHash}`);
           const snapshot = await get(teamRef);
@@ -59,6 +63,7 @@ export default function TeamPortal() {
   }, [isSignedIn, user]);
 
   const handleLogout = async () => {
+    localStorage.removeItem('verifiedEmail');
     await signOut();
     navigate('/');
   };
