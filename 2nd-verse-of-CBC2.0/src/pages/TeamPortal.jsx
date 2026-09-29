@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth, useUser } from '@clerk/react';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, Eye, Users } from 'lucide-react';
 import { ref, get, set, increment, serverTimestamp } from 'firebase/database';
@@ -10,18 +11,23 @@ import TeamVerificationSection from '../components/TeamVerificationSection';
 import NeuralBackground from '../components/NeuralBackground';
 
 export default function TeamPortal() {
+  const { isLoaded, isSignedIn, signOut } = useAuth();
+  const { user } = useUser();
   const navigate = useNavigate();
   const [teamData, setTeamData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  
-  const verifiedEmail = typeof window !== 'undefined' ? localStorage.getItem('verifiedEmail') : null;
+
+  const fallbackEmail = typeof window !== 'undefined' ? localStorage.getItem('verifiedEmail') : null;
+  const clerkEmail = (isSignedIn && user?.primaryEmailAddress?.emailAddress) ? user.primaryEmailAddress.emailAddress : null;
+  const activeEmail = clerkEmail || fallbackEmail;
+  const isAuthenticated = isSignedIn || !!fallbackEmail;
 
   useEffect(() => {
-    if (verifiedEmail) {
+    if (isAuthenticated && activeEmail) {
       const fetchTeam = async () => {
         try {
-          const emailHash = verifiedEmail.toLowerCase().trim().replace(/[.#$\[\]\/]/g, '_');
+          const emailHash = activeEmail.toLowerCase().trim().replace(/[.#$\[\]\/]/g, '_');
           const teamRef = ref(rtdb, `registeredTeams/${emailHash}`);
           const snapshot = await get(teamRef);
           
@@ -32,12 +38,12 @@ export default function TeamPortal() {
             const viewRef = ref(rtdb, `teamViews/${emailHash}`);
             await set(viewRef, {
               teamName: data['Team Name'] || data['TeamName'] || 'Unknown Team',
-              email: verifiedEmail,
+              email: activeEmail,
               views: increment(1),
               lastViewed: serverTimestamp()
             });
           } else {
-            setError(`No registered team found for "${verifiedEmail}". Please verify with the email address used during team registration.`);
+            setError(`No registered team found for "${activeEmail}". Please verify using the email address submitted during team registration.`);
           }
         } catch (err) {
           console.error(err);
@@ -47,20 +53,33 @@ export default function TeamPortal() {
         }
       };
       fetchTeam();
-    } else {
+    } else if (isLoaded && !isAuthenticated) {
       setLoading(false);
     }
-  }, [verifiedEmail]);
+  }, [isLoaded, isAuthenticated, activeEmail]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     localStorage.removeItem('verifiedEmail');
     localStorage.removeItem('verifiedTeam');
+    try {
+      if (signOut) await signOut();
+    } catch (e) {
+      console.error(e);
+    }
     setTeamData(null);
     setError('');
     navigate('/');
   };
 
-  if (!verifiedEmail) {
+  if (!isLoaded && !fallbackEmail) {
+    return (
+      <div className="w-full min-h-screen bg-[#F4F6F9] dark:bg-[#010103] flex justify-center items-center">
+        <div className="text-[#00F3FF] animate-pulse font-bold tracking-widest uppercase font-mono">Initializing Secure Portal...</div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
     return (
       <div className="w-full min-h-screen bg-[#F4F6F9] dark:bg-[#010103] text-gray-900 dark:text-[#F0F0F0] selection:bg-[#00F3FF]/30 selection:text-black dark:selection:text-white relative transition-colors duration-300 flex flex-col">
         <NeuralBackground />
@@ -77,7 +96,7 @@ export default function TeamPortal() {
   if (loading) {
     return (
       <div className="w-full min-h-screen bg-[#F4F6F9] dark:bg-[#010103] flex justify-center items-center">
-        <div className="text-[#00F3FF] animate-pulse font-bold tracking-widest uppercase">Loading Team Details...</div>
+        <div className="text-[#00F3FF] animate-pulse font-bold tracking-widest uppercase font-mono">Loading Team Details...</div>
       </div>
     );
   }
@@ -92,17 +111,17 @@ export default function TeamPortal() {
         <div className="mb-12">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-              <h2 className="text-4xl md:text-5xl font-extrabold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-[#00F3FF] to-[#BC13FE]">
+              <h2 className="text-4xl md:text-5xl font-extrabold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-[#00F3FF] to-[#BC13FE] font-orbitron">
                 TEAM DASHBOARD
               </h2>
-              <h3 className="text-xl font-bold flex items-center gap-2 text-gray-400">
+              <h3 className="text-xl font-bold flex items-center gap-2 text-gray-400 font-mono">
                 <Users className="text-[#00F3FF]" size={20} /> 
                 {teamData ? (teamData['Team Name'] || teamData['TeamName'] || 'Your Team') : 'Your Team'}
               </h3>
             </div>
             <button 
               onClick={handleLogout} 
-              className="flex items-center gap-2 text-red-400 hover:text-white transition-colors text-sm font-bold uppercase tracking-wider bg-red-500/10 hover:bg-red-500/30 px-6 py-3 rounded-lg border border-red-500/20 cursor-pointer"
+              className="flex items-center gap-2 text-red-400 hover:text-white transition-colors text-sm font-bold uppercase tracking-wider bg-red-500/10 hover:bg-red-500/30 px-6 py-3 rounded-lg border border-red-500/20 cursor-pointer font-mono"
             >
               <LogOut size={18} /> Sign Out
             </button>
@@ -110,13 +129,13 @@ export default function TeamPortal() {
         </div>
         
         {error ? (
-          <div className="text-red-400 text-center py-12 bg-red-500/10 rounded-2xl border border-red-500/20 flex flex-col items-center gap-4">
+          <div className="text-red-400 text-center py-12 bg-red-500/10 rounded-2xl border border-red-500/20 flex flex-col items-center gap-4 font-mono">
             <p className="text-base">{error}</p>
             <button 
               onClick={handleLogout}
               className="px-6 py-2 bg-red-500/20 hover:bg-red-500/30 text-white rounded-lg border border-red-500/30 text-sm font-bold uppercase tracking-wider transition-colors cursor-pointer"
             >
-              Verify With Different Details
+              Verify With Different Email
             </button>
           </div>
         ) : teamData ? (
