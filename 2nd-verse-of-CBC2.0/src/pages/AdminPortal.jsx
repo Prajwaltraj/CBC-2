@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { auth, loginWithGoogle, loginWithEmail, logout, rtdb } from '../firebase';
-import { ref, set } from 'firebase/database';
-import { LogOut, Send, AlertTriangle, XCircle, CheckCircle2, Monitor } from 'lucide-react';
+import { ref, set, onValue } from 'firebase/database';
+import { LogOut, Send, AlertTriangle, XCircle, CheckCircle2, Monitor, Edit3 } from 'lucide-react';
 import { BoardTemplate } from "./SmartBoard";
 import AdminTeamViews from "../components/AdminTeamViews";
 import AdminMediaControls from "../components/AdminMediaControls"; // Import the template for live preview
@@ -61,6 +61,29 @@ const AdminPortal = () => {
   const [status, setStatus] = useState({ type: '', msg: '' });
   const [showLivePreview, setShowLivePreview] = useState(false);
   const [activeTab, setActiveTab] = useState("broadcast");
+  const [allowTeamEditing, setAllowTeamEditing] = useState(false);
+
+  useEffect(() => {
+    const configRef = ref(rtdb, 'config/allowTeamEditing');
+    const unsub = onValue(configRef, (snapshot) => {
+      if (snapshot.exists()) {
+        setAllowTeamEditing(Boolean(snapshot.val()));
+      }
+    });
+    return () => unsub();
+  }, []);
+
+  const toggleTeamEditing = async () => {
+    try {
+      const configRef = ref(rtdb, 'config/allowTeamEditing');
+      await set(configRef, !allowTeamEditing);
+      setStatus({ type: 'success', msg: `Team editing access is now ${!allowTeamEditing ? 'ENABLED' : 'DISABLED'} ✓` });
+      setTimeout(() => setStatus({ type: '', msg: '' }), 3000);
+    } catch (e) {
+      console.error(e);
+      setStatus({ type: 'error', msg: 'Failed to update edit access config.' });
+    }
+  };
 
   
   const [loginEmail, setLoginEmail] = useState('');
@@ -354,6 +377,19 @@ const AdminPortal = () => {
           </a>
 
           <div className="h-4 w-px bg-[#242a30]"></div>
+
+          <button
+            onClick={toggleTeamEditing}
+            className={`text-xs font-mono px-3 py-1.5 rounded-lg border transition-all flex items-center gap-1.5 ${
+              allowTeamEditing 
+                ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' 
+                : 'bg-[#0f1215] border-[#242a30] text-[#7c8891] hover:text-white'
+            }`}
+            title="Toggle whether participants can edit their branch, year, and details on /team"
+          >
+            <Edit3 size={13} />
+            <span>Team Edit Access: {allowTeamEditing ? 'ON' : 'OFF'}</span>
+          </button>
 
           <button
             onClick={() => setShowLivePreview(!showLivePreview)}

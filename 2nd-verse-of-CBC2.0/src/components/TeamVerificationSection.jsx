@@ -78,11 +78,16 @@ const TeamVerificationSection = () => {
         return;
       }
 
-      // Successful verification
-      localStorage.setItem('verifiedEmail', cleanEmail);
+      // Successful verification - Store in sessionStorage so it automatically clears when the user exits the browser/tab
+      sessionStorage.setItem('verifiedEmail', cleanEmail);
       if (data.team) {
-        localStorage.setItem('verifiedTeam', JSON.stringify(data.team));
+        sessionStorage.setItem('verifiedTeam', JSON.stringify(data.team));
       }
+      // Clear legacy localStorage keys
+      try {
+        localStorage.removeItem('verifiedEmail');
+        localStorage.removeItem('verifiedTeam');
+      } catch (e) {}
 
       setStatus({ type: 'success', msg: 'Verification successful! Loading dashboard...' });
       setTimeout(() => {
@@ -95,7 +100,7 @@ const TeamVerificationSection = () => {
     }
   };
 
-  const storedEmail = typeof window !== 'undefined' ? localStorage.getItem('verifiedEmail') : null;
+  const storedEmail = typeof window !== 'undefined' ? sessionStorage.getItem('verifiedEmail') : null;
 
   return (
     <section id="verification" className="py-20 relative w-full overflow-hidden flex flex-col items-center">
@@ -129,6 +134,8 @@ const TeamVerificationSection = () => {
                   </button>
                   <button 
                     onClick={() => {
+                      sessionStorage.removeItem('verifiedEmail');
+                      sessionStorage.removeItem('verifiedTeam');
                       localStorage.removeItem('verifiedEmail');
                       localStorage.removeItem('verifiedTeam');
                       window.location.reload();
