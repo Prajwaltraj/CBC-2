@@ -62,7 +62,7 @@ const NavigationBar = () => {
     { name: 'Timeline', href: '#timeline' },
     { name: 'Statements', href: '#problems' },
     { name: 'Sponsors', href: '#sponsors' },
-    { name: 'Team', href: '#team' },
+    { name: 'Team', href: '/team' },
   ];
 
   const handleLogoClick = (e) => {
@@ -107,6 +107,9 @@ const NavigationBar = () => {
           }, 50);
         }
       }
+    } else {
+      navigate(href);
+      window.scrollTo(0, 0);
     }
   };
 
