@@ -328,24 +328,25 @@ export default function TeamPortal() {
       <CustomCursor />
       <NavigationBar />
 
-      <main className="flex-1 pt-24 sm:pt-28 pb-12 sm:pb-16 px-3.5 sm:px-6 max-w-4xl mx-auto w-full z-10">
+      <main className="flex-1 pt-28 sm:pt-32 pb-12 sm:pb-16 px-3.5 sm:px-6 max-w-4xl mx-auto w-full z-10">
         {/* Top Header Bar */}
-        <div className="flex justify-between items-center mb-5 sm:mb-8 pb-3.5 sm:pb-4 border-b border-gray-800">
-          <div>
+        <div className="mb-5 sm:mb-8 pb-3.5 sm:pb-4 border-b border-gray-800">
+          <div className="flex justify-between items-center gap-3">
             <h1 className="text-xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#00F3FF] via-[#A300FF] to-[#FF007A] font-orbitron tracking-wider">
               TEAM PORTAL
             </h1>
-            <p className="text-gray-400 text-xs sm:text-sm font-mono mt-0.5">
-              Verified access for <span className="text-[#00F3FF] font-medium break-all">{verifiedEmail}</span>
-            </p>
+            
+            <button 
+              onClick={handleLogout}
+              className="flex items-center gap-1.5 text-red-400 hover:text-white transition-colors text-xs font-bold uppercase tracking-wider bg-red-500/10 hover:bg-red-500/30 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border border-red-500/20 cursor-pointer font-mono shrink-0"
+            >
+              <LogOut size={13} /> Sign Out
+            </button>
           </div>
-          
-          <button 
-            onClick={handleLogout}
-            className="flex items-center gap-1.5 text-red-400 hover:text-white transition-colors text-xs font-bold uppercase tracking-wider bg-red-500/10 hover:bg-red-500/30 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border border-red-500/20 cursor-pointer font-mono"
-          >
-            <LogOut size={13} /> Sign Out
-          </button>
+
+          <p className="text-gray-400 text-xs sm:text-sm font-mono mt-1.5 sm:mt-1">
+            Verified access for <span className="text-[#00F3FF] font-medium break-words">{verifiedEmail}</span>
+          </p>
         </div>
         
         {error ? (
@@ -406,13 +407,22 @@ export default function TeamPortal() {
                     Domain
                   </span>
                   {isEditing ? (
-                    <input
-                      type="text"
+                    <select
                       value={editDomain}
                       onChange={(e) => setEditDomain(e.target.value)}
-                      placeholder="e.g. Software & Web Development / AI"
-                      className="w-full bg-black/50 border border-[#00F3FF]/40 focus:border-[#00F3FF] focus:ring-1 focus:ring-[#00F3FF] rounded-lg p-2.5 text-white font-mono text-xs sm:text-sm outline-none transition-all"
-                    />
+                      className="w-full bg-black/50 border border-[#00F3FF]/40 focus:border-[#00F3FF] focus:ring-1 focus:ring-[#00F3FF] rounded-lg p-2.5 text-white font-mono text-xs sm:text-sm outline-none transition-all cursor-pointer"
+                    >
+                      <option value="" className="bg-[#0b0f19] text-gray-400">Select Domain</option>
+                      {editDomain && !['Software & Web Development', 'Artificial Intelligence & Machine Learning (AI&ML)', 'Cybersecurity', 'Open Innovation', 'Blockchain & Web3', 'IoT & Embedded Systems'].includes(editDomain) && (
+                        <option value={editDomain} className="bg-[#0b0f19] text-white">{editDomain}</option>
+                      )}
+                      <option value="Software & Web Development" className="bg-[#0b0f19] text-white">Software & Web Development</option>
+                      <option value="Artificial Intelligence & Machine Learning (AI&ML)" className="bg-[#0b0f19] text-white">Artificial Intelligence & Machine Learning (AI&ML)</option>
+                      <option value="Cybersecurity" className="bg-[#0b0f19] text-white">Cybersecurity</option>
+                      <option value="Open Innovation" className="bg-[#0b0f19] text-white">Open Innovation</option>
+                      <option value="Blockchain & Web3" className="bg-[#0b0f19] text-white">Blockchain & Web3</option>
+                      <option value="IoT & Embedded Systems" className="bg-[#0b0f19] text-white">IoT & Embedded Systems</option>
+                    </select>
                   ) : (
                     <span className="text-sm font-semibold text-white break-words">
                       {parsedTeam.domain}
