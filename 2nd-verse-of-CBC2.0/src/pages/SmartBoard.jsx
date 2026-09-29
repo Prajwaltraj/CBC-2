@@ -128,6 +128,12 @@ export const BoardTemplate = ({
   useEffect(() => {
     if (data?.videoState?.lastSeek && data.videoState.lastSeek.id !== prevSeekRef.current) {
       if (playerRef.current) {
+  useEffect(() => {
+    if (playerRef.current && forceSkipToken > 0) {
+      playerRef.current.seekTo(playerRef.current.getCurrentTime() + 10, "seconds");
+    }
+  }, [forceSkipToken]);
+
         playerRef.current.seekTo(data.videoState.lastSeek.time, 'seconds');
       }
       prevSeekRef.current = data.videoState.lastSeek.id;
@@ -272,7 +278,7 @@ export const BoardTemplate = ({
                       <ReactPlayer
                         ref={playerRef}
                         url={posterUrl}
-                        playing={data?.videoState?.playing ?? true}
+                        playing={isPlaying}
                         muted={isMuted}
                         loop={true}
                         controls={false}
@@ -328,6 +334,20 @@ const SmartBoard = () => {
   const [data, setData] = useState(null);
   const [muted, setMuted] = useState(false);
   const [isAlerting, setIsAlerting] = useState(false);
+  const [mediaControls, setMediaControls] = useState({ isPlaying: true, isMuted: false, forceSkipToken: 0 });
+
+  useEffect(() => {
+    const controlsRef = ref(rtdb, "smartboard/controls");
+    const unsubscribe = onValue(controlsRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const controls = snapshot.val();
+        setMediaControls(controls);
+        if (controls.isMuted !== undefined) setMuted(controls.isMuted);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
   const [typedHeadline, setTypedHeadline] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [showMessage, setShowMessage] = useState(true);
@@ -539,6 +559,8 @@ const SmartBoard = () => {
         typedHeadline={typedHeadline}
         isTyping={isTyping}
         showMessage={showMessage}
+        isPlaying={mediaControls.isPlaying}
+        forceSkipToken={mediaControls.forceSkipToken}
       />
     </div>
   );

@@ -2,7 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { auth, loginWithGoogle, loginWithEmail, logout, rtdb } from '../firebase';
 import { ref, set } from 'firebase/database';
 import { LogOut, Send, AlertTriangle, XCircle, CheckCircle2, Monitor } from 'lucide-react';
-import { BoardTemplate } from './SmartBoard'; // Import the template for live preview
+import { BoardTemplate } from "./SmartBoard";
+import AdminTeamViews from "../components/AdminTeamViews";
+import AdminMediaControls from "../components/AdminMediaControls"; // Import the template for live preview
 
 // List of emails allowed to access the Admin Portal
 const ALLOWED_EMAILS = [
@@ -58,6 +60,8 @@ const AdminPortal = () => {
   const [selectedType, setSelectedType] = useState('info');
   const [status, setStatus] = useState({ type: '', msg: '' });
   const [showLivePreview, setShowLivePreview] = useState(false);
+  const [activeTab, setActiveTab] = useState("broadcast");
+
   
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
@@ -377,39 +381,69 @@ const AdminPortal = () => {
         </div>
       </div>
 
-      {/* Main Container */}
+      {/* Tabs Navigation */}
+      <div className="bg-[#14171b] border-b border-[#242a30] px-6 md:px-10 flex gap-6 overflow-x-auto">
+        <button
+          onClick={() => setActiveTab('broadcast')}
+          className={`py-4 text-sm font-bold uppercase tracking-wider border-b-2 transition-colors ${
+            activeTab === 'broadcast' ? 'border-[#7c5cff] text-white' : 'border-transparent text-gray-500 hover:text-gray-300'
+          }`}
+        >
+          Announcements
+        </button>
+        <button
+          onClick={() => setActiveTab('media')}
+          className={`py-4 text-sm font-bold uppercase tracking-wider border-b-2 transition-colors ${
+            activeTab === 'media' ? 'border-[#BC13FE] text-white' : 'border-transparent text-gray-500 hover:text-gray-300'
+          }`}
+        >
+          Media Controls
+        </button>
+        <button
+          onClick={() => setActiveTab('team-views')}
+          className={`py-4 text-sm font-bold uppercase tracking-wider border-b-2 transition-colors ${
+            activeTab === 'team-views' ? 'border-[#00F3FF] text-white' : 'border-transparent text-gray-500 hover:text-gray-300'
+          }`}
+        >
+          Team Logs
+        </button>
+      </div>
+
+      {/* Main Container - Conditionally Rendered based on Tab */}
       <div className="flex-1 max-w-[1240px] mx-auto w-full px-6 md:px-8 py-8 flex flex-col justify-between">
         
-        {/* Top Branding Section */}
-        <div>
-          <div className="flex items-center gap-4 mb-4 flex-wrap">
-            <img src="/logos/gatlockuplogo.png" alt="GAT Logo" className="h-8 md:h-10 object-contain" />
-            <div className="w-px h-6 bg-[#242a30]" />
-            <img src="/logos/aimldeptlogo.png" alt="AIML Dept Logo" className="h-8 md:h-10 object-contain" />
-            <div className="w-px h-6 bg-[#242a30]" />
-            <img src="/logos/cbc2ologo.PNG" alt="CBC 2.0" className="h-8 md:h-10 object-contain" />
-          </div>
+        {activeTab === 'broadcast' && (
+          <>
+            {/* Top Branding Section */}
+            <div>
+              <div className="flex items-center gap-4 mb-4 flex-wrap">
+                <img src="/logos/gatlockuplogo.png" alt="GAT Logo" className="h-8 md:h-10 object-contain" />
+                <div className="w-px h-6 bg-[#242a30]" />
+                <img src="/logos/aimldeptlogo.png" alt="AIML Dept Logo" className="h-8 md:h-10 object-contain" />
+                <div className="w-px h-6 bg-[#242a30]" />
+                <img src="/logos/cbc2ologo.PNG" alt="CBC 2.0" className="h-8 md:h-10 object-contain" />
+              </div>
 
-          <div className="flex items-center gap-2 font-mono text-xs tracking-widest text-[#33e0a1] uppercase mb-1">
-            <span className="w-2 h-2 rounded-full bg-[#33e0a1] shadow-[0_0_8px_#33e0a1]" />
-            Broadcast Console
-          </div>
-          <span className="inline-block bg-[#7c5cff]/15 text-[#7c5cff] border border-[#7c5cff]/30 px-2.5 py-0.5 rounded text-[11px] font-mono font-semibold mb-2">
-            A National-Level 24-Hour Hackathon
-          </span>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight mb-1">
-            CODE BREAKER CHALLENGE 2.0
-          </h1>
-          <div className="font-mono text-xs text-[#33e0a1] italic mb-1">
-            “Think. Build. Break Limits.” • #AIforchange
-          </div>
-          <p className="text-xs text-[#7c8891] mb-8">
-            Whatever you send here appears instantly on every /display screen, with sound.
-          </p>
-        </div>
+              <div className="flex items-center gap-2 font-mono text-xs tracking-widest text-[#33e0a1] uppercase mb-1">
+                <span className="w-2 h-2 rounded-full bg-[#33e0a1] shadow-[0_0_8px_#33e0a1]" />
+                Broadcast Console
+              </div>
+              <span className="inline-block bg-[#7c5cff]/15 text-[#7c5cff] border border-[#7c5cff]/30 px-2.5 py-0.5 rounded text-[11px] font-mono font-semibold mb-2">
+                A National-Level 24-Hour Hackathon
+              </span>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight mb-1">
+                CODE BREAKER CHALLENGE 2.0
+              </h1>
+              <div className="font-mono text-xs text-[#33e0a1] italic mb-1">
+                “Think. Build. Break Limits.” • #AIforchange
+              </div>
+              <p className="text-xs text-[#7c8891] mb-8">
+                Whatever you send here appears instantly on every /display screen, with sound.
+              </p>
+            </div>
 
-        {/* 2-Column Grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* 2-Column Grid Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
           {/* LEFT SIDE: Custom Broadcast Form */}
           <div className="bg-[#14171b] border border-[#242a30] rounded-2xl p-6 md:p-7 flex flex-col justify-between">
@@ -576,6 +610,16 @@ const AdminPortal = () => {
               <BoardTemplate data={previewData} isPreview={true} isMuted={true} />
             </div>
           </div>
+        )}
+          </>
+        )}
+
+        {activeTab === 'media' && (
+          <AdminMediaControls />
+        )}
+
+        {activeTab === 'team-views' && (
+          <AdminTeamViews />
         )}
 
         {/* Bottom Footer Notice */}
