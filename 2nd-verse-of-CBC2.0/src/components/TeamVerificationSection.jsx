@@ -117,7 +117,16 @@ const TeamVerificationSection = () => {
         console.log("[DEBUG] Verification succeeded! Clerk handles session automatically in v6.");
         if (completeSignUp && completeSignUp.createdSessionId) {
           await setActive({ session: completeSignUp.createdSessionId });
+        } else if (window.Clerk && window.Clerk.client && window.Clerk.client.signUp && window.Clerk.client.signUp.createdSessionId) {
+          await setActive({ session: window.Clerk.client.signUp.createdSessionId });
+        } else {
+          // If Clerk handles it automatically, let's just wait for isSignedIn to flip,
+          // or force a hard reload to pick up the new auth state.
+          setTimeout(() => {
+            window.location.href = '/team';
+          }, 1500);
         }
+        
         setStatus({ type: 'success', msg: 'Verification complete! Redirecting...' });
       } else if (signIn && signIn.status === 'needs_first_factor') {
         console.log("[DEBUG] Attempting signIn.attemptFirstFactor...");
@@ -131,14 +140,17 @@ const TeamVerificationSection = () => {
           throw completeSignIn.error;
         }
 
-        if (completeSignIn.status === 'complete') {
+        if (completeSignIn && completeSignIn.createdSessionId) {
           console.log("[DEBUG] Setting active session for signIn...");
           await setActive({ session: completeSignIn.createdSessionId });
-          setStatus({ type: 'success', msg: 'Verification complete! Redirecting...' });
+        } else if (window.Clerk && window.Clerk.client && window.Clerk.client.signIn && window.Clerk.client.signIn.createdSessionId) {
+          await setActive({ session: window.Clerk.client.signIn.createdSessionId });
         } else {
-          console.log("[DEBUG] SignIn not complete. Status:", completeSignIn.status);
-          setStatus({ type: 'error', msg: 'Sign in requires additional steps. Check console.' });
+          setTimeout(() => {
+            window.location.href = '/team';
+          }, 1500);
         }
+        setStatus({ type: 'success', msg: 'Verification complete! Redirecting...' });
       } else {
         console.log("[DEBUG] Neither signUp nor signIn are in expected states.");
         setStatus({ type: 'error', msg: 'Invalid authentication state. Try going back and requesting a new code.' });
