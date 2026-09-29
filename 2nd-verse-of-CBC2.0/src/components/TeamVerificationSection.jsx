@@ -106,8 +106,8 @@ const TeamVerificationSection = () => {
 
     try {
       if (signUp && signUp.status === 'missing_requirements') {
-        console.log("[DEBUG] Attempting signUp.attemptEmailAddressVerification...");
-        const completeSignUp = await signUp.attemptEmailAddressVerification({ code });
+        console.log("[DEBUG] Attempting signUp.attemptVerification...");
+        const completeSignUp = await signUp.attemptVerification({ strategy: 'email_code', code });
         console.log("[DEBUG] completeSignUp result:", completeSignUp);
         
         if (completeSignUp && completeSignUp.error) {
