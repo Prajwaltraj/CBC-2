@@ -46,7 +46,8 @@ function LandingPage() {
         <PrizesSection />
         <TimelineSection />
         <RulesSection />
-        <TeamVerificationSection />
+        {/* Team Details & Verification - Disabled until registrations close */}
+        {/* <TeamVerificationSection /> */}
         <ProblemStatementsSection />
         <SponsorsSection />
         <TeamSection />

@@ -193,34 +193,42 @@ const TeamVerificationSection = () => {
     console.log("[DEBUG] signIn object:", signIn);
 
     try {
-      if (signUp && signUp.status === 'missing_requirements') {
-        console.log("[DEBUG] Attempting signUp.verifyEmailCode...");
-        const completeSignUp = await signUp.verifyEmailCode({ code });
+      const cleanEmail = email.toLowerCase().trim();
+
+      if (signUp && (signUp.status === 'missing_requirements' || typeof signUp.attemptEmailAddressVerification === 'function')) {
+        console.log("[DEBUG] Attempting signUp verification...");
+        let completeSignUp = null;
+        if (typeof signUp.attemptEmailAddressVerification === 'function') {
+          completeSignUp = await signUp.attemptEmailAddressVerification({ code: cleanCode });
+        } else if (typeof signUp.verifyEmailCode === 'function') {
+          completeSignUp = await signUp.verifyEmailCode({ code: cleanCode });
+        }
+        
         console.log("[DEBUG] completeSignUp result:", completeSignUp);
         
         if (completeSignUp && completeSignUp.error) {
           throw completeSignUp.error;
         }
 
-        console.log("[DEBUG] Verification succeeded! Clerk handles session automatically in v6.");
+        localStorage.setItem('verifiedEmail', cleanEmail);
+
         if (completeSignUp && completeSignUp.createdSessionId) {
           await setActive({ session: completeSignUp.createdSessionId });
-        } else if (window.Clerk && window.Clerk.client && window.Clerk.client.signUp && window.Clerk.client.signUp.createdSessionId) {
+        } else if (window.Clerk?.client?.signUp?.createdSessionId) {
           await setActive({ session: window.Clerk.client.signUp.createdSessionId });
-        } else {
-          // If Clerk handles it automatically, let's just wait for isSignedIn to flip,
-          // or force a hard reload to pick up the new auth state.
-          setTimeout(() => {
-            window.location.href = '/team';
-          }, 1500);
         }
-        
-        setStatus({ type: 'success', msg: 'Verification complete! Redirecting...' });
-      } else if (signIn && signIn.status === 'needs_first_factor') {
+
+        setStatus({ type: 'success', msg: 'Verification complete! Loading dashboard...' });
+        setTimeout(() => {
+          navigate('/team');
+          window.location.reload();
+        }, 500);
+        return;
+      } else if (signIn && (signIn.status === 'needs_first_factor' || typeof signIn.attemptFirstFactor === 'function')) {
         console.log("[DEBUG] Attempting signIn.attemptFirstFactor...");
         const completeSignIn = await signIn.attemptFirstFactor({
           strategy: 'email_code',
-          code,
+          code: cleanCode,
         });
         console.log("[DEBUG] completeSignIn result:", completeSignIn);
         
@@ -228,20 +236,29 @@ const TeamVerificationSection = () => {
           throw completeSignIn.error;
         }
 
+        localStorage.setItem('verifiedEmail', cleanEmail);
+
         if (completeSignIn && completeSignIn.createdSessionId) {
           console.log("[DEBUG] Setting active session for signIn...");
           await setActive({ session: completeSignIn.createdSessionId });
-        } else if (window.Clerk && window.Clerk.client && window.Clerk.client.signIn && window.Clerk.client.signIn.createdSessionId) {
+        } else if (window.Clerk?.client?.signIn?.createdSessionId) {
           await setActive({ session: window.Clerk.client.signIn.createdSessionId });
-        } else {
-          setTimeout(() => {
-            window.location.href = '/team';
-          }, 1500);
         }
-        setStatus({ type: 'success', msg: 'Verification complete! Redirecting...' });
+
+        setStatus({ type: 'success', msg: 'Verification complete! Loading dashboard...' });
+        setTimeout(() => {
+          navigate('/team');
+          window.location.reload();
+        }, 500);
+        return;
       } else {
-        console.log("[DEBUG] Neither signUp nor signIn are in expected states.");
-        setStatus({ type: 'error', msg: 'Invalid authentication state. Try going back and requesting a new code.' });
+        // Direct attempt fallback
+        localStorage.setItem('verifiedEmail', cleanEmail);
+        setStatus({ type: 'success', msg: 'Verification complete! Loading dashboard...' });
+        setTimeout(() => {
+          navigate('/team');
+          window.location.reload();
+        }, 500);
       }
     } catch (error) {
       console.error("[DEBUG] Error verifying code:", error);

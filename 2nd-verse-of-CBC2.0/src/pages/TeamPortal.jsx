@@ -18,14 +18,8 @@ export default function TeamPortal() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const fallbackEmail = localStorage.getItem('verifiedEmail');
+  const fallbackEmail = typeof window !== 'undefined' ? localStorage.getItem('verifiedEmail') : null;
   const isAuthenticated = isSignedIn || !!fallbackEmail;
-
-  useEffect(() => {
-    if (isLoaded && !isAuthenticated) {
-      navigate('/');
-    }
-  }, [isLoaded, isAuthenticated, navigate]);
 
   useEffect(() => {
     if (isAuthenticated) {
