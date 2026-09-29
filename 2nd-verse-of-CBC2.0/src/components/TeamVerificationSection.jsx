@@ -100,26 +100,54 @@ const TeamVerificationSection = () => {
     e.preventDefault();
     setStatus({ type: 'loading', msg: 'Verifying code...' });
 
+    console.log("[DEBUG] Verifying code with:", code);
+    console.log("[DEBUG] signUp object:", signUp);
+    console.log("[DEBUG] signIn object:", signIn);
+
     try {
-      // Check if we are in sign up or sign in flow
       if (signUp && signUp.status === 'missing_requirements') {
+        console.log("[DEBUG] Attempting signUp.verifyEmailCode...");
         const completeSignUp = await signUp.verifyEmailCode({ code });
+        console.log("[DEBUG] completeSignUp result:", completeSignUp);
+        
+        if (completeSignUp && completeSignUp.error) {
+          throw completeSignUp.error;
+        }
+
         if (completeSignUp.status === 'complete') {
+          console.log("[DEBUG] Setting active session for signUp...");
           await setActive({ session: completeSignUp.createdSessionId });
-          // The useEffect will catch isSignedIn and redirect to /team
+          setStatus({ type: 'success', msg: 'Verification complete! Redirecting...' });
+        } else {
+          console.log("[DEBUG] SignUp not complete. Status:", completeSignUp.status);
+          setStatus({ type: 'error', msg: 'Registration requires additional info. Check console.' });
         }
       } else if (signIn && signIn.status === 'needs_first_factor') {
+        console.log("[DEBUG] Attempting signIn.attemptFirstFactor...");
         const completeSignIn = await signIn.attemptFirstFactor({
           strategy: 'email_code',
           code,
         });
-        if (completeSignIn.status === 'complete') {
-          await setActive({ session: completeSignIn.createdSessionId });
-          // The useEffect will catch isSignedIn and redirect to /team
+        console.log("[DEBUG] completeSignIn result:", completeSignIn);
+        
+        if (completeSignIn && completeSignIn.error) {
+          throw completeSignIn.error;
         }
+
+        if (completeSignIn.status === 'complete') {
+          console.log("[DEBUG] Setting active session for signIn...");
+          await setActive({ session: completeSignIn.createdSessionId });
+          setStatus({ type: 'success', msg: 'Verification complete! Redirecting...' });
+        } else {
+          console.log("[DEBUG] SignIn not complete. Status:", completeSignIn.status);
+          setStatus({ type: 'error', msg: 'Sign in requires additional steps. Check console.' });
+        }
+      } else {
+        console.log("[DEBUG] Neither signUp nor signIn are in expected states.");
+        setStatus({ type: 'error', msg: 'Invalid authentication state. Try going back and requesting a new code.' });
       }
     } catch (error) {
-      console.error(error);
+      console.error("[DEBUG] Error during verification:", error);
       setStatus({ type: 'error', msg: error.errors?.[0]?.longMessage || 'Invalid code.' });
     }
   };
