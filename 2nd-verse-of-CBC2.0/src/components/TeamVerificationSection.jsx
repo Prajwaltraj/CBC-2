@@ -106,8 +106,8 @@ const TeamVerificationSection = () => {
 
     try {
       if (signUp && signUp.status === 'missing_requirements') {
-        console.log("[DEBUG] Attempting signUp.verifyEmailCode...");
-        const completeSignUp = await signUp.verifyEmailCode({ code });
+        console.log("[DEBUG] Attempting signUp.attemptEmailAddressVerification...");
+        const completeSignUp = await signUp.attemptEmailAddressVerification({ code });
         console.log("[DEBUG] completeSignUp result:", completeSignUp);
         
         if (completeSignUp && completeSignUp.error) {
@@ -205,6 +205,8 @@ const TeamVerificationSection = () => {
                       className="w-full bg-black/40 border border-gray-700/50 rounded-lg p-3 text-white outline-none focus:border-[#00F3FF] focus:ring-1 focus:ring-[#00F3FF] transition-all"
                     />
                   </div>
+                  {/* Required for Clerk v6 Custom Flow Bot Protection */}
+                  <div id="clerk-captcha"></div>
                   <button 
                     type="submit"
                     disabled={status.type === 'loading'}
@@ -236,6 +238,8 @@ const TeamVerificationSection = () => {
                       className="w-full bg-black/40 border border-gray-700/50 rounded-lg p-3 text-white outline-none focus:border-[#00F3FF] focus:ring-1 focus:ring-[#00F3FF] transition-all text-center tracking-widest text-2xl"
                     />
                   </div>
+                  {/* Required for Clerk v6 Custom Flow Bot Protection */}
+                  <div id="clerk-captcha"></div>
                   <button 
                     type="submit"
                     disabled={status.type === 'loading'}
