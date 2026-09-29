@@ -1,25 +1,22 @@
 import { useState } from 'react';
-import { Search, CheckCircle2, AlertTriangle, ShieldCheck, Phone, Mail } from 'lucide-react';
+import { Search, CheckCircle2, AlertTriangle, ShieldCheck, Mail } from 'lucide-react';
 import { ref, get } from 'firebase/database';
 import { rtdb } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 
 const TeamVerificationSection = () => {
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
   const [status, setStatus] = useState({ type: '', msg: '' });
   const navigate = useNavigate();
 
   const handleVerify = async (e) => {
     e.preventDefault();
-    if (!email || !phone) {
-      setStatus({ type: 'error', msg: 'Please provide both your registered email and WhatsApp number.' });
+    if (!email) {
+      setStatus({ type: 'error', msg: 'Please provide your registered email.' });
       return;
     }
 
     const cleanEmail = email.toLowerCase().trim();
-    const cleanPhone = phone.replace(/[^0-9]/g, '');
-
     setStatus({ type: 'loading', msg: 'Verifying team registration...' });
 
     try {
@@ -40,28 +37,6 @@ const TeamVerificationSection = () => {
       }
 
       const teamData = snapshot.val();
-      
-      // Extract all phone numbers from the registered team
-      const registeredPhones = [];
-      for (const [key, val] of Object.entries(teamData)) {
-        if (key && (key.toLowerCase().includes('whatsapp') || key.toLowerCase().includes('phone') || key.toLowerCase().includes('number')) && val) {
-          const digits = String(val).replace(/[^0-9]/g, '');
-          if (digits) registeredPhones.push(digits);
-        }
-      }
-
-      // Check if entered phone matches full number or last 4/6 digits
-      const isPhoneMatched = registeredPhones.some(p => 
-        p.endsWith(cleanPhone) || cleanPhone.endsWith(p) || p === cleanPhone || (cleanPhone.length >= 4 && p.includes(cleanPhone))
-      );
-
-      if (!isPhoneMatched && registeredPhones.length > 0) {
-        setStatus({
-          type: 'error',
-          msg: 'WhatsApp number did not match the registered team details. Please enter the number used during registration.'
-        });
-        return;
-      }
 
       // Successful verification
       localStorage.setItem('verifiedEmail', cleanEmail);
@@ -92,7 +67,7 @@ const TeamVerificationSection = () => {
             TEAM VERIFICATION
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto font-mono text-sm">
-            Access your team dashboard using your registration credentials.
+            Access your team dashboard using your registered email address.
           </p>
         </div>
 
@@ -127,7 +102,7 @@ const TeamVerificationSection = () => {
                     <ShieldCheck size={28} className="text-[#00F3FF]" />
                   </div>
                   <h3 className="text-2xl font-bold mb-2 dark:text-white text-black font-orbitron">Access Dashboard</h3>
-                  <p className="text-gray-400 text-sm font-mono">Enter your registered email and WhatsApp number.</p>
+                  <p className="text-gray-400 text-sm font-mono">Enter your registered team email address.</p>
                 </div>
                 
                 <form onSubmit={handleVerify} className="space-y-5">
@@ -140,20 +115,6 @@ const TeamVerificationSection = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="team@example.com"
-                      required
-                      className="w-full bg-black/40 border border-gray-700/50 rounded-lg p-3 text-white outline-none focus:border-[#00F3FF] focus:ring-1 focus:ring-[#00F3FF] transition-all font-mono text-sm"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-gray-400 tracking-wider mb-2 uppercase font-mono flex items-center gap-1.5">
-                      <Phone size={14} className="text-[#A855F7]" /> Registered WhatsApp Number
-                    </label>
-                    <input 
-                      type="tel" 
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="9876543210"
                       required
                       className="w-full bg-black/40 border border-gray-700/50 rounded-lg p-3 text-white outline-none focus:border-[#00F3FF] focus:ring-1 focus:ring-[#00F3FF] transition-all font-mono text-sm"
                     />
