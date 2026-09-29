@@ -22,10 +22,9 @@ import GlimpsesSection from './components/GlimpsesSection';
 import NeuralBackground from './components/NeuralBackground';
 import RulebookPage from './pages/RulebookPage';
 import TeamPortal from './pages/TeamPortal';
-import ChatbotWidget from './components/ChatbotWidget';
 import { Analytics } from '@vercel/analytics/react';
 
-const PUBLISHABLE_KEY = "pk_test_c3RlYWR5LWRvYmVybWFuLTI5NTkuY2xlcmsuYWNjb3VudHMuZGV2JA";
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || "pk_live_Y2xlcmsuY2JjLTIteHYydS52ZXJjZWwuYXBwJA";
 
 if (!PUBLISHABLE_KEY) {
   throw new Error("Missing Publishable Key");
@@ -47,8 +46,9 @@ function LandingPage() {
         <PrizesSection />
         <TimelineSection />
         <RulesSection />
-        <TestClerk />
-        <TeamVerificationSection />
+        {/* <TestClerk /> */}
+        {/* Team Details & Verification - Disabled until registrations close */}
+        {/* <TeamVerificationSection /> */}
         <ProblemStatementsSection />
         <SponsorsSection />
         <TeamSection />
@@ -73,7 +73,6 @@ export default function App() {
           <Route path="/team" element={<TeamPortal />} />
         </Routes>
         <Analytics />
-        <ChatbotWidget />
       </Router>
     </ClerkProvider>
   );
