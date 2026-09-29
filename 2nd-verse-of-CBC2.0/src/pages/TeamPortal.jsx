@@ -413,15 +413,12 @@ export default function TeamPortal() {
                       className="w-full bg-black/50 border border-[#00F3FF]/40 focus:border-[#00F3FF] focus:ring-1 focus:ring-[#00F3FF] rounded-lg p-2.5 text-white font-mono text-xs sm:text-sm outline-none transition-all cursor-pointer"
                     >
                       <option value="" className="bg-[#0b0f19] text-gray-400">Select Domain</option>
-                      {editDomain && !['Software & Web Development', 'Artificial Intelligence & Machine Learning (AI&ML)', 'Cybersecurity', 'Open Innovation', 'Blockchain & Web3', 'IoT & Embedded Systems'].includes(editDomain) && (
+                      {editDomain && !['Software & Web Development', 'Artificial Intelligence & Machine Learning (AI&ML)', 'Cybersecurity'].includes(editDomain) && (
                         <option value={editDomain} className="bg-[#0b0f19] text-white">{editDomain}</option>
                       )}
                       <option value="Software & Web Development" className="bg-[#0b0f19] text-white">Software & Web Development</option>
                       <option value="Artificial Intelligence & Machine Learning (AI&ML)" className="bg-[#0b0f19] text-white">Artificial Intelligence & Machine Learning (AI&ML)</option>
                       <option value="Cybersecurity" className="bg-[#0b0f19] text-white">Cybersecurity</option>
-                      <option value="Open Innovation" className="bg-[#0b0f19] text-white">Open Innovation</option>
-                      <option value="Blockchain & Web3" className="bg-[#0b0f19] text-white">Blockchain & Web3</option>
-                      <option value="IoT & Embedded Systems" className="bg-[#0b0f19] text-white">IoT & Embedded Systems</option>
                     </select>
                   ) : (
                     <span className="text-sm font-semibold text-white break-words">
