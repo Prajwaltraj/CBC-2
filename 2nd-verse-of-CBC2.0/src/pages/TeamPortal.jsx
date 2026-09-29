@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth, useUser } from '@clerk/react';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, Eye, Users } from 'lucide-react';
 import { ref, get, set, increment, serverTimestamp } from 'firebase/database';
@@ -11,23 +10,18 @@ import TeamVerificationSection from '../components/TeamVerificationSection';
 import NeuralBackground from '../components/NeuralBackground';
 
 export default function TeamPortal() {
-  const { isLoaded, isSignedIn, signOut } = useAuth();
-  const { user } = useUser();
   const navigate = useNavigate();
   const [teamData, setTeamData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
-  const fallbackEmail = typeof window !== 'undefined' ? localStorage.getItem('verifiedEmail') : null;
-  const isAuthenticated = isSignedIn || !!fallbackEmail;
+  
+  const verifiedEmail = typeof window !== 'undefined' ? localStorage.getItem('verifiedEmail') : null;
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (verifiedEmail) {
       const fetchTeam = async () => {
         try {
-          const userEmail = (isSignedIn && user?.primaryEmailAddress?.emailAddress) ? user.primaryEmailAddress.emailAddress : fallbackEmail;
-          if (!userEmail) return;
-          const emailHash = userEmail.toLowerCase().trim().replace(/[.#$\[\]\/]/g, '_');
+          const emailHash = verifiedEmail.toLowerCase().trim().replace(/[.#$\[\]\/]/g, '_');
           const teamRef = ref(rtdb, `registeredTeams/${emailHash}`);
           const snapshot = await get(teamRef);
           
@@ -38,12 +32,12 @@ export default function TeamPortal() {
             const viewRef = ref(rtdb, `teamViews/${emailHash}`);
             await set(viewRef, {
               teamName: data['Team Name'] || data['TeamName'] || 'Unknown Team',
-              email: userEmail,
+              email: verifiedEmail,
               views: increment(1),
               lastViewed: serverTimestamp()
             });
           } else {
-            setError(`No registered team found for "${userEmail}". Please ensure you sign in with the email address used during team registration.`);
+            setError(`No registered team found for "${verifiedEmail}". Please verify with the email address used during team registration.`);
           }
         } catch (err) {
           console.error(err);
@@ -53,28 +47,20 @@ export default function TeamPortal() {
         }
       };
       fetchTeam();
-    } else if (!isAuthenticated) {
+    } else {
       setLoading(false);
     }
-  }, [isLoaded, isAuthenticated, isSignedIn, user, fallbackEmail]);
+  }, [verifiedEmail]);
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     localStorage.removeItem('verifiedEmail');
-    try { await signOut(); } catch(e) {}
+    localStorage.removeItem('verifiedTeam');
     setTeamData(null);
     setError('');
     navigate('/');
   };
 
-  if (!isLoaded && !fallbackEmail) {
-    return (
-      <div className="w-full min-h-screen bg-[#F4F6F9] dark:bg-[#010103] flex justify-center items-center">
-        <div className="text-[#00F3FF] animate-pulse font-bold tracking-widest uppercase">Initializing Secure Portal...</div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
+  if (!verifiedEmail) {
     return (
       <div className="w-full min-h-screen bg-[#F4F6F9] dark:bg-[#010103] text-gray-900 dark:text-[#F0F0F0] selection:bg-[#00F3FF]/30 selection:text-black dark:selection:text-white relative transition-colors duration-300 flex flex-col">
         <NeuralBackground />
@@ -130,28 +116,28 @@ export default function TeamPortal() {
               onClick={handleLogout}
               className="px-6 py-2 bg-red-500/20 hover:bg-red-500/30 text-white rounded-lg border border-red-500/30 text-sm font-bold uppercase tracking-wider transition-colors cursor-pointer"
             >
-              Sign In With Different Email
+              Verify With Different Details
             </button>
           </div>
         ) : teamData ? (
           <div className="bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 shadow-[0_0_50px_rgba(0,243,255,0.05)] overflow-hidden flex-1">
             <div className="p-8 border-b border-white/10 bg-black/40">
-              <h4 className="text-xl font-bold flex items-center gap-3 dark:text-white text-black tracking-wide uppercase">
+              <h4 className="text-xl font-bold flex items-center gap-3 dark:text-white text-black tracking-wide uppercase font-orbitron">
                 <Eye size={24} className="text-[#00F3FF]" /> Official Registration Data
               </h4>
             </div>
             <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {Object.entries(teamData).map(([key, value]) => {
-                if(key.startsWith('_')) return null;
+                if (key.startsWith('_')) return null;
                 
                 const isLink = typeof value === 'string' && value.startsWith('http');
 
                 return (
                   <div key={key} className="bg-black/30 p-5 rounded-2xl border border-white/5 hover:border-[#00F3FF]/40 hover:shadow-[0_0_20px_rgba(0,243,255,0.1)] transition-all group">
-                    <p className="text-xs font-bold text-[#BC13FE] group-hover:text-[#00F3FF] uppercase tracking-wider mb-2 transition-colors">{key}</p>
+                    <p className="text-xs font-bold text-[#BC13FE] group-hover:text-[#00F3FF] uppercase tracking-wider mb-2 transition-colors font-mono">{key}</p>
                     {isLink ? (
-                      <a href={value} target="_blank" rel="noreferrer" className="text-sm text-[#00F3FF] hover:underline break-words block truncate">
-                        View Attachment
+                      <a href={value} target="_blank" rel="noreferrer" className="text-sm text-[#00F3FF] hover:underline break-words block truncate font-mono">
+                        View Attachment ↗
                       </a>
                     ) : (
                       <p className="text-sm dark:text-gray-200 text-gray-800 break-words font-medium">{value?.toString() || 'N/A'}</p>
