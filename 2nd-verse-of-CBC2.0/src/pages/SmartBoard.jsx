@@ -346,6 +346,8 @@ const SmartBoard = () => {
         setMediaControls(controls);
         if (controls.isMuted !== undefined) setMuted(controls.isMuted);
       }
+    }, (error) => {
+      console.error("[SmartBoard] Failed to listen to smartboard/controls:", error);
     });
     return () => unsubscribe();
   }, []);
@@ -473,6 +475,8 @@ const SmartBoard = () => {
         setIsAlerting(false);
         setShowMessage(true);
       }
+    }, (error) => {
+      console.error("[SmartBoard] Failed to listen to broadcast/current:", error);
     });
 
     return () => {

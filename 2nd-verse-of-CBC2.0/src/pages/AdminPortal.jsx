@@ -137,8 +137,14 @@ const AdminPortal = () => {
       setStatus({ type: 'success', msg: `Sent to display screen ✓ [${typeToUse.toUpperCase()}]` });
       setTimeout(() => setStatus({ type: '', msg: '' }), 3000);
     } catch (error) {
-      console.error(error);
-      setStatus({ type: 'error', msg: 'Broadcast failed! Check connection.' });
+      console.error("Broadcast error:", error);
+      const isPermError = error?.code === 'PERMISSION_DENIED' || String(error?.message || '').toLowerCase().includes('permission');
+      setStatus({ 
+        type: 'error', 
+        msg: isPermError 
+          ? 'Broadcast failed: Permission Denied! Please update Firebase Realtime Database rules.' 
+          : `Broadcast failed: ${error?.message || 'Check connection.'}` 
+      });
     }
   };
 
@@ -160,8 +166,14 @@ const AdminPortal = () => {
       setStatus({ type: 'success', msg: `Sent preset "${preset.title}" ✓` });
       setTimeout(() => setStatus({ type: '', msg: '' }), 2500);
     } catch (error) {
-      console.error(error);
-      setStatus({ type: 'error', msg: 'Broadcast failed! Check connection.' });
+      console.error("Preset broadcast error:", error);
+      const isPermError = error?.code === 'PERMISSION_DENIED' || String(error?.message || '').toLowerCase().includes('permission');
+      setStatus({ 
+        type: 'error', 
+        msg: isPermError 
+          ? 'Broadcast failed: Permission Denied! Please update Firebase Realtime Database rules.' 
+          : `Broadcast failed: ${error?.message || 'Check connection.'}` 
+      });
     }
   };
 
@@ -174,7 +186,14 @@ const AdminPortal = () => {
       setStatus({ type: 'success', msg: 'Display history cleared ✓' });
       setTimeout(() => setStatus({ type: '', msg: '' }), 2500);
     } catch (error) {
-      console.error(error);
+      console.error("Clear board error:", error);
+      const isPermError = error?.code === 'PERMISSION_DENIED' || String(error?.message || '').toLowerCase().includes('permission');
+      setStatus({ 
+        type: 'error', 
+        msg: isPermError 
+          ? 'Clear failed: Permission Denied! Please update Firebase Realtime Database rules.' 
+          : `Clear failed: ${error?.message || 'Check connection.'}` 
+      });
     }
   };
 
