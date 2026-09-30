@@ -13,8 +13,11 @@ from flask import Flask, request, jsonify
 try:
     try:
         from ._sheets import get_team_members, set_attendance, set_meal
-    except ImportError:
-        from _sheets import get_team_members, set_attendance, set_meal
+    except (ImportError, ValueError):
+        try:
+            from _sheets import get_team_members, set_attendance, set_meal
+        except ImportError:
+            from api._sheets import get_team_members, set_attendance, set_meal
 except Exception as e:
     print("Warning: _sheets could not be loaded:", e, file=sys.stderr)
     get_team_members = None
@@ -229,8 +232,11 @@ def api_mark():
 try:
     try:
         from .chatbot.engine import get_engine
-    except ImportError:
-        from chatbot.engine import get_engine
+    except (ImportError, ValueError):
+        try:
+            from chatbot.engine import get_engine
+        except ImportError:
+            from api.chatbot.engine import get_engine
 except Exception as e:
     print("Warning: chatbot engine could not be loaded:", e, file=sys.stderr)
     get_engine = None
