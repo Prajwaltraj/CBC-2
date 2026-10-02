@@ -2,6 +2,36 @@ import { useState } from 'react';
 import { Search, CheckCircle2, AlertTriangle, KeyRound, Mail, ArrowLeft, RefreshCw, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+export const MOCK_TEST_TEAM = {
+  "Team Name:": "Team CyberKnights (Demo)",
+  "Domain:": "Artificial Intelligence & Machine Learning (AI&ML)",
+  "College Name:": "Global Academy of Technology",
+  "Team Leader's Name:": "Alex Vance (Leader)",
+  "Email ID:": "test@cbc.com",
+  "WhatsApp Number:": "+91 9876543210",
+  "Team Leader College:": "Global Academy of Technology",
+  "Team Leader Branch:": "AIML",
+  "Team Leader Year:": "3rd Year",
+  "Team Member 2 Name:": "Sarah Connor",
+  "Team Member 2 Email ID:": "sarah.connor@example.com",
+  "Team Member 2 WhatsApp Number:": "+91 9876543211",
+  "Team Member 2 College Name:": "Global Academy of Technology",
+  "Team Member 2 Branch:": "CSE",
+  "Team Member 2 Year:": "3rd Year",
+  "Team Member 3 Name:": "Neo Anderson",
+  "Team Member 3 Email ID:": "neo.anderson@example.com",
+  "Team Member 3 WhatsApp Number:": "+91 9876543212",
+  "Team Member 3 College Name:": "Global Academy of Technology",
+  "Team Member 3 Branch:": "ISE",
+  "Team Member 3 Year:": "3rd Year",
+  "Team Member 4 Name:": "Ada Lovelace",
+  "Team Member 4 Email ID:": "ada.lovelace@example.com",
+  "Team Member 4 WhatsApp Number:": "+91 9876543213",
+  "Team Member 4 College Name:": "Global Academy of Technology",
+  "Team Member 4 Branch:": "AIML",
+  "Team Member 4 Year:": "2nd Year"
+};
+
 const TeamVerificationSection = () => {
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');

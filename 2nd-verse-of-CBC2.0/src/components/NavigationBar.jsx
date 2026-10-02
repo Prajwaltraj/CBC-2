@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, Menu, X, Sun, Moon } from 'lucide-react';
+import { Zap, Menu, X, Sun, Moon, ShieldCheck } from 'lucide-react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import ProgressiveImage from './ProgressiveImage';
 
@@ -122,19 +122,7 @@ const NavigationBar = () => {
         isScrolled || mobileMenuOpen ? 'bg-[#010103]/90 backdrop-blur-md border-b border-black/20 dark:border-white/10' : 'bg-transparent'
       }`}
     >
-      {/* Notification Banner */}
-      <div className="bg-gradient-to-r from-[#8B5CF6] via-[#00F3FF] to-[#8B5CF6] text-black font-bold font-mono text-xs sm:text-sm py-2 px-0 overflow-hidden whitespace-nowrap shadow-[0_0_20px_rgba(0,243,255,0.4)] relative">
-        <div className="smooth-marquee flex gap-4">
-          <span className="px-4">
-            <span className="siren-icon">🚨</span> URGENT: REGISTRATIONS CLOSING ON TUESDAY, 29TH! <span className="siren-icon">🚨</span> Don't just watch the future unfold—build it. Your code, your legacy! ⚡ Innovate. Collaborate. Accelerate. ⚡ Secure your spot at Code Breaker 2.0 before it's too late! 🚀 
-          </span>
-          {/* Duplicate for seamless infinite scroll */}
-          <span className="px-4">
-            <span className="siren-icon">🚨</span> URGENT: REGISTRATIONS CLOSING ON TUESDAY, 29TH! <span className="siren-icon">🚨</span> Don't just watch the future unfold—build it. Your code, your legacy! ⚡ Innovate. Collaborate. Accelerate. ⚡ Secure your spot at Code Breaker 2.0 before it's too late! 🚀 
-          </span>
-        </div>
-      </div>
-
+      {/* Main Navigation Bar */}
       <div className={`max-w-7xl mx-auto px-3 sm:px-4 md:px-8 flex justify-between items-center w-full transition-all duration-300 ${
         isScrolled || mobileMenuOpen ? 'py-2.5 sm:py-3' : 'py-3 sm:py-4 nav:py-5'
       }`}>
@@ -156,7 +144,7 @@ const NavigationBar = () => {
           ))}
         </div>
 
-        {/* Right Controls: Theme Toggle + Register Button + Mobile Menu Toggle */}
+        {/* Right Controls: Theme Toggle + Verify Button + Mobile Menu Toggle */}
         <div className="flex items-center gap-1.5 sm:gap-2 min-[1200px]:gap-4 shrink-0">
           <button
             onClick={toggleTheme}
@@ -166,12 +154,16 @@ const NavigationBar = () => {
             {isLight ? <Moon size={18} /> : <Sun size={18} className="text-[#00F3FF]" />}
           </button>
 
-          <a href="https://forms.gle/idBVSyU5E7HQpkop9" target="_blank" rel="noopener noreferrer" className="relative inline-flex items-center justify-center px-3 sm:px-4 min-[1200px]:px-6 py-1.5 sm:py-2 min-[1200px]:py-2.5 overflow-hidden font-orbitron font-bold text-white bg-[#010103] border border-[#00F3FF] rounded-md hover:bg-[#00F3FF]/10 transition-colors group shadow-[0_0_10px_rgba(0,243,255,0.15)] shrink-0">
+          <Link 
+            to="/team" 
+            onClick={() => setMobileMenuOpen(false)}
+            className="relative inline-flex items-center justify-center px-3 sm:px-4 min-[1200px]:px-6 py-1.5 sm:py-2 min-[1200px]:py-2.5 overflow-hidden font-orbitron font-bold text-white bg-[#010103] border border-[#00F3FF] rounded-md hover:bg-[#00F3FF]/10 transition-colors group shadow-[0_0_10px_rgba(0,243,255,0.15)] shrink-0 cursor-pointer"
+          >
             <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-[#00F3FF] rounded-full group-hover:w-56 group-hover:h-56 opacity-10"></span>
             <span className="relative flex items-center gap-1 sm:gap-1.5 min-[1200px]:gap-2 text-[10px] sm:text-[11px] min-[1200px]:text-sm whitespace-nowrap">
-              <Zap size={13} className="text-[#00F3FF] min-[1200px]:w-4 min-[1200px]:h-4" /> REGISTER
+              <ShieldCheck size={14} className="text-[#00F3FF] min-[1200px]:w-4 min-[1200px]:h-4" /> VERIFY
             </span>
-          </a>
+          </Link>
 
           {/* Mobile Menu Toggle (Visible only below 1200px, hidden above 1200px) */}
           <button
@@ -207,6 +199,17 @@ const NavigationBar = () => {
                   <span className="text-[10px] text-gray-500 font-mono">0{idx + 1} {'//'}</span>
                 </a>
               ))}
+
+              <Link
+                to="/team"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between py-2.5 px-3 rounded-lg border border-[#00F3FF]/40 bg-[#00F3FF]/10 text-[#00F3FF] font-bold transition-all cursor-pointer mt-1"
+              >
+                <span className="uppercase font-bold tracking-widest flex items-center gap-2">
+                  <ShieldCheck size={14} /> Team Verification
+                </span>
+                <span className="text-[10px] text-[#00F3FF] font-mono">PORTAL {'//'}</span>
+              </Link>
               
               <div className="mt-2 pt-3 border-t border-black/20 dark:border-white/10 flex justify-between items-center text-[10px] font-mono text-gray-400">
                 <span className="text-gray-500">SYS.NAV // ACTIVE</span>

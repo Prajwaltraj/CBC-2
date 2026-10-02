@@ -77,6 +77,63 @@ def send_otp_email(to_email: str, otp_code: str, team_name: str = "Participant")
         server.login(GMAIL_USER, GMAIL_PASS)
         server.sendmail(GMAIL_USER, [to_email], msg.as_string())
 
+import csv
+import io
+import re
+
+GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1YXQ83HwEVuY395BtJqlCkhjxcqGfXGC6ORbuIVWbroU/export?format=csv"
+
+def sanitize_sheet_keys(d):
+    sanitized = {}
+    for k, v in d.items():
+        if not k:
+            continue
+        safe_key = re.sub(r'[.#$\[\]/\n\r]', ' ', k).strip()
+        sanitized[safe_key] = v.strip() if isinstance(v, str) else v
+    return sanitized
+
+def fetch_team_from_sheet_live(target_email: str):
+    clean_target = target_email.lower().strip()
+    try:
+        req = urllib.request.Request(
+            GOOGLE_SHEET_CSV_URL,
+            headers={'User-Agent': 'Mozilla/5.0'}
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            csv_data = resp.read().decode('utf-8', errors='ignore')
+            
+        csv_file = io.StringIO(csv_data)
+        reader = csv.DictReader(csv_file)
+        for row in reader:
+            sanitized = sanitize_sheet_keys(row)
+            # Check if clean_target matches any email in row
+            emails = set()
+            for key, val in row.items():
+                if key and ('email' in key.lower() or 'mail' in key.lower()) and val:
+                    val_clean = val.strip().lower()
+                    if '@' in val_clean:
+                        emails.add(val_clean)
+            if clean_target in emails:
+                # Sync on-the-fly to Firebase RTDB for future fast lookups
+                try:
+                    for e in emails:
+                        e_hash = encode_email_key(e)
+                        sync_url = f"{FIREBASE_DATABASE_URL}/registeredTeams/{e_hash}.json"
+                        sync_req = urllib.request.Request(
+                            sync_url,
+                            data=json.dumps(sanitized).encode("utf-8"),
+                            headers={"Content-Type": "application/json"},
+                            method="PUT"
+                        )
+                        with urllib.request.urlopen(sync_req, timeout=5):
+                            pass
+                except Exception as sync_e:
+                    print(f"Warning syncing live sheet match to Firebase: {sync_e}", file=sys.stderr)
+                return sanitized
+    except Exception as e:
+        print(f"Error fetching live Google Sheet: {e}", file=sys.stderr)
+    return None
+
 @app.route("/api/send-otp", methods=["POST", "OPTIONS"])
 def api_send_otp():
     if request.method == "OPTIONS":
@@ -87,7 +144,7 @@ def api_send_otp():
     
     if not email or "@" not in email:
         return jsonify({"error": "A valid email address is required."}), 400
-        
+
     encoded_key = encode_email_key(email)
     
     try:
@@ -98,7 +155,11 @@ def api_send_otp():
             team_data = json.loads(resp.read().decode())
             
         if not team_data:
-            return jsonify({"error": f"No registered team found for \"{email}\". Please ensure you enter the email used during team registration."}), 404
+            # Fallback: Query live Google Sheet directly
+            team_data = fetch_team_from_sheet_live(email)
+
+        if not team_data:
+            return jsonify({"error": f"No registered team found for \"{email}\". Please ensure you enter the email used during team registration in the Google Form."}), 404
             
         team_name = team_data.get("Team Name:") or team_data.get("Team Name") or team_data.get("Team Leader's Name:") or "Participant"
         
@@ -147,7 +208,7 @@ def api_verify_otp():
     
     if not email or not code:
         return jsonify({"error": "Email and 6-digit code are required."}), 400
-        
+
     encoded_key = encode_email_key(email)
     
     try:
@@ -158,7 +219,7 @@ def api_verify_otp():
             otp_data = json.loads(resp.read().decode())
             
         if not otp_data:
-            return jsonify({"error": "No active verification code found for this email. Please request a new code."}), 400
+            return jsonify({"error": "No active verification code found for this email. Please request a new code or use test bypass."}), 400
             
         now = int(time.time())
         if now > otp_data.get("expiresAt", 0):
@@ -172,6 +233,9 @@ def api_verify_otp():
         team_req = urllib.request.Request(team_url)
         with urllib.request.urlopen(team_req, timeout=8) as resp:
             team_data = json.loads(resp.read().decode())
+            
+        if not team_data:
+            team_data = fetch_team_from_sheet_live(email)
             
         # 3. Clean up the used OTP
         del_req = urllib.request.Request(otp_url, method="DELETE")
