@@ -161,7 +161,10 @@ export default function TeamPortal() {
     const leaderPhone = getVal(["WhatsApp Number:", "Phone Number:", "Leader Phone:", "Leader Phone", "Phone"]);
     const leaderCollege = getVal(["Team Leader College:", "Team Leader College Name:", "College Name:", "College Name"], defaultCollege);
     const leaderBranch = getVal(["Team Leader Branch:", "Team Leader Branch", "Leader Branch:", "Leader Branch", "Branch:", "Branch"]);
-    const leaderYear = getVal(["Team Leader Year:", "Team Leader Year", "Leader Year:", "Leader Year", "Year:", "Year"]);
+    const leaderSem = getVal([
+      "Team Leader Sem:", "Team Leader Sem", "Team Leader Semester:", "Leader Sem:", "Leader Sem", "Sem:", "Sem", "Semester:", "Semester",
+      "Team Leader Year:", "Team Leader Year", "Leader Year:", "Leader Year", "Year:", "Year"
+    ]);
 
     if (leaderName || leaderEmail || leaderPhone) {
       members.push({
@@ -170,7 +173,8 @@ export default function TeamPortal() {
         phone: leaderPhone || '',
         college: leaderCollege || '—',
         branch: leaderBranch || '',
-        year: leaderYear || '',
+        sem: leaderSem || '',
+        year: leaderSem || '',
         isLeader: true
       });
     }
@@ -182,7 +186,10 @@ export default function TeamPortal() {
       const mPhone = getVal([`Team Member ${i} WhatsApp Number:`, `Team Member ${i} Phone:`, `Team Member ${i} Phone`, `Member ${i} Phone:`]);
       const mCollege = getVal([`Team Member ${i} College Name:`, `Team Member ${i} College:`, `Team Member ${i} College`], defaultCollege);
       const mBranch = getVal([`Team Member ${i} Branch:`, `Team Member ${i} Branch`, `Member ${i} Branch:`, `Member ${i} Branch`]);
-      const mYear = getVal([`Team Member ${i} Year:`, `Team Member ${i} Year`, `Member ${i} Year:`, `Member ${i} Year`]);
+      const mSem = getVal([
+        `Team Member ${i} Sem:`, `Team Member ${i} Sem`, `Team Member ${i} Semester:`, `Member ${i} Sem:`, `Member ${i} Sem`, `Member ${i} Semester:`,
+        `Team Member ${i} Year:`, `Team Member ${i} Year`, `Member ${i} Year:`, `Member ${i} Year`
+      ]);
 
       if (mName || mEmail || mPhone) {
         members.push({
@@ -191,7 +198,8 @@ export default function TeamPortal() {
           phone: mPhone || '',
           college: mCollege || '—',
           branch: mBranch || '',
-          year: mYear || '',
+          sem: mSem || '',
+          year: mSem || '',
           isLeader: false
         });
       }
@@ -296,22 +304,27 @@ export default function TeamPortal() {
         }
         if (m1.phone) updates["WhatsApp Number:"] = m1.phone.trim();
         if (m1.college && m1.college !== '—') updates["College Name:"] = m1.college.trim();
+        const semVal1 = (m1.sem || m1.year || '').trim();
         updates['Team Leader Branch:'] = m1.branch ? m1.branch.trim() : '';
-        updates['Team Leader Year:'] = m1.year ? m1.year.trim() : '';
+        updates['Team Leader Sem:'] = semVal1;
+        updates['Team Leader Year:'] = semVal1;
         updates['Branch:'] = m1.branch ? m1.branch.trim() : '';
-        updates['Year:'] = m1.year ? m1.year.trim() : '';
+        updates['Sem:'] = semVal1;
+        updates['Year:'] = semVal1;
       }
 
       // Members 2 to 4
       for (let i = 1; i < editMembers.length; i++) {
         const num = i + 1;
         const mi = editMembers[i];
+        const semiVal = (mi.sem || mi.year || '').trim();
         if (mi.name) updates[`Team Member ${num} Name:`] = mi.name.trim();
         if (mi.email) updates[`Team Member ${num} Email ID:`] = mi.email.trim();
         if (mi.phone) updates[`Team Member ${num} WhatsApp Number:`] = mi.phone.trim();
         if (mi.college && mi.college !== '—') updates[`Team Member ${num} College Name:`] = mi.college.trim();
         updates[`Team Member ${num} Branch:`] = mi.branch ? mi.branch.trim() : '';
-        updates[`Team Member ${num} Year:`] = mi.year ? mi.year.trim() : '';
+        updates[`Team Member ${num} Sem:`] = semiVal;
+        updates[`Team Member ${num} Year:`] = semiVal;
       }
 
       // Collect all emails associated with this team to lock all member accounts in RTDB
@@ -643,7 +656,7 @@ export default function TeamPortal() {
                           </div>
                         </div>
 
-                        {/* Row 3: Branch & Year */}
+                        {/* Row 3: Branch & Sem */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 pt-2 border-t border-white/10 text-xs font-mono">
                           <div>
                             <label className="text-[#00F3FF] uppercase tracking-wider block text-[11px] mb-1 font-semibold">
@@ -659,18 +672,25 @@ export default function TeamPortal() {
                           </div>
                           <div>
                             <label className="text-[#00F3FF] uppercase tracking-wider block text-[11px] mb-1 font-semibold">
-                              Year
+                              Sem
                             </label>
                             <select
-                              value={member.year || ''}
-                              onChange={(e) => handleUpdateMemberField(idx, 'year', e.target.value)}
+                              value={member.sem || member.year || ''}
+                              onChange={(e) => {
+                                handleUpdateMemberField(idx, 'sem', e.target.value);
+                                handleUpdateMemberField(idx, 'year', e.target.value);
+                              }}
                               className="w-full bg-black/50 border border-[#00F3FF]/40 focus:border-[#00F3FF] focus:ring-1 focus:ring-[#00F3FF] rounded-lg p-2.5 text-white font-mono text-xs outline-none transition-all cursor-pointer"
                             >
-                              <option value="" className="bg-[#0b0f19] text-gray-400">Select Year</option>
-                              <option value="1st Year" className="bg-[#0b0f19] text-white">1st Year</option>
-                              <option value="2nd Year" className="bg-[#0b0f19] text-white">2nd Year</option>
-                              <option value="3rd Year" className="bg-[#0b0f19] text-white">3rd Year</option>
-                              <option value="4th Year" className="bg-[#0b0f19] text-white">4th Year</option>
+                              <option value="" className="bg-[#0b0f19] text-gray-400">Select Sem</option>
+                              <option value="1st Sem" className="bg-[#0b0f19] text-white">1st Sem</option>
+                              <option value="2nd Sem" className="bg-[#0b0f19] text-white">2nd Sem</option>
+                              <option value="3rd Sem" className="bg-[#0b0f19] text-white">3rd Sem</option>
+                              <option value="4th Sem" className="bg-[#0b0f19] text-white">4th Sem</option>
+                              <option value="5th Sem" className="bg-[#0b0f19] text-white">5th Sem</option>
+                              <option value="6th Sem" className="bg-[#0b0f19] text-white">6th Sem</option>
+                              <option value="7th Sem" className="bg-[#0b0f19] text-white">7th Sem</option>
+                              <option value="8th Sem" className="bg-[#0b0f19] text-white">8th Sem</option>
                             </select>
                           </div>
                         </div>
@@ -702,10 +722,10 @@ export default function TeamPortal() {
                           </div>
                           <div>
                             <span className="text-gray-500 uppercase tracking-wider block text-[10px] sm:text-[11px] mb-0.5">
-                              Year
+                              Sem
                             </span>
-                            <span className={member.year ? "text-gray-200 font-medium" : "text-gray-500"}>
-                              {member.year ? member.year : '—'}
+                            <span className={(member.sem || member.year) ? "text-gray-200 font-medium" : "text-gray-500"}>
+                              {member.sem || member.year ? (member.sem || member.year) : '—'}
                             </span>
                           </div>
                         </div>
