@@ -48,66 +48,57 @@ export default function TeamPortal() {
 
   useEffect(() => {
     if (verifiedEmail) {
-      const fetchTeam = async () => {
-        try {
-          const cached = sessionStorage.getItem('verifiedTeam') || localStorage.getItem('verifiedTeam');
-          if (cached) {
-            try {
-              setTeamData(JSON.parse(cached));
-            } catch(e) {}
-          }
+      const emailHash = verifiedEmail.toLowerCase().trim().replace(/[.#$\[\]\/]/g, '_');
+      const teamRef = ref(rtdb, `registeredTeams/${emailHash}`);
+      
+      const unsubscribe = onValue(teamRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          setTeamData(data);
+          sessionStorage.setItem('verifiedEmail', verifiedEmail);
+          sessionStorage.setItem('verifiedTeam', JSON.stringify(data));
+          try {
+            localStorage.removeItem('verifiedEmail');
+            localStorage.removeItem('verifiedTeam');
+          } catch (e) {}
 
-          const emailHash = verifiedEmail.toLowerCase().trim().replace(/[.#$\[\]\/]/g, '_');
-          const teamRef = ref(rtdb, `registeredTeams/${emailHash}`);
-          const snapshot = await get(teamRef);
-          
-          if (snapshot.exists()) {
-            const data = snapshot.val();
-            setTeamData(data);
-            sessionStorage.setItem('verifiedEmail', verifiedEmail);
-            sessionStorage.setItem('verifiedTeam', JSON.stringify(data));
-            try {
-              localStorage.removeItem('verifiedEmail');
-              localStorage.removeItem('verifiedTeam');
-            } catch (e) {}
-            
-            try {
-              const viewRef = ref(rtdb, `teamViews/${emailHash}`);
-              await set(viewRef, {
-                teamName: data['Team Name:'] || data['Team Name'] || data["Team Leader's Name:"] || 'Unknown Team',
-                email: verifiedEmail,
-                lastViewedAt: serverTimestamp(),
-                viewCount: increment(1)
-              });
-            } catch (e) {}
-          } else {
-            if (cached) {
-              // keep cached
-            } else if (verifiedEmail.toLowerCase().includes('test') || verifiedEmail.toLowerCase().includes('demo') || verifiedEmail === 'test@cbc.com') {
-              const testData = { ...MOCK_TEST_TEAM, "Email ID:": verifiedEmail };
-              setTeamData(testData);
-              sessionStorage.setItem('verifiedTeam', JSON.stringify(testData));
-            } else {
-              setError('No registration details found for this email address.');
-            }
-          }
-        } catch (err) {
-          console.error('Error fetching team details:', err);
-          if (cached) {
-            // keep cached
-          } else if (verifiedEmail.toLowerCase().includes('test') || verifiedEmail.toLowerCase().includes('demo') || verifiedEmail === 'test@cbc.com') {
+          try {
+            const viewRef = ref(rtdb, `teamViews/${emailHash}`);
+            set(viewRef, {
+              teamName: data['Team Name:'] || data['Team Name'] || data["Team Leader's Name:"] || 'Unknown Team',
+              email: verifiedEmail,
+              lastViewedAt: serverTimestamp(),
+              viewCount: increment(1)
+            });
+          } catch (e) {}
+        } else {
+          if (verifiedEmail.toLowerCase().includes('test') || verifiedEmail.toLowerCase().includes('demo') || verifiedEmail === 'test@cbc.com') {
             const testData = { ...MOCK_TEST_TEAM, "Email ID:": verifiedEmail };
             setTeamData(testData);
             sessionStorage.setItem('verifiedTeam', JSON.stringify(testData));
-          } else if (!teamData) {
-            setError('Unable to load team information. Please check your connection.');
+          } else {
+            setError('No registration details found for this email address.');
           }
-        } finally {
-          setLoading(false);
         }
-      };
+        setLoading(false);
+      }, (err) => {
+        console.error('Error listening to team details:', err);
+        const cached = sessionStorage.getItem('verifiedTeam') || localStorage.getItem('verifiedTeam');
+        if (cached) {
+          try {
+            setTeamData(JSON.parse(cached));
+          } catch(e) {}
+        } else if (verifiedEmail.toLowerCase().includes('test') || verifiedEmail.toLowerCase().includes('demo') || verifiedEmail === 'test@cbc.com') {
+          const testData = { ...MOCK_TEST_TEAM, "Email ID:": verifiedEmail };
+          setTeamData(testData);
+          sessionStorage.setItem('verifiedTeam', JSON.stringify(testData));
+        } else if (!teamData) {
+          setError('Unable to load team information. Please check your connection.');
+        }
+        setLoading(false);
+      });
 
-      fetchTeam();
+      return () => unsubscribe();
     } else {
       setLoading(false);
     }
@@ -226,15 +217,7 @@ export default function TeamPortal() {
   // Check if this team has already completed their one-time edit
   const hasAlreadyEdited = useMemo(() => {
     if (!teamData) return false;
-    return Boolean(
-      teamData.hasEdited === true ||
-      teamData.isEdited === true ||
-      teamData.edited === true ||
-      teamData['Has Edited'] === true ||
-      teamData['hasEdited'] === 'true' ||
-      teamData['isEdited'] === 'true' ||
-      teamData['edited'] === 'true'
-    );
+    return teamData.hasEdited === true || teamData.hasEdited === 'true';
   }, [teamData]);
 
   // Start Editing Mode (Team Leader only, 1-time only)
@@ -291,9 +274,6 @@ export default function TeamPortal() {
 
       const updates = {
         hasEdited: true,
-        isEdited: true,
-        edited: true,
-        "Has Edited": true,
         editedAt: new Date().toISOString()
       };
 
