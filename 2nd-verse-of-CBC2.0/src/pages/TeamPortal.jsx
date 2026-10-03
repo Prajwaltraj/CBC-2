@@ -229,8 +229,11 @@ export default function TeamPortal() {
     return Boolean(
       teamData.hasEdited === true ||
       teamData.isEdited === true ||
+      teamData.edited === true ||
       teamData['Has Edited'] === true ||
-      teamData['hasEdited'] === 'true'
+      teamData['hasEdited'] === 'true' ||
+      teamData['isEdited'] === 'true' ||
+      teamData['edited'] === 'true'
     );
   }, [teamData]);
 
@@ -288,6 +291,9 @@ export default function TeamPortal() {
 
       const updates = {
         hasEdited: true,
+        isEdited: true,
+        edited: true,
+        "Has Edited": true,
         editedAt: new Date().toISOString()
       };
 
