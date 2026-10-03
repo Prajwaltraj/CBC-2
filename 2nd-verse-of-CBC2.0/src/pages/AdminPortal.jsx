@@ -77,7 +77,7 @@ const AdminPortal = () => {
     try {
       const configRef = ref(rtdb, 'config/allowTeamEditing');
       await set(configRef, !allowTeamEditing);
-      setStatus({ type: 'success', msg: `Team editing access is now ${!allowTeamEditing ? 'ENABLED' : 'DISABLED'} ✓` });
+      setStatus({ type: 'success', msg: `Team Leader editing access is now ${!allowTeamEditing ? 'ENABLED' : 'DISABLED'} ✓` });
       setTimeout(() => setStatus({ type: '', msg: '' }), 3000);
     } catch (e) {
       console.error(e);
@@ -404,10 +404,10 @@ const AdminPortal = () => {
                 ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' 
                 : 'bg-[#0f1215] border-[#242a30] text-[#7c8891] hover:text-white'
             }`}
-            title="Toggle whether participants can edit their branch, year, and details on /team"
+            title="Toggle whether Team Leaders can edit domain and team details on /team"
           >
             <Edit3 size={13} />
-            <span>Team Edit Access: {allowTeamEditing ? 'ON' : 'OFF'}</span>
+            <span>Leader Edit Access: {allowTeamEditing ? 'ON' : 'OFF'}</span>
           </button>
 
           <button

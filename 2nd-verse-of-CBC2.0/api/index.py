@@ -134,6 +134,60 @@ def fetch_team_from_sheet_live(target_email: str):
         print(f"Error fetching live Google Sheet: {e}", file=sys.stderr)
     return None
 
+MAX_OTP_REQUESTS = 3
+OTP_WINDOW_SECONDS = 900  # 15 minutes cooldown window
+
+def check_and_update_otp_rate_limit(encoded_key: str, email: str = ""):
+    """
+    Rate-limits OTP generation to a maximum of 3 requests per 15 minutes per email.
+    Returns (allowed: bool, attempts_used: int, wait_seconds: int)
+    """
+    now = int(time.time())
+    limit_url = f"{FIREBASE_DATABASE_URL}/otpRateLimits/{encoded_key}.json"
+    
+    rate_data = None
+    try:
+        req = urllib.request.Request(limit_url)
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            rate_data = json.loads(resp.read().decode())
+    except Exception as e:
+        print(f"Warning fetching rate limit data: {e}", file=sys.stderr)
+        
+    if rate_data and isinstance(rate_data, dict):
+        first_attempt = rate_data.get("firstAttempt", now)
+        count = rate_data.get("count", 0)
+        
+        # If still within the 15-minute window
+        if (now - first_attempt) < OTP_WINDOW_SECONDS:
+            if count >= MAX_OTP_REQUESTS:
+                wait_time = OTP_WINDOW_SECONDS - (now - first_attempt)
+                return False, count, wait_time
+            else:
+                new_count = count + 1
+                new_data = {"firstAttempt": first_attempt, "count": new_count, "lastAttempt": now}
+        else:
+            # Window expired, reset counter for new window
+            new_count = 1
+            new_data = {"firstAttempt": now, "count": 1, "lastAttempt": now}
+    else:
+        new_count = 1
+        new_data = {"firstAttempt": now, "count": 1, "lastAttempt": now}
+        
+    # Save updated rate limit record to Firebase RTDB
+    try:
+        put_req = urllib.request.Request(
+            limit_url,
+            data=json.dumps(new_data).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="PUT"
+        )
+        with urllib.request.urlopen(put_req, timeout=5):
+            pass
+    except Exception as e:
+        print(f"Warning saving rate limit data: {e}", file=sys.stderr)
+        
+    return True, new_count, 0
+
 @app.route("/api/send-otp", methods=["POST", "OPTIONS"])
 def api_send_otp():
     if request.method == "OPTIONS":
@@ -146,6 +200,14 @@ def api_send_otp():
         return jsonify({"error": "A valid email address is required."}), 400
 
     encoded_key = encode_email_key(email)
+    
+    # 0. Enforce Rate Limiting (Max 3 OTP requests per 15 minutes)
+    allowed, attempts_used, wait_seconds = check_and_update_otp_rate_limit(encoded_key, email)
+    if not allowed:
+        wait_mins = int(wait_seconds / 60) + 1
+        return jsonify({
+            "error": f"OTP request limit reached (max 3 requests per 15 minutes). Please wait {wait_mins} minute{'s' if wait_mins != 1 else ''} before requesting another code."
+        }), 429
     
     try:
         # 1. Check if email exists in registeredTeams in Firebase RTDB
@@ -171,7 +233,8 @@ def api_send_otp():
             "code": otp_code,
             "email": email,
             "expiresAt": expires_at,
-            "teamName": team_name
+            "teamName": team_name,
+            "failedAttempts": 0
         }
         
         # 3. Store OTP in Firebase RTDB
@@ -188,9 +251,14 @@ def api_send_otp():
         # 4. Dispatch Email via Gmail SMTP
         send_otp_email(email, otp_code, team_name)
         
+        attempts_left = MAX_OTP_REQUESTS - attempts_used
+        attempt_note = f" (Attempt {attempts_used}/3)" if attempts_used > 1 else ""
+        
         return jsonify({
             "success": True,
-            "message": f"6-digit verification code sent to {email}. Please check your inbox and spam folder."
+            "message": f"6-digit verification code sent to {email}.{attempt_note} Please check your inbox and spam folder.",
+            "attemptsUsed": attempts_used,
+            "attemptsRemaining": attempts_left
         }), 200
         
     except Exception as e:
@@ -219,14 +287,38 @@ def api_verify_otp():
             otp_data = json.loads(resp.read().decode())
             
         if not otp_data:
-            return jsonify({"error": "No active verification code found for this email. Please request a new code or use test bypass."}), 400
+            return jsonify({"error": "No active verification code found for this email. Please request a new code."}), 400
             
         now = int(time.time())
         if now > otp_data.get("expiresAt", 0):
             return jsonify({"error": "Verification code has expired. Please request a new code."}), 400
             
         if str(otp_data.get("code")).strip() != code:
-            return jsonify({"error": "Invalid verification code. Please check your email and try again."}), 400
+            failed_count = otp_data.get("failedAttempts", 0) + 1
+            if failed_count >= 3:
+                # Invalidate OTP on 3 consecutive wrong attempts
+                del_req = urllib.request.Request(otp_url, method="DELETE")
+                try:
+                    with urllib.request.urlopen(del_req, timeout=5):
+                        pass
+                except Exception:
+                    pass
+                return jsonify({"error": "Too many invalid code attempts (max 3). This verification code has expired. Please request a new code."}), 400
+            else:
+                otp_data["failedAttempts"] = failed_count
+                put_req = urllib.request.Request(
+                    otp_url,
+                    data=json.dumps(otp_data).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                    method="PUT"
+                )
+                try:
+                    with urllib.request.urlopen(put_req, timeout=5):
+                        pass
+                except Exception:
+                    pass
+                remaining = 3 - failed_count
+                return jsonify({"error": f"Invalid verification code. {remaining} attempt{'s' if remaining != 1 else ''} remaining."}), 400
             
         # 2. OTP is valid! Fetch full team data
         team_url = f"{FIREBASE_DATABASE_URL}/registeredTeams/{encoded_key}.json"

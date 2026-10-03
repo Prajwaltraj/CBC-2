@@ -204,8 +204,28 @@ export default function TeamPortal() {
     };
   }, [teamData]);
 
-  // Start Editing Mode
+  // Check whether the logged-in user is the Team Leader
+  const isLeader = useMemo(() => {
+    if (!parsedTeam || !verifiedEmail) return false;
+    const leaderMember = parsedTeam.members?.find(m => m.isLeader) || parsedTeam.members?.[0];
+    if (!leaderMember || !leaderMember.email) return false;
+    return leaderMember.email.trim().toLowerCase() === verifiedEmail.trim().toLowerCase();
+  }, [parsedTeam, verifiedEmail]);
+
+  // Check if this team has already completed their one-time edit
+  const hasAlreadyEdited = useMemo(() => {
+    if (!teamData) return false;
+    return Boolean(
+      teamData.hasEdited === true ||
+      teamData.isEdited === true ||
+      teamData['Has Edited'] === true ||
+      teamData['hasEdited'] === 'true'
+    );
+  }, [teamData]);
+
+  // Start Editing Mode (Team Leader only, 1-time only)
   const handleStartEdit = () => {
+    if (!isLeader || !isEditAllowed || hasAlreadyEdited) return;
     if (!parsedTeam) return;
     setEditDomain(parsedTeam.domain === '—' ? '' : parsedTeam.domain);
     setEditMembers(parsedTeam.members.map(m => ({ ...m })));
@@ -232,17 +252,33 @@ export default function TeamPortal() {
     });
   };
 
-  // Save Changes to Firebase RTDB and Google Sheets
+  // Save Changes to Firebase RTDB and Google Sheets (Team Leader only, 1-time submission)
   const handleSaveChanges = async () => {
     if (!verifiedEmail) return;
+    if (!isLeader) {
+      setSaveStatus({ type: 'error', msg: 'Permission denied: Only the Team Leader can save edits.' });
+      return;
+    }
+    if (hasAlreadyEdited) {
+      setSaveStatus({ type: 'error', msg: 'Edit limit reached: Team details have already been submitted (one-time edit limit).' });
+      return;
+    }
+
+    const confirmSave = window.confirm(
+      '⚠️ Important: You have ONE-TIME edit access.\n\nOnce saved, these registration details will be permanently locked and cannot be edited again.\n\nDo you want to submit your changes now?'
+    );
+    if (!confirmSave) return;
+
     setIsSaving(true);
     setSaveStatus({ type: '', msg: '' });
 
     try {
       const emailHash = verifiedEmail.toLowerCase().trim().replace(/[.#$\[\]\/]/g, '_');
-      const teamRef = ref(rtdb, `registeredTeams/${emailHash}`);
 
-      const updates = {};
+      const updates = {
+        hasEdited: true,
+        editedAt: new Date().toISOString()
+      };
 
       // Domain
       if (editDomain && editDomain.trim() !== '') {
@@ -278,11 +314,25 @@ export default function TeamPortal() {
         updates[`Team Member ${num} Year:`] = mi.year ? mi.year.trim() : '';
       }
 
-      // 1. Write updates to Firebase RTDB
-      try {
-        await update(teamRef, updates);
-      } catch (fbErr) {
-        console.warn('Firebase RTDB update warning (demo/test mode or offline):', fbErr);
+      // Collect all emails associated with this team to lock all member accounts in RTDB
+      const allTeamEmails = new Set();
+      if (verifiedEmail) allTeamEmails.add(verifiedEmail.toLowerCase().trim());
+      parsedTeam?.members?.forEach(m => {
+        if (m.email && m.email.includes('@')) allTeamEmails.add(m.email.toLowerCase().trim());
+      });
+      editMembers?.forEach(m => {
+        if (m.email && m.email.includes('@')) allTeamEmails.add(m.email.toLowerCase().trim());
+      });
+
+      // 1. Write updates to Firebase RTDB for all member hashes
+      for (const email of allTeamEmails) {
+        try {
+          const hash = email.replace(/[.#$\[\]\/]/g, '_');
+          const refItem = ref(rtdb, `registeredTeams/${hash}`);
+          await update(refItem, updates);
+        } catch (fbErr) {
+          console.warn('Firebase RTDB update warning:', fbErr);
+        }
       }
 
       // 2. Write updates to Google Sheets via Webhook
@@ -307,8 +357,8 @@ export default function TeamPortal() {
       sessionStorage.setItem('verifiedTeam', JSON.stringify(updatedFullTeam));
 
       setIsEditing(false);
-      setSaveStatus({ type: 'success', msg: 'All changes saved and synced successfully! ✓' });
-      setTimeout(() => setSaveStatus({ type: '', msg: '' }), 4000);
+      setSaveStatus({ type: 'success', msg: 'All changes saved and locked successfully! (1-time edit completed) ✓' });
+      setTimeout(() => setSaveStatus({ type: '', msg: '' }), 5000);
     } catch (err) {
       console.error('Error saving team updates:', err);
       setSaveStatus({ type: 'error', msg: 'Failed to save changes. Please try again.' });
@@ -362,8 +412,17 @@ export default function TeamPortal() {
             </button>
           </div>
 
-          <p className="text-gray-400 text-xs sm:text-sm font-mono mt-1.5 sm:mt-1">
-            Verified access for <span className="text-[#00F3FF] font-medium break-words">{verifiedEmail}</span>
+          <p className="text-gray-400 text-xs sm:text-sm font-mono mt-1.5 sm:mt-1 flex items-center flex-wrap gap-1.5">
+            <span>Verified access for <span className="text-[#00F3FF] font-medium break-words">{verifiedEmail}</span></span>
+            {isLeader ? (
+              <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded text-[11px] font-semibold">
+                ★ Team Leader
+              </span>
+            ) : (
+              <span className="px-2 py-0.5 bg-gray-800 text-gray-400 border border-gray-700 rounded text-[11px]">
+                Member (View Only)
+              </span>
+            )}
           </p>
         </div>
         
@@ -379,7 +438,7 @@ export default function TeamPortal() {
           </div>
         ) : parsedTeam ? (
           <div className="bg-[#0b0f19] border border-[#1e293b] rounded-2xl p-4 sm:p-8 shadow-2xl overflow-hidden">
-            {/* Top Bar: Team Name, Members Count & Dynamic Edit Button (Visible only when Admin enables it) */}
+            {/* Top Bar: Team Name, Members Count & Dynamic Edit Button (Visible only for Team Leader when Admin enables it) */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 pb-5 sm:pb-6 border-b border-[#1e293b]">
               <div className="min-w-0 flex-1">
                 <h2 className="text-xl sm:text-3xl font-extrabold text-white tracking-wide break-words font-orbitron">
@@ -391,16 +450,45 @@ export default function TeamPortal() {
                   {parsedTeam.members.length} {parsedTeam.members.length === 1 ? 'Member' : 'Members'}
                 </span>
 
-                {isEditAllowed && !isEditing && (
-                  <button
-                    onClick={handleStartEdit}
-                    className="flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-lg bg-[#00F3FF]/15 hover:bg-[#00F3FF]/25 text-[#00F3FF] border border-[#00F3FF]/40 text-xs font-mono font-bold transition-all cursor-pointer shadow-[0_0_15px_rgba(0,243,255,0.15)] active:scale-95"
+                {hasAlreadyEdited ? (
+                  <span 
+                    className="px-2.5 sm:px-3 py-1 bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-mono flex items-center gap-1.5"
+                    title="This team has already submitted their one-time edit."
                   >
-                    <Edit3 size={13} /> Edit Details
-                  </button>
+                    <CheckCircle2 size={13} className="text-emerald-400" />
+                    Submitted (1-Time Edit Used)
+                  </span>
+                ) : (
+                  isEditAllowed && !isEditing && (
+                    isLeader ? (
+                      <button
+                        onClick={handleStartEdit}
+                        className="flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-lg bg-[#00F3FF]/15 hover:bg-[#00F3FF]/25 text-[#00F3FF] border border-[#00F3FF]/40 text-xs font-mono font-bold transition-all cursor-pointer shadow-[0_0_15px_rgba(0,243,255,0.15)] active:scale-95"
+                      >
+                        <Edit3 size={13} /> Edit Details (1-Time)
+                      </button>
+                    ) : (
+                      <span 
+                        className="px-2.5 sm:px-3 py-1 bg-gray-800/80 text-gray-400 border border-gray-700/60 rounded-full text-xs font-mono"
+                        title="Only the Team Leader is authorized to edit registration details"
+                      >
+                        View Only (Leader Only)
+                      </span>
+                    )
+                  )
                 )}
               </div>
             </div>
+
+            {/* One-Time Edit Warning Banner */}
+            {isEditing && (
+              <div className="mt-4 p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-300 text-xs font-mono flex items-start sm:items-center gap-2.5">
+                <AlertTriangle size={16} className="shrink-0 text-amber-400 mt-0.5 sm:mt-0" />
+                <span className="leading-relaxed">
+                  <strong>One-Time Edit Notice:</strong> You can only submit and save your team's details once. Once saved, these details are permanently locked and cannot be edited again. Please ensure all names, emails, branches, and contact numbers are accurate before submitting.
+                </span>
+              </div>
+            )}
 
             {/* Notification / Save Status Message */}
             {saveStatus.msg && (

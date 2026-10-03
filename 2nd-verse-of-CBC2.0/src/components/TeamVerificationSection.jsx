@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, CheckCircle2, AlertTriangle, KeyRound, Mail, ArrowLeft, RefreshCw, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -37,16 +37,85 @@ const TeamVerificationSection = () => {
   const [code, setCode] = useState('');
   const [status, setStatus] = useState({ type: '', msg: '' });
   const [pendingVerification, setPendingVerification] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
   const navigate = useNavigate();
+
+  // Handle Resend Cooldown Countdown
+  useEffect(() => {
+    let timer;
+    if (resendCooldown > 0) {
+      timer = setInterval(() => {
+        setResendCooldown((prev) => (prev > 0 ? prev - 1 : 0));
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
+
+  const checkClientRateLimit = (cleanEmail) => {
+    try {
+      const key = `otp_rate_${cleanEmail}`;
+      const dataStr = localStorage.getItem(key);
+      const now = Date.now();
+      const WINDOW_MS = 15 * 60 * 1000; // 15 mins
+
+      if (dataStr) {
+        const parsed = JSON.parse(dataStr);
+        if (now - parsed.firstAttempt < WINDOW_MS) {
+          if (parsed.count >= 3) {
+            const minsLeft = Math.ceil((WINDOW_MS - (now - parsed.firstAttempt)) / 60000);
+            return { allowed: false, count: parsed.count, minsLeft };
+          }
+          return { allowed: true, count: parsed.count };
+        }
+      }
+      return { allowed: true, count: 0 };
+    } catch (e) {
+      return { allowed: true, count: 0 };
+    }
+  };
+
+  const recordClientAttempt = (cleanEmail) => {
+    try {
+      const key = `otp_rate_${cleanEmail}`;
+      const dataStr = localStorage.getItem(key);
+      const now = Date.now();
+      const WINDOW_MS = 15 * 60 * 1000;
+
+      if (dataStr) {
+        const parsed = JSON.parse(dataStr);
+        if (now - parsed.firstAttempt < WINDOW_MS) {
+          const newCount = parsed.count + 1;
+          localStorage.setItem(key, JSON.stringify({ count: newCount, firstAttempt: parsed.firstAttempt }));
+          return newCount;
+        }
+      }
+      localStorage.setItem(key, JSON.stringify({ count: 1, firstAttempt: now }));
+      return 1;
+    } catch (e) {
+      return 1;
+    }
+  };
 
   const handleSendCode = async (e) => {
     if (e && e.preventDefault) e.preventDefault();
+    if (resendCooldown > 0) return;
     if (!email) {
       setStatus({ type: 'error', msg: 'Please enter your registered email address.' });
       return;
     }
 
     const cleanEmail = email.toLowerCase().trim();
+
+    // 1. Client-side Rate Limit Check (Max 3 attempts per 15 minutes)
+    const rateCheck = checkClientRateLimit(cleanEmail);
+    if (!rateCheck.allowed) {
+      setStatus({
+        type: 'error',
+        msg: `OTP request limit reached (3 attempts max per 15 minutes). Please wait ${rateCheck.minsLeft} minute${rateCheck.minsLeft !== 1 ? 's' : ''} before requesting another code.`
+      });
+      return;
+    }
+
     setStatus({ type: 'loading', msg: 'Sending 6-digit verification code...' });
 
     try {
@@ -66,10 +135,14 @@ const TeamVerificationSection = () => {
         return;
       }
 
+      // Record successful OTP dispatch attempt
+      recordClientAttempt(cleanEmail);
+
       setPendingVerification(true);
+      setResendCooldown(30); // 30-second cooldown between resends
       setStatus({
         type: 'success',
-        msg: 'Verification code sent! Please check your inbox and spam folder.',
+        msg: data.message || 'Verification code sent! Please check your inbox and spam folder.',
       });
     } catch (error) {
       console.error('[DEBUG] Error sending code:', error);
@@ -194,7 +267,10 @@ const TeamVerificationSection = () => {
                     <input 
                       type="email" 
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        if (status.msg) setStatus({ type: '', msg: '' });
+                      }}
                       placeholder="team@example.com"
                       required
                       className="w-full bg-black/40 border border-gray-700/50 rounded-lg p-3 text-white outline-none focus:border-[#00F3FF] focus:ring-1 focus:ring-[#00F3FF] transition-all font-mono text-sm"
@@ -233,7 +309,10 @@ const TeamVerificationSection = () => {
                     <input 
                       type="text" 
                       value={code}
-                      onChange={(e) => setCode(e.target.value.trim())}
+                      onChange={(e) => {
+                        setCode(e.target.value.trim());
+                        if (status.type === 'error') setStatus({ type: '', msg: '' });
+                      }}
                       placeholder="123456"
                       maxLength={6}
                       required
@@ -252,7 +331,11 @@ const TeamVerificationSection = () => {
                   <div className="flex items-center justify-between mt-4 text-xs font-mono">
                     <button 
                       type="button"
-                      onClick={() => setPendingVerification(false)}
+                      onClick={() => {
+                        setPendingVerification(false);
+                        setStatus({ type: '', msg: '' });
+                        setCode('');
+                      }}
                       className="text-gray-400 hover:text-white transition-colors flex items-center gap-1 cursor-pointer"
                     >
                       <ArrowLeft size={12} /> Change Email
@@ -260,10 +343,11 @@ const TeamVerificationSection = () => {
                     <button
                       type="button"
                       onClick={handleSendCode}
-                      disabled={status.type === 'loading'}
-                      className="text-[#00F3FF] hover:underline disabled:opacity-50 flex items-center gap-1 cursor-pointer"
+                      disabled={status.type === 'loading' || resendCooldown > 0}
+                      className="text-[#00F3FF] hover:underline disabled:opacity-50 disabled:no-underline flex items-center gap-1 cursor-pointer disabled:cursor-not-allowed"
                     >
-                      <RefreshCw size={12} /> Resend Code
+                      <RefreshCw size={12} className={resendCooldown > 0 ? "" : ""} /> 
+                      {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend Code'}
                     </button>
                   </div>
                   <p className="text-center text-[11px] text-gray-400 mt-3 font-mono">
