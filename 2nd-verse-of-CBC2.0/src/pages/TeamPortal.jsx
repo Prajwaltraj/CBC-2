@@ -162,8 +162,10 @@ export default function TeamPortal() {
     const leaderCollege = getVal(["Team Leader College:", "Team Leader College Name:", "College Name:", "College Name"], defaultCollege);
     const leaderBranch = getVal(["Team Leader Branch:", "Team Leader Branch", "Leader Branch:", "Leader Branch", "Branch:", "Branch"]);
     const leaderSem = getVal([
-      "Team Leader Sem:", "Team Leader Sem", "Team Leader Semester:", "Leader Sem:", "Leader Sem", "Sem:", "Sem", "Semester:", "Semester",
-      "Team Leader Year:", "Team Leader Year", "Leader Year:", "Leader Year", "Year:", "Year"
+      "Team Leader Semester", "Team Leader Semester:", "Team Leader Sem", "Team Leader Sem:",
+      "Leader Semester", "Leader Semester:", "Leader Sem", "Leader Sem:",
+      "Semester", "Semester:", "Sem", "Sem:",
+      "Team Leader Year", "Team Leader Year:", "Leader Year", "Leader Year:", "Year", "Year:"
     ]);
 
     if (leaderName || leaderEmail || leaderPhone) {
@@ -187,8 +189,9 @@ export default function TeamPortal() {
       const mCollege = getVal([`Team Member ${i} College Name:`, `Team Member ${i} College:`, `Team Member ${i} College`], defaultCollege);
       const mBranch = getVal([`Team Member ${i} Branch:`, `Team Member ${i} Branch`, `Member ${i} Branch:`, `Member ${i} Branch`]);
       const mSem = getVal([
-        `Team Member ${i} Sem:`, `Team Member ${i} Sem`, `Team Member ${i} Semester:`, `Member ${i} Sem:`, `Member ${i} Sem`, `Member ${i} Semester:`,
-        `Team Member ${i} Year:`, `Team Member ${i} Year`, `Member ${i} Year:`, `Member ${i} Year`
+        `Team Member ${i} Semester`, `Team Member ${i} Semester:`, `Team Member ${i} Sem`, `Team Member ${i} Sem:`,
+        `Member ${i} Semester`, `Member ${i} Semester:`, `Member ${i} Sem`, `Member ${i} Sem:`,
+        `Team Member ${i} Year`, `Team Member ${i} Year:`, `Member ${i} Year`, `Member ${i} Year:`
       ]);
 
       if (mName || mEmail || mPhone) {
@@ -306,11 +309,21 @@ export default function TeamPortal() {
         if (m1.college && m1.college !== '—') updates["College Name:"] = m1.college.trim();
         const semVal1 = (m1.sem || m1.year || '').trim();
         updates['Team Leader Branch:'] = m1.branch ? m1.branch.trim() : '';
+        updates['Team Leader Branch'] = m1.branch ? m1.branch.trim() : '';
+        updates['Team Leader Semester:'] = semVal1;
+        updates['Team Leader Semester'] = semVal1;
         updates['Team Leader Sem:'] = semVal1;
+        updates['Team Leader Sem'] = semVal1;
         updates['Team Leader Year:'] = semVal1;
+        updates['Team Leader Year'] = semVal1;
         updates['Branch:'] = m1.branch ? m1.branch.trim() : '';
+        updates['Branch'] = m1.branch ? m1.branch.trim() : '';
+        updates['Semester:'] = semVal1;
+        updates['Semester'] = semVal1;
         updates['Sem:'] = semVal1;
+        updates['Sem'] = semVal1;
         updates['Year:'] = semVal1;
+        updates['Year'] = semVal1;
       }
 
       // Members 2 to 4
@@ -323,8 +336,13 @@ export default function TeamPortal() {
         if (mi.phone) updates[`Team Member ${num} WhatsApp Number:`] = mi.phone.trim();
         if (mi.college && mi.college !== '—') updates[`Team Member ${num} College Name:`] = mi.college.trim();
         updates[`Team Member ${num} Branch:`] = mi.branch ? mi.branch.trim() : '';
+        updates[`Team Member ${num} Branch`] = mi.branch ? mi.branch.trim() : '';
+        updates[`Team Member ${num} Semester:`] = semiVal;
+        updates[`Team Member ${num} Semester`] = semiVal;
         updates[`Team Member ${num} Sem:`] = semiVal;
+        updates[`Team Member ${num} Sem`] = semiVal;
         updates[`Team Member ${num} Year:`] = semiVal;
+        updates[`Team Member ${num} Year`] = semiVal;
       }
 
       // Collect all emails associated with this team to lock all member accounts in RTDB
@@ -349,12 +367,12 @@ export default function TeamPortal() {
       }
 
       // 2. Write updates to Google Sheets via Webhook
-      const GOOGLE_SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxsDLJs4FHaQXDBp0Nh5WYc3I_E4HALnurnoH4mAslsE51dBZt6mfqLhdgoK-Cp3uKGtw/exec';
+      const GOOGLE_SHEET_WEBHOOK_URL = import.meta.env.VITE_GOOGLE_SHEET_WEBHOOK_URL || 'https://script.google.com/macros/s/AKfycbxsDLJs4FHaQXDBp0Nh5WYc3I_E4HALnurnoH4mAslsE51dBZt6mfqLhdgoK-Cp3uKGtw/exec';
       try {
         await fetch(GOOGLE_SHEET_WEBHOOK_URL, {
           method: 'POST',
           mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             email: verifiedEmail,
             updates: updates
