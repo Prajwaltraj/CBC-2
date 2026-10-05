@@ -1,7 +1,6 @@
 
 
 const SponsorsSection = () => {
-  const foodSponsors = ["Food Partner 1", "Food Partner 2"];
   const technicalSponsors = ["Tech Partner 1", "Tech Partner 2"];
   const supportSponsors = ["Support 1", "Support 2"];
 
@@ -13,13 +12,15 @@ const SponsorsSection = () => {
         </h2>
 
         <div className="flex flex-col gap-16">
-          {/* Layer 1: Title Sponsor */}
+          {/* Layer 1: Title Sponsor - Placeholder commented for now */}
+          {/* 
           <div className="text-center">
             <h3 className="text-sm font-mono text-[#FBBF24] tracking-[0.2em] uppercase mb-6">Title Sponsors</h3>
             <div className="flex justify-center items-center gap-8 flex-wrap">
               <div className="glass-panel w-64 h-32 rounded-xl flex items-center justify-center text-gray-500 hover:text-black dark:hover:text-white transition-colors border-[#FBBF24]/30 shadow-[0_0_20px_rgba(251,191,36,0.1)]">Title Placeholder 1</div>
             </div>
           </div>
+          */}
 
           {/* Layer 2: Hosting Sponsors */}
           <div className="text-center">
@@ -36,12 +37,13 @@ const SponsorsSection = () => {
             <h3 className="text-sm font-mono text-[#00F3FF] tracking-[0.2em] uppercase mb-6">Sustainability Partner</h3>
             <div className="flex justify-center items-center gap-6 flex-wrap glass-panel p-4 rounded-2xl w-fit mx-auto">
               <a href="https://www.passiton.in/" target="_blank" rel="noopener noreferrer" className="overflow-hidden rounded-lg hover:scale-105 transition-transform duration-300 shadow-[0_0_15px_rgba(34,197,94,0.3)]">
-                <img src="/team/passiton.webp" alt="PassItOn" className="h-12 md:h-16 object-contain" />
+                <img src="/team/passiton.png" alt="PassItOn" className="h-12 md:h-16 object-contain" />
               </a>
             </div>
           </div>
 
-          {/* Layer 3: Co-Sponsors */}
+          {/* Layer 3: Co-Sponsors - Placeholder commented for now */}
+          {/* 
           <div className="text-center">
             <h3 className="text-sm font-mono text-[#00F3FF] tracking-[0.2em] uppercase mb-6">Co-Sponsors</h3>
             <div className="flex justify-center items-center gap-6 flex-wrap">
@@ -50,20 +52,11 @@ const SponsorsSection = () => {
               <div className="glass-panel w-48 h-24 rounded-lg flex items-center justify-center text-gray-500 hover:text-black dark:hover:text-white transition-colors">Co-Sponsor 3</div>
             </div>
           </div>
+          */}
 
-          {/* Layer 4: 3 Columns */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 border-t border-black/10 dark:border-white/5 pt-12">
-            {/* Food Sponsors */}
-            <div className="text-center">
-              <h3 className="text-xs font-mono text-gray-400 tracking-[0.1em] uppercase mb-4">Food Sponsors</h3>
-              <div className="flex flex-col gap-4 items-center">
-                {foodSponsors.map((s, i) => (
-                  <div key={i} className="glass-panel w-full max-w-[200px] h-16 rounded flex items-center justify-center text-gray-500 text-sm">{s}</div>
-                ))}
-              </div>
-            </div>
-            
-            {/* Technical Sponsors */}
+          {/* Layer 4: Technical & Support Sponsors - Placeholder commented for now */}
+          {/* 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto w-full border-t border-black/10 dark:border-white/5 pt-12">
             <div className="text-center">
               <h3 className="text-xs font-mono text-gray-400 tracking-[0.1em] uppercase mb-4">Technical Sponsors</h3>
               <div className="flex flex-col gap-4 items-center">
@@ -73,7 +66,6 @@ const SponsorsSection = () => {
               </div>
             </div>
 
-            {/* Support Sponsors */}
             <div className="text-center">
               <h3 className="text-xs font-mono text-gray-400 tracking-[0.1em] uppercase mb-4">Support Sponsors</h3>
               <div className="flex flex-col gap-4 items-center">
@@ -83,6 +75,7 @@ const SponsorsSection = () => {
               </div>
             </div>
           </div>
+          */}
 
           {/* Previous Sponsors & Partners */}
           <div className="text-center mt-12 pt-16 border-t border-white/10 relative">
