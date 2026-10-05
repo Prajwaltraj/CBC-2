@@ -24,7 +24,7 @@ const TeamSection = () => {
       badge: "PATRON",
       color: "#FBBF24",
       dept: "GAT Bengaluru",
-      image: "/team/HOD.png"
+      image: "/team/HOD.webp"
     },
     {
       name: "Prof. C Christlin Shanuja",
@@ -33,7 +33,7 @@ const TeamSection = () => {
       badge: "MENTOR",
       color: "#FBBF24",
       dept: "GAT Bengaluru",
-      image: "/team/Shanuja mam.png"
+      image: "/team/Shanuja mam.webp"
     },
     {
       name: "Prof. Prasanna N",
@@ -42,7 +42,7 @@ const TeamSection = () => {
       badge: "MENTOR",
       color: "#FBBF24",
       dept: "GAT Bengaluru",
-      image: "/team/prasanna.png"
+      image: "/team/prasanna.webp"
     },
     {
       name: "Prof. Anusha J",
@@ -51,7 +51,7 @@ const TeamSection = () => {
       badge: "MENTOR",
       color: "#FBBF24",
       dept: "GAT Bengaluru",
-      image: "/team/Anusha.png"
+      image: "/team/Anusha.webp"
     },
     {
       name: "Prof. Likhith Krishna Kikkeri",
@@ -60,7 +60,7 @@ const TeamSection = () => {
       badge: "MENTOR",
       color: "#FBBF24",
       dept: "GAT Bengaluru",
-      image: "/team/likith.png"
+      image: "/team/likith.webp"
     },
     
 
@@ -72,7 +72,7 @@ const TeamSection = () => {
       badge: "CONVENOR",
       color: "#00F3FF",
       dept: "Dept. of AI & ML, GAT",
-      image: "/team/Niyathi.png"
+      image: "/team/Niyathi.webp"
     },
     {
       name: "Bhuvan A R",
@@ -81,7 +81,7 @@ const TeamSection = () => {
       badge: "CO-CONVENOR",
       color: "#00B4D8",
       dept: "Dept. of AI & ML, GAT",
-      image: "/team/Bhuvan.png"
+      image: "/team/Bhuvan.webp"
     },
     {
       name: "Ravi Kumar G",
@@ -90,7 +90,7 @@ const TeamSection = () => {
       badge: "CO-CONVENOR",
       color: "#38BDF8",
       dept: "Dept. of AI & ML, GAT",
-      image: "/team/Ravi.png"
+      image: "/team/Ravi.webp"
     },
     
     // Technical Team
@@ -101,7 +101,7 @@ const TeamSection = () => {
       badge: "TECH HEAD",
       color: "#00F3FF",
       dept: "Dept. of AI & ML, GAT",
-      image: "/team/Prajwal.png"
+      image: "/team/Prajwal.webp"
     },
     {
       name: "Chethan Ponnappa A",
@@ -110,7 +110,7 @@ const TeamSection = () => {
       badge: "TECH CO-HEAD",
       color: "#00B4D8",
       dept: "Dept. of AI & ML, GAT",
-      image: "/team/Chethan.png"
+      image: "/team/Chethan.webp"
     },
 
     // Operations & Media Team
@@ -121,7 +121,7 @@ const TeamSection = () => {
       badge: "TREASURER",
       color: "#A855F7",
       dept: "Dept. of AI & ML, GAT",
-      image: "/team/yashaswini.png"
+      image: "/team/yashaswini.webp"
     },
     {
       name: "Janavi H B",
@@ -130,7 +130,7 @@ const TeamSection = () => {
       badge: "STAGE HEAD",
       color: "#EC4899",
       dept: "Dept. of AI & ML, GAT",
-      image: "/team/Jaanvi.png"
+      image: "/team/Jaanvi.webp"
     },
     {
       name: "Namratha B A",
@@ -139,7 +139,7 @@ const TeamSection = () => {
       badge: "STAGE CO-HEAD",
       color: "#EC4899",
       dept: "Dept. of AI & ML, GAT",
-      image: "/team/Namratha.png"
+      image: "/team/Namratha.webp"
     },
     {
       name: "Riya Vinod",
@@ -148,7 +148,7 @@ const TeamSection = () => {
       badge: "CREATIVE HEAD",
       color: "#F43F5E",
       dept: "Dept. of AI & ML, GAT",
-      image: "/team/Riya.png"
+      image: "/team/Riya.webp"
     },
     {
       name: "Samrudh H T",
@@ -157,7 +157,7 @@ const TeamSection = () => {
       badge: "MEDIA HEAD",
       color: "#06B6D4",
       dept: "Dept. of AI & ML, GAT",
-      image: "/team/samrudh.png"
+      image: "/team/samrudh.webp"
     },
     {
       name: "Pratheeksha R",
@@ -166,7 +166,7 @@ const TeamSection = () => {
       badge: "MEDIA CO-HEAD",
       color: "#06B6D4",
       dept: "Dept. of AI & ML, GAT",
-      image: "/team/Pratheeksha.png"
+      image: "/team/Pratheeksha.webp"
     },
     {
       name: "Mythri Mehendarkar R",
@@ -175,7 +175,7 @@ const TeamSection = () => {
       badge: "HOSPITALITY",
       color: "#38BDF8",
       dept: "Dept. of AI & ML, GAT",
-      image: "/team/mythri.png"
+      image: "/team/mythri.webp"
     },
     {
       name: "Laasya S D",
@@ -184,7 +184,7 @@ const TeamSection = () => {
       badge: "HOSPITALITY",
       color: "#38BDF8",
       dept: "Dept. of AI & ML, GAT",
-      image: "/team/laasya.png"
+      image: "/team/laasya.webp"
     },
     {
       name: "Vinayaka S",
@@ -193,7 +193,7 @@ const TeamSection = () => {
       badge: "REGISTRATION",
       color: "#10B981",
       dept: "Dept. of AI & ML, GAT",
-      image: "/team/Vinayaka .png"
+      image: "/team/Vinayaka .webp"
     },
     {
       name: "Yashavantha M S",
@@ -202,7 +202,7 @@ const TeamSection = () => {
       badge: "DISCIPLINE",
       color: "#F59E0B",
       dept: "Dept. of AI & ML, GAT",
-      image: "/team/yashvantha.png"
+      image: "/team/yashvantha.webp"
     },
     {
       name: "S Maha Skanda",
@@ -211,7 +211,7 @@ const TeamSection = () => {
       badge: "LOGISTICS",
       color: "#8B5CF6",
       dept: "Dept. of AI & ML, GAT",
-      image: "/team/skanda .png"
+      image: "/team/skanda .webp"
     }
   ];
 

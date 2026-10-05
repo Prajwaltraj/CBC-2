@@ -11,7 +11,7 @@ const Footer = () => (
       {/* Brand & Location */}
       <div className="flex flex-col gap-5">
         <a href="/" className="flex items-center gap-3 group cursor-pointer">
-          <ProgressiveImage src="/team/cbc logo.png" alt="CBC 2.0" className="h-12 w-12 object-contain transition-transform duration-300 group-hover:scale-105" />
+          <ProgressiveImage src="/team/cbc logo.webp" alt="CBC 2.0" className="h-12 w-12 object-contain transition-transform duration-300 group-hover:scale-105" />
           <span className="font-orbitron font-bold text-2xl tracking-wider group-hover:text-[#00F3FF] transition-colors">CBC 2.0</span>
         </a>
         <p className="text-gray-400 text-sm font-mono leading-relaxed">

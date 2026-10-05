@@ -5,11 +5,11 @@ const GlimpsesSection = () => {
   const [hoveredIndex, setHoveredIndex] = useState(0);
 
   const glimpses = [
-    { id: 1, src: '/glimpses/1.png', title: 'INNOVATION', subtitle: 'TEAMS BUILDING THE FUTURE' },
-    { id: 2, src: '/glimpses/2.png', title: 'COLLABORATION', subtitle: '24 HOURS OF SYNERGY' },
-    { id: 3, src: '/glimpses/3.png', title: 'EXCELLENCE', subtitle: 'PUSHING BOUNDARIES' },
-    { id: 4, src: '/glimpses/4.png', title: 'COMMUNITY', subtitle: 'THE CBC VIBE' },
-    { id: 5, src: '/glimpses/5.png', title: 'IMPACT', subtitle: 'REAL WORLD SOLUTIONS' },
+    { id: 1, src: '/glimpses/1.webp', title: 'INNOVATION', subtitle: 'TEAMS BUILDING THE FUTURE' },
+    { id: 2, src: '/glimpses/2.webp', title: 'COLLABORATION', subtitle: '24 HOURS OF SYNERGY' },
+    { id: 3, src: '/glimpses/3.webp', title: 'EXCELLENCE', subtitle: 'PUSHING BOUNDARIES' },
+    { id: 4, src: '/glimpses/4.webp', title: 'COMMUNITY', subtitle: 'THE CBC VIBE' },
+    { id: 5, src: '/glimpses/5.webp', title: 'IMPACT', subtitle: 'REAL WORLD SOLUTIONS' },
   ];
 
   return (

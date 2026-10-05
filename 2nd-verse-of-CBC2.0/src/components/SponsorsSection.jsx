@@ -36,7 +36,7 @@ const SponsorsSection = () => {
             <h3 className="text-sm font-mono text-[#00F3FF] tracking-[0.2em] uppercase mb-6">Sustainability Partner</h3>
             <div className="flex justify-center items-center gap-6 flex-wrap glass-panel p-4 rounded-2xl w-fit mx-auto">
               <a href="https://www.passiton.in/" target="_blank" rel="noopener noreferrer" className="overflow-hidden rounded-lg hover:scale-105 transition-transform duration-300 shadow-[0_0_15px_rgba(34,197,94,0.3)]">
-                <img src="/team/passiton.png" alt="PassItOn" className="h-12 md:h-16 object-contain" />
+                <img src="/team/passiton.webp" alt="PassItOn" className="h-12 md:h-16 object-contain" />
               </a>
             </div>
           </div>

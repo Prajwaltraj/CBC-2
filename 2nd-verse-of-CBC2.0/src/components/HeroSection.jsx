@@ -19,21 +19,21 @@ const HeroSection = () => (
       className="relative z-10 flex flex-wrap justify-center items-center gap-8 mb-10 w-full max-w-4xl"
     >
       <ProgressiveImage 
-        src="/team/Global logoo.png" 
+        src="/team/Global logoo.webp" 
         alt="Global Academy of Technology" 
         priority={true}
         className="h-16 md:h-20 object-contain bg-[#FDFEFF] p-2 rounded-lg" 
       />
       <div className="h-12 w-[1px] bg-white/20 hidden md:block" />
       <ProgressiveImage 
-        src="/team/cbc logo.png" 
+        src="/team/cbc logo.webp" 
         alt="Code Breaker Challenge 2.0" 
         priority={true}
         className="h-16 md:h-20 object-contain" 
       />
       <div className="h-12 w-[1px] bg-white/20 hidden md:block" />
       <ProgressiveImage 
-        src="/team/22.png" 
+        src="/team/22.webp" 
         alt="Dept of AI & ML" 
         priority={true}
         className="h-16 md:h-20 object-contain" 
@@ -100,23 +100,23 @@ const HeroSection = () => (
         <div className="flex flex-col items-center gap-4 mb-6 mt-4">
           <div className="flex flex-col md:flex-row items-center justify-center gap-4">
             <ProgressiveImage 
-              src="/team/sdg long.png" 
+              src="/team/sdg long.webp" 
               alt="Sustainable Development Goals" 
               className="h-12 md:h-16 object-contain opacity-90 hover:opacity-100 transition-opacity drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] rounded-lg" 
             />
             <div className="flex items-center justify-center gap-4">
               <ProgressiveImage 
-                src="/team/sdg 04.jpeg" 
+                src="/team/sdg 04.webp" 
                 alt="SDG 4 - Quality Education" 
                 className="h-12 md:h-16 object-contain opacity-90 hover:opacity-100 transition-opacity drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] rounded-lg" 
               />
               <ProgressiveImage 
-                src="/team/sdg 09.jpeg" 
+                src="/team/sdg 09.webp" 
                 alt="SDG 9 - Industry, Innovation and Infrastructure" 
                 className="h-12 md:h-16 object-contain opacity-90 hover:opacity-100 transition-opacity drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] rounded-lg" 
               />
               <ProgressiveImage 
-                src="/team/sdg 17.jpeg" 
+                src="/team/sdg 17.webp" 
                 alt="SDG 17 - Partnerships for the Goals" 
                 className="h-12 md:h-16 object-contain opacity-90 hover:opacity-100 transition-opacity drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] rounded-lg" 
               />

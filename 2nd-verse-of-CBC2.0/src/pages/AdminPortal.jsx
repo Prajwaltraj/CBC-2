@@ -472,11 +472,11 @@ const AdminPortal = () => {
             {/* Top Branding Section */}
             <div>
               <div className="flex items-center gap-4 mb-4 flex-wrap">
-                <img src="/logos/gatlockuplogo.png" alt="GAT Logo" className="h-8 md:h-10 object-contain" />
+                <img src="/logos/gatlockuplogo.webp" alt="GAT Logo" className="h-8 md:h-10 object-contain" />
                 <div className="w-px h-6 bg-[#242a30]" />
-                <img src="/logos/aimldeptlogo.png" alt="AIML Dept Logo" className="h-8 md:h-10 object-contain" />
+                <img src="/logos/aimldeptlogo.webp" alt="AIML Dept Logo" className="h-8 md:h-10 object-contain" />
                 <div className="w-px h-6 bg-[#242a30]" />
-                <img src="/logos/cbc2ologo.PNG" alt="CBC 2.0" className="h-8 md:h-10 object-contain" />
+                <img src="/logos/cbc2ologo.webp" alt="CBC 2.0" className="h-8 md:h-10 object-contain" />
               </div>
 
               <div className="flex items-center gap-2 font-mono text-xs tracking-widest text-[#33e0a1] uppercase mb-1">

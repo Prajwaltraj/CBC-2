@@ -34,7 +34,7 @@ const AboutSection = () => {
           {/* Background Image */}
           <div className="absolute inset-0 z-0 bg-[#010103]">
             <img 
-              src="/team/gatt.png" 
+              src="/team/gatt.webp" 
               alt="GAT Background" 
               className="w-full h-full object-cover opacity-70 mix-blend-screen" 
               onError={(e) => {
@@ -79,7 +79,7 @@ const AboutSection = () => {
           {/* Background Image */}
           <div className="absolute inset-0 z-0 bg-[#010103]">
             <img 
-              src="/team/aimll.png" 
+              src="/team/aimll.webp" 
               alt="AIML Background" 
               className="w-full h-full object-cover opacity-70 mix-blend-screen" 
               onError={(e) => {
@@ -122,7 +122,7 @@ const AboutSection = () => {
           {/* Background Image */}
           <div className="absolute inset-0 z-0 bg-[#010103]">
             <img 
-              src="/team/cb.png" 
+              src="/team/cb.webp" 
               alt="CBC Background" 
               className="w-full h-full object-cover opacity-70 mix-blend-screen" 
               onError={(e) => {

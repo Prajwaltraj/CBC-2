@@ -129,7 +129,7 @@ const NavigationBar = () => {
         {/* Logo */}
         <Link to="/" onClick={handleLogoClick} className="flex items-center gap-1.5 sm:gap-2 group z-50 shrink-0 cursor-pointer">
           <ProgressiveImage 
-            src="/team/cbc logo.png" 
+            src="/team/cbc logo.webp" 
             alt="CBC 2.0" 
             priority={true}
             className="h-8 w-8 sm:h-9 sm:w-9 nav:h-10 nav:w-10 object-contain transition-transform duration-300 group-hover:scale-110" 

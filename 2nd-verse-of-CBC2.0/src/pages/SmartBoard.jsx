@@ -210,11 +210,11 @@ export const BoardTemplate = ({
       {/* Top Header / Branding Bar */}
       <header className="w-full flex justify-between items-center z-10">
         <div className="flex items-center gap-3 md:gap-4">
-          <img src="/logos/gatlockuplogo.png" alt="GAT Logo" className="h-8 md:h-10 object-contain" />
+          <img src="/logos/gatlockuplogo.webp" alt="GAT Logo" className="h-8 md:h-10 object-contain" />
           <div className="w-px h-6 bg-[#242a30]" />
-          <img src="/logos/aimldeptlogo.png" alt="AIML Dept Logo" className="h-8 md:h-10 object-contain" />
+          <img src="/logos/aimldeptlogo.webp" alt="AIML Dept Logo" className="h-8 md:h-10 object-contain" />
           <div className="w-px h-6 bg-[#242a30]" />
-          <img src="/logos/cbc2ologo.PNG" alt="CBC 2.0" className="h-8 md:h-10 object-contain" />
+          <img src="/logos/cbc2ologo.webp" alt="CBC 2.0" className="h-8 md:h-10 object-contain" />
           
           <div className="flex items-center gap-2 ml-2 md:ml-3 text-xs font-mono font-bold tracking-widest text-[#33e0a1] uppercase">
             <span className={`w-2.5 h-2.5 rounded-full bg-[#33e0a1] shadow-[0_0_8px_#33e0a1] ${isAlerting ? 'animate-ping' : 'animate-pulse'}`} />
@@ -310,9 +310,9 @@ export const BoardTemplate = ({
                 Our Event Sponsors & Partners
               </span>
               <div className="flex items-center justify-center gap-8 md:gap-12 flex-wrap">
-                <img src="/logos/gatlockuplogo.png" alt="Sponsor GAT" className="h-7 md:h-9 object-contain opacity-80 hover:opacity-100 transition-opacity" />
-                <img src="/logos/aimldeptlogo.png" alt="Sponsor AIML" className="h-7 md:h-9 object-contain opacity-80 hover:opacity-100 transition-opacity" />
-                <img src="/logos/cbc2ologo.PNG" alt="CBC 2.0" className="h-7 md:h-9 object-contain opacity-80 hover:opacity-100 transition-opacity" />
+                <img src="/logos/gatlockuplogo.webp" alt="Sponsor GAT" className="h-7 md:h-9 object-contain opacity-80 hover:opacity-100 transition-opacity" />
+                <img src="/logos/aimldeptlogo.webp" alt="Sponsor AIML" className="h-7 md:h-9 object-contain opacity-80 hover:opacity-100 transition-opacity" />
+                <img src="/logos/cbc2ologo.webp" alt="CBC 2.0" className="h-7 md:h-9 object-contain opacity-80 hover:opacity-100 transition-opacity" />
               </div>
             </div>
             */}
