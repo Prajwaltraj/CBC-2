@@ -154,15 +154,7 @@ const NavigationBar = () => {
             {isLight ? <Moon size={18} /> : <Sun size={18} className="text-[#00F3FF]" />}
           </button>
 
-          <a href="https://forms.gle/idBVSyU5E7HQpkop9" target="_blank" rel="noopener noreferrer" 
-            onClick={() => setMobileMenuOpen(false)}
-            className="relative inline-flex items-center justify-center px-3 sm:px-4 min-[1200px]:px-6 py-1.5 sm:py-2 min-[1200px]:py-2.5 overflow-hidden font-orbitron font-bold text-white bg-[#010103] border border-[#00F3FF] rounded-md hover:bg-[#00F3FF]/10 transition-colors group shadow-[0_0_10px_rgba(0,243,255,0.15)] shrink-0 cursor-pointer"
-          >
-            <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-[#00F3FF] rounded-full group-hover:w-56 group-hover:h-56 opacity-10"></span>
-            <span className="relative flex items-center gap-1 sm:gap-1.5 min-[1200px]:gap-2 text-[10px] sm:text-[11px] min-[1200px]:text-sm whitespace-nowrap">
-              <Zap size={13} className="text-[#00F3FF] min-[1200px]:w-4 min-[1200px]:h-4" /> REGISTER
-            </span>
-          </a>
+
 
           {/* Mobile Menu Toggle (Visible only below 1200px, hidden above 1200px) */}
           <button
