@@ -123,7 +123,7 @@ const TeamVerificationSection = () => {
     setStatus({ type: 'loading', msg: 'Sending 6-digit verification code...' });
 
     try {
-      const response = await fetch('/api/send-otp', {
+      const response = await fetch((import.meta.env.VITE_API_BASE_URL || "") + "/api/send-otp", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: cleanEmail }),
@@ -169,7 +169,7 @@ const TeamVerificationSection = () => {
     setStatus({ type: 'loading', msg: 'Verifying code...' });
 
     try {
-      const response = await fetch('/api/verify-otp', {
+      const response = await fetch((import.meta.env.VITE_API_BASE_URL || "") + "/api/verify-otp", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: cleanEmail, code: cleanCode }),

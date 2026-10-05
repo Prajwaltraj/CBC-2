@@ -18,7 +18,7 @@ const ChatbotWidget = () => {
 
   useEffect(() => {
     if (isOpen && suggestions.length === 0) {
-      fetch('/api/suggestions')
+      fetch((import.meta.env.VITE_API_BASE_URL || "") + "/api/suggestions")
         .then(res => res.json())
         .then(data => setSuggestions(data))
         .catch(err => console.error(err));
@@ -37,7 +37,7 @@ const ChatbotWidget = () => {
     setIsLoading(true);
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await fetch((import.meta.env.VITE_API_BASE_URL || "") + "/api/chat", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: text })
