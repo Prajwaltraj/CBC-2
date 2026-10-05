@@ -135,7 +135,7 @@ const NavigationBar = () => {
             className="h-8 w-8 sm:h-9 sm:w-9 nav:h-10 nav:w-10 object-contain transition-transform duration-300 group-hover:scale-110" 
           />
           <span className="font-orbitron font-bold text-base sm:text-lg nav:text-xl tracking-wider text-white group-hover:text-[#00F3FF] transition-colors">CBC 2.0</span>
-        </Link>
+        </a>
 
         {/* Desktop Nav Links (Expands above 1200px) */}
         <div className="hidden min-[1200px]:flex items-center gap-5 xl:gap-7 font-orbitron text-[11px] tracking-wider transition-all">
@@ -154,16 +154,15 @@ const NavigationBar = () => {
             {isLight ? <Moon size={18} /> : <Sun size={18} className="text-[#00F3FF]" />}
           </button>
 
-          <Link 
-            to="/team" 
+          <a href="https://forms.gle/idBVSyU5E7HQpkop9" target="_blank" rel="noopener noreferrer" 
             onClick={() => setMobileMenuOpen(false)}
             className="relative inline-flex items-center justify-center px-3 sm:px-4 min-[1200px]:px-6 py-1.5 sm:py-2 min-[1200px]:py-2.5 overflow-hidden font-orbitron font-bold text-white bg-[#010103] border border-[#00F3FF] rounded-md hover:bg-[#00F3FF]/10 transition-colors group shadow-[0_0_10px_rgba(0,243,255,0.15)] shrink-0 cursor-pointer"
           >
             <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-[#00F3FF] rounded-full group-hover:w-56 group-hover:h-56 opacity-10"></span>
             <span className="relative flex items-center gap-1 sm:gap-1.5 min-[1200px]:gap-2 text-[10px] sm:text-[11px] min-[1200px]:text-sm whitespace-nowrap">
-              <ShieldCheck size={14} className="text-[#00F3FF] min-[1200px]:w-4 min-[1200px]:h-4" /> VERIFY
+              <Zap size={13} className="text-[#00F3FF] min-[1200px]:w-4 min-[1200px]:h-4" /> REGISTER
             </span>
-          </Link>
+          </a>
 
           {/* Mobile Menu Toggle (Visible only below 1200px, hidden above 1200px) */}
           <button
@@ -200,17 +199,6 @@ const NavigationBar = () => {
                 </a>
               ))}
 
-              <Link
-                to="/team"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between py-2.5 px-3 rounded-lg border border-[#00F3FF]/40 bg-[#00F3FF]/10 text-[#00F3FF] font-bold transition-all cursor-pointer mt-1"
-              >
-                <span className="uppercase font-bold tracking-widest flex items-center gap-2">
-                  <ShieldCheck size={14} /> Team Verification
-                </span>
-                <span className="text-[10px] text-[#00F3FF] font-mono">PORTAL {'//'}</span>
-              </Link>
-              
               <div className="mt-2 pt-3 border-t border-black/20 dark:border-white/10 flex justify-between items-center text-[10px] font-mono text-gray-400">
                 <span className="text-gray-500">SYS.NAV // ACTIVE</span>
                 <span className="text-[#00F3FF]">CBC 2.0</span>

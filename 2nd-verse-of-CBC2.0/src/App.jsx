@@ -18,7 +18,6 @@ import SmartBoard from './pages/SmartBoard';
 import GlimpsesSection from './components/GlimpsesSection';
 import NeuralBackground from './components/NeuralBackground';
 import RulebookPage from './pages/RulebookPage';
-import TeamPortal from './pages/TeamPortal';
 import { Analytics } from '@vercel/analytics/react';
 
 function LandingPage() {
@@ -37,8 +36,6 @@ function LandingPage() {
         <PrizesSection />
         <TimelineSection />
         <RulesSection />
-        {/* Team Details & Verification - Disabled until registrations close */}
-        {/* <TeamVerificationSection /> */}
         <ProblemStatementsSection />
         <SponsorsSection />
         <TeamSection />
@@ -59,8 +56,7 @@ export default function App() {
         <Route path="/board" element={<SmartBoard />} />
         <Route path="/display" element={<Navigate to="/board" replace />} />
         <Route path="/rulebook" element={<RulebookPage />} />
-        <Route path="/team" element={<TeamPortal />} />
-      </Routes>
+              </Routes>
       <Analytics />
     </Router>
   );
