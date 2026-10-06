@@ -1,7 +1,9 @@
 import { useCountdown } from './useCountdown';
-import { PROBLEM_STATEMENTS_CONFIG } from '../config/problemStatements';
+
+const EVENT_START_DATE = "2026-10-10T10:30:00+05:30";
+
 const FixedTimer = () => {
-  const timeLeft = useCountdown(PROBLEM_STATEMENTS_CONFIG.UNLOCK_DATE);
+  const timeLeft = useCountdown(EVENT_START_DATE);
 
   return (
     <div 

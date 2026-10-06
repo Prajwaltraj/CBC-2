@@ -60,7 +60,6 @@ const NavigationBar = () => {
     { name: 'Domains', href: '#themes' },
     { name: 'Prizes', href: '#prizes' },
     { name: 'Timeline', href: '#timeline' },
-    { name: 'Statements', href: '#problems' },
     { name: 'Sponsors', href: '#sponsors' },
     { name: 'Team', href: '#team' },
   ];
