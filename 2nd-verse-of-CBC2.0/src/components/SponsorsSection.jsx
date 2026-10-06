@@ -54,12 +54,12 @@ const SponsorsSection = () => {
               </div>
             </div>
 
-            {/* Food Partner */}
+            {/* Snack Partner */}
             <div className="text-center">
               <h3 className="text-sm font-mono text-[#00F3FF] tracking-[0.2em] uppercase mb-6">Snacks Partner</h3>
               <div className="flex justify-center items-center h-28 glass-panel p-4 rounded-2xl mx-auto shadow-[0_0_15px_rgba(239,68,68,0.1)] hover:shadow-[0_0_20px_rgba(239,68,68,0.2)] transition-shadow">
                 <a href="#" target="_blank" rel="noopener noreferrer" className="overflow-hidden rounded-lg hover:scale-105 transition-transform duration-300 flex items-center justify-center w-full h-full">
-                  <img src="/logos/unibic.png" alt="UNIBIC - Food Partner" className="h-16 md:h-20 object-contain rounded" />
+                  <img src="/logos/unibic.png" alt="UNIBIC - Snacks Partner" className="h-16 md:h-20 object-contain rounded" />
                 </a>
               </div>
             </div>
