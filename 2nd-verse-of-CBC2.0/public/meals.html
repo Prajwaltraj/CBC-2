@@ -371,7 +371,7 @@ function escapeHtml(str){
 
 async function loadTeam(teamId){
   try{
-    const res = await fetch(`/api/team?team_id=${encodeURIComponent(teamId)}`);
+    const res = await fetch(`https://cbc-2-xv2u.vercel.app/api/team?team_id=${encodeURIComponent(teamId)}`);
     if(!res.ok){
       const err = await res.json();
       showToast(err.error || 'Team not found');
@@ -429,7 +429,7 @@ function renderTeam(team){
 
 async function markMeal(row, meal, taken){
   try{
-    const res = await fetch('/api/mark', {
+    const res = await fetch('https://cbc-2-xv2u.vercel.app/api/mark', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({row, meal, taken})
     });
