@@ -37,30 +37,30 @@ const SponsorsSection = () => {
             {/* Sustainability Partner */}
             <div className="text-center">
               <h3 className="text-sm font-mono text-[#00F3FF] tracking-[0.2em] uppercase mb-6">Sustainability Partner</h3>
-              <div className="flex justify-center items-center h-28 glass-panel p-4 rounded-2xl mx-auto shadow-[0_0_15px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.2)] transition-shadow">
-                <a href="https://www.passiton.in/" target="_blank" rel="noopener noreferrer" className="overflow-hidden rounded-lg hover:scale-105 transition-transform duration-300 flex items-center justify-center w-full h-full">
+              <div className="flex justify-center items-center h-28 glass-panel p-4 rounded-2xl mx-auto shadow-[0_0_15px_rgba(34,197,94,0.1)]">
+                <div className="overflow-hidden rounded-lg flex items-center justify-center w-full h-full">
                   <img src="/team/passiton.webp" alt="PassItOn - Sustainability Partner" className="h-14 md:h-16 object-contain" />
-                </a>
+                </div>
               </div>
             </div>
 
             {/* Education Partner */}
             <div className="text-center">
               <h3 className="text-sm font-mono text-[#00F3FF] tracking-[0.2em] uppercase mb-6">Education Partner</h3>
-              <div className="flex justify-center items-center h-28 glass-panel p-4 rounded-2xl mx-auto shadow-[0_0_15px_rgba(59,130,246,0.1)] hover:shadow-[0_0_20px_rgba(59,130,246,0.2)] transition-shadow">
-                <a href="#" target="_blank" rel="noopener noreferrer" className="overflow-hidden rounded-lg hover:scale-105 transition-transform duration-300 flex items-center justify-center w-full h-full bg-white/90 p-2">
+              <div className="flex justify-center items-center h-28 glass-panel p-4 rounded-2xl mx-auto shadow-[0_0_15px_rgba(59,130,246,0.1)]">
+                <div className="overflow-hidden rounded-lg flex items-center justify-center w-full h-full">
                   <img src="/logos/whatnext.png" alt="WhatNext - Education Partner" className="h-16 md:h-20 object-contain" />
-                </a>
+                </div>
               </div>
             </div>
 
             {/* Food Partner */}
             <div className="text-center">
-              <h3 className="text-sm font-mono text-[#00F3FF] tracking-[0.2em] uppercase mb-6">Snacks Partner</h3>
+              <h3 className="text-sm font-mono text-[#00F3FF] tracking-[0.2em] uppercase mb-6">Food Partner</h3>
               <div className="flex justify-center items-center h-28 glass-panel p-4 rounded-2xl mx-auto shadow-[0_0_15px_rgba(239,68,68,0.1)] hover:shadow-[0_0_20px_rgba(239,68,68,0.2)] transition-shadow">
                 <a href="#" target="_blank" rel="noopener noreferrer" className="overflow-hidden rounded-lg hover:scale-105 transition-transform duration-300 flex items-center justify-center w-full h-full">
                   <img src="/logos/unibic.png" alt="UNIBIC - Food Partner" className="h-16 md:h-20 object-contain rounded" />
-                </a>
+                </div>
               </div>
             </div>
           </div>

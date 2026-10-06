@@ -9,7 +9,6 @@ import RulesSection from "./components/RulesSection";
 import ThemesSection from './components/ThemesSection';
 import PrizesSection from './components/PrizesSection';
 import TimelineSection from './components/TimelineSection';
-import ProblemStatementsSection from './components/ProblemStatementsSection';
 import SponsorsSection from './components/SponsorsSection';
 import TeamSection from './components/TeamSection';
 import Footer from './components/Footer';
@@ -36,7 +35,6 @@ function LandingPage() {
         <PrizesSection />
         <TimelineSection />
         <RulesSection />
-        <ProblemStatementsSection />
         <SponsorsSection />
         <TeamSection />
         <Footer />
