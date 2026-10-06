@@ -9,6 +9,7 @@ import urllib.parse
 import urllib.request
 import json
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 try:
     try:
@@ -25,6 +26,7 @@ except Exception as e:
     set_meal = None
 
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 
 # Email Configuration
 GMAIL_USER = os.environ.get("GMAIL_USER", "cbc2.o.tech@gmail.com")
