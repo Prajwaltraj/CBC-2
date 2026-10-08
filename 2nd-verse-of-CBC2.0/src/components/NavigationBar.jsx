@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, Menu, X, Sun, Moon, ShieldCheck } from 'lucide-react';
+import { Zap, Menu, X, Sun, Moon } from 'lucide-react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import ProgressiveImage from './ProgressiveImage';
 
@@ -143,7 +143,7 @@ const NavigationBar = () => {
           ))}
         </div>
 
-        {/* Right Controls: Theme Toggle + Verify Button + Mobile Menu Toggle */}
+        {/* Right Controls: Theme Toggle + Mobile Menu Toggle */}
         <div className="flex items-center gap-1.5 sm:gap-2 min-[1200px]:gap-4 shrink-0">
           <button
             onClick={toggleTheme}
@@ -152,8 +152,6 @@ const NavigationBar = () => {
           >
             {isLight ? <Moon size={18} /> : <Sun size={18} className="text-[#00F3FF]" />}
           </button>
-
-
 
           {/* Mobile Menu Toggle (Visible only below 1200px, hidden above 1200px) */}
           <button

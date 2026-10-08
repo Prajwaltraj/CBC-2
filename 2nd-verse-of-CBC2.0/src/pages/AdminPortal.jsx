@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { auth, loginWithGoogle, loginWithEmail, logout, rtdb } from '../firebase';
 import { ref, set, onValue } from 'firebase/database';
-import { LogOut, Send, AlertTriangle, XCircle, CheckCircle2, Monitor, Edit3 } from 'lucide-react';
+import { LogOut, Send, AlertTriangle, XCircle, CheckCircle2, Monitor, Code2 } from 'lucide-react';
 import { BoardTemplate } from "./SmartBoard";
 import AdminTeamViews from "../components/AdminTeamViews";
 import AdminMediaControls from "../components/AdminMediaControls"; // Import the template for live preview
@@ -61,27 +61,31 @@ const AdminPortal = () => {
   const [status, setStatus] = useState({ type: '', msg: '' });
   const [showLivePreview, setShowLivePreview] = useState(false);
   const [activeTab, setActiveTab] = useState("broadcast");
-  const [allowTeamEditing, setAllowTeamEditing] = useState(false);
+  const [submissionsOpen, setSubmissionsOpen] = useState(false);
 
   useEffect(() => {
-    const configRef = ref(rtdb, 'config/allowTeamEditing');
-    const unsub = onValue(configRef, (snapshot) => {
+    const subRef = ref(rtdb, 'config/submissionsOpen');
+    const unsub = onValue(subRef, (snapshot) => {
       if (snapshot.exists()) {
-        setAllowTeamEditing(Boolean(snapshot.val()));
+        setSubmissionsOpen(Boolean(snapshot.val()));
       }
     });
     return () => unsub();
   }, []);
 
-  const toggleTeamEditing = async () => {
+  const toggleSubmissionsOpen = async () => {
     try {
-      const configRef = ref(rtdb, 'config/allowTeamEditing');
-      await set(configRef, !allowTeamEditing);
-      setStatus({ type: 'success', msg: `Team Leader editing access is now ${!allowTeamEditing ? 'ENABLED' : 'DISABLED'} ✓` });
-      setTimeout(() => setStatus({ type: '', msg: '' }), 3000);
+      const subRef = ref(rtdb, 'config/submissionsOpen');
+      const nextState = !submissionsOpen;
+      await set(subRef, nextState);
+      setStatus({ 
+        type: 'success', 
+        msg: `Project Submissions are now ${nextState ? 'OPEN (Active)' : 'CLOSED (Locked)'} ✓` 
+      });
+      setTimeout(() => setStatus({ type: '', msg: '' }), 3500);
     } catch (e) {
       console.error(e);
-      setStatus({ type: 'error', msg: 'Failed to update edit access config.' });
+      setStatus({ type: 'error', msg: 'Failed to update submissions config.' });
     }
   };
 
@@ -398,16 +402,17 @@ const AdminPortal = () => {
           <div className="h-4 w-px bg-[#242a30]"></div>
 
           <button
-            onClick={toggleTeamEditing}
-            className={`text-xs font-mono px-3 py-1.5 rounded-lg border transition-all flex items-center gap-1.5 ${
-              allowTeamEditing 
-                ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' 
+            onClick={toggleSubmissionsOpen}
+            className={`text-xs font-mono px-3.5 py-1.5 rounded-lg border transition-all flex items-center gap-1.5 cursor-pointer ${
+              submissionsOpen 
+                ? 'bg-[#00F3FF]/20 border-[#00F3FF]/60 text-[#00F3FF] shadow-[0_0_12px_rgba(0,243,255,0.25)] font-bold' 
                 : 'bg-[#0f1215] border-[#242a30] text-[#7c8891] hover:text-white'
             }`}
-            title="Toggle whether Team Leaders can edit domain and team details on /team"
+            title="Toggle whether GitHub repository submissions are open or closed for team leaders on /leader"
           >
-            <Edit3 size={13} />
-            <span>Leader Edit Access: {allowTeamEditing ? 'ON' : 'OFF'}</span>
+            <div className={`w-2 h-2 rounded-full ${submissionsOpen ? 'bg-[#00F3FF] animate-pulse' : 'bg-gray-500'}`} />
+            <Code2 size={13} />
+            <span>Submissions: {submissionsOpen ? 'OPEN' : 'CLOSED'}</span>
           </button>
 
           <button

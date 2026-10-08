@@ -17,6 +17,7 @@ import SmartBoard from './pages/SmartBoard';
 import GlimpsesSection from './components/GlimpsesSection';
 import NeuralBackground from './components/NeuralBackground';
 import RulebookPage from './pages/RulebookPage';
+import LeaderPortal from './pages/LeaderPortal';
 import { Analytics } from '@vercel/analytics/react';
 
 function LandingPage() {
@@ -54,7 +55,10 @@ export default function App() {
         <Route path="/board" element={<SmartBoard />} />
         <Route path="/display" element={<Navigate to="/board" replace />} />
         <Route path="/rulebook" element={<RulebookPage />} />
-              </Routes>
+        <Route path="/submit" element={<LeaderPortal />} />
+        <Route path="/portal" element={<LeaderPortal />} />
+        <Route path="/leader" element={<LeaderPortal />} />
+      </Routes>
       <Analytics />
     </Router>
   );

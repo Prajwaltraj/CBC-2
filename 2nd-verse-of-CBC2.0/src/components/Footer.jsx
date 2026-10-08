@@ -35,7 +35,6 @@ const Footer = () => (
           <a href="#themes" className="hover:text-[#00F3FF] transition-colors w-max">Domains</a>
           <a href="#timeline" className="hover:text-[#00F3FF] transition-colors w-max">Timeline</a>
           <a href="/rulebook" className="hover:text-[#00F3FF] transition-colors w-max">Rules & FAQs</a>
-          {/* <a href="/team" className="hover:text-[#00F3FF] transition-colors w-max">Team Portal</a> */}
           <a href="#sponsors" className="hover:text-[#00F3FF] transition-colors w-max">Sponsors</a>
         </div>
       </div>
@@ -44,8 +43,8 @@ const Footer = () => (
       <div className="flex flex-col gap-4">
         <h4 className="font-orbitron font-bold text-[#A855F7] tracking-wider mb-2 uppercase">Connect</h4>
         <div className="flex flex-col gap-3">
-          <a href="mailto:Codebreakeraiml@gmail.com?subject=Query%20Regarding%20Code%20Breaker%20Challenge%202.0" className="flex items-center gap-3 px-4 py-3 glass-panel rounded-lg hover:bg-yellow-400/20 hover:text-yellow-400 transition-colors w-full">
-            <Mail size={18} className="shrink-0" /><span className="font-mono text-xs break-all">Codebreakeraiml@gmail.com</span>
+          <a href="mailto:codebreaker.aiml@gmail.com?subject=Query%20Regarding%20Code%20Breaker%20Challenge%202.0" className="flex items-center gap-3 px-4 py-3 glass-panel rounded-lg hover:bg-yellow-400/20 hover:text-yellow-400 transition-colors w-full">
+            <Mail size={18} className="shrink-0" /><span className="font-mono text-xs break-all">codebreaker.aiml@gmail.com</span>
           </a>
           <a href="https://www.instagram.com/codebreaker_aiml/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-4 py-3 glass-panel rounded-lg hover:bg-[#E1306C]/20 hover:text-[#E1306C] transition-colors w-full">
             <Instagram size={18} className="shrink-0" /> <span className="font-mono text-xs">Code Breaker 2.0</span>
