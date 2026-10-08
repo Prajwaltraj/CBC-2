@@ -327,11 +327,14 @@
     <div id="reader"></div>
     <div class="scan-hint">Hold the team's QR code steady in front of the camera</div>
     <button class="btn-navy" id="scanToggle" onclick="toggleScanner()">Start Camera</button>
+    
+    <input type="file" id="qrFileInput" accept="image/*" style="display:none;" onchange="handleFileScan(event)">
+    <button class="btn-outline" style="width:100%; margin-top:8px;" onclick="document.getElementById('qrFileInput').click()">📁 Upload / Scan QR Image</button>
 
     <div class="manual-search">
       <label>Or enter Team ID manually</label>
       <div class="search-row">
-        <input type="text" id="searchInput" placeholder="e.g. HK2026-001" onkeydown="if(event.key==='Enter') manualLookup()">
+        <input type="text" id="searchInput" placeholder="e.g. CBC001" onkeydown="if(event.key==='Enter') manualLookup()">
         <button class="btn-outline" onclick="manualLookup()">Go</button>
       </div>
     </div>
@@ -357,11 +360,41 @@ let html5QrCode = null;
 let scannedTeamsCount = 0;
 let scannedIds = new Set();
 
+const PROD_API = 'https://cbc-2-xv2u.vercel.app';
+
+async function apiFetch(path, options = {}) {
+  // If running on local Flask port 5000 or on Vercel deployment directly, relative works directly
+  const isPort5000 = window.location.port === '5000';
+  const isVercel = window.location.origin.includes('vercel.app');
+
+  if (isPort5000 || isVercel) {
+    try {
+      const res = await fetch(path, options);
+      return res;
+    } catch (_) {}
+  }
+
+  // When testing on Vite (port 5173 / localhost) or other local servers, try local relative first:
+  if (window.location.protocol.startsWith('http')) {
+    try {
+      const res = await fetch(path, options);
+      // If local server answered with a valid HTTP response (including 400/404), return it
+      if (res.status !== 502 && res.status !== 504 && res.status !== 500) {
+        return res;
+      }
+    } catch (_) {}
+  }
+
+  // Fallback seamlessly to the live backend
+  const fallbackUrl = `${PROD_API}${path}`;
+  return await fetch(fallbackUrl, options);
+}
+
 function showToast(msg){
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2200);
+  setTimeout(()=>t.classList.remove('show'), 2500);
 }
 
 function escapeHtml(str){
@@ -369,15 +402,60 @@ function escapeHtml(str){
   return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-async function loadTeam(teamId){
+function extractTeamId(rawText){
+  if(!rawText) return '';
+  let text = String(rawText).trim();
+
+  // 1. JSON parsing
+  try {
+    const payload = JSON.parse(text);
+    if(payload && typeof payload === 'object'){
+      if(payload.team_id) return String(payload.team_id).trim();
+      if(payload.teamId) return String(payload.teamId).trim();
+      if(payload.id) return String(payload.id).trim();
+      if(payload.team) return String(payload.team).trim();
+    }
+  } catch(_) {}
+
+  // 2. URL parsing
+  if(text.startsWith('http://') || text.startsWith('https://') || text.includes('://')){
+    try {
+      const url = new URL(text);
+      if(url.searchParams.get('team_id')) return url.searchParams.get('team_id').trim();
+      if(url.searchParams.get('teamId')) return url.searchParams.get('teamId').trim();
+      if(url.searchParams.get('id')) return url.searchParams.get('id').trim();
+      if(url.searchParams.get('t')) return url.searchParams.get('t').trim();
+      if(url.hash){
+        const hash = url.hash.replace(/^#\/?/, '').trim();
+        if(hash) return hash;
+      }
+      const parts = url.pathname.split('/').filter(Boolean);
+      if(parts.length > 0){
+        const last = parts[parts.length - 1];
+        if(last && !last.includes('.') && !['meals', 'attendance', 'admin'].includes(last.toLowerCase())){
+          return last.trim();
+        }
+      }
+    } catch(_) {}
+  }
+
+  return text;
+}
+
+async function loadTeam(rawTeamId){
+  const teamId = extractTeamId(rawTeamId);
+  if(!teamId){
+    showToast('Please enter a valid Team ID');
+    return;
+  }
+  showToast('Fetching team ' + teamId + '…');
   try{
-    const res = await fetch(`https://cbc-2-xv2u.vercel.app/api/team?team_id=${encodeURIComponent(teamId)}`);
+    const res = await apiFetch(`/api/team?team_id=${encodeURIComponent(teamId)}`);
+    const team = await res.json();
     if(!res.ok){
-      const err = await res.json();
-      showToast(err.error || 'Team not found');
+      showToast(team.error || `No team found for "${teamId}"`);
       return;
     }
-    const team = await res.json();
     currentTeam = team;
     renderTeam(team);
     if(!scannedIds.has(team.team_id)){
@@ -385,16 +463,18 @@ async function loadTeam(teamId){
       scannedTeamsCount++;
       document.getElementById('statScanned').textContent = scannedTeamsCount;
     }
+    showToast(`Loaded team: ${team.team_name || team.team_id}`);
   }catch(e){
-    showToast(e.name === 'SyntaxError' ? 'Server error: Are you running locally via Vite? Try vercel dev.' : 'Network error — check your connection');
     console.error(e);
+    showToast(e.message || 'Network error — check connection');
   }
 }
 
 function mealToggle(row, meal, current){
+  const label = meal === 'lunch' ? 'Lunch' : meal === 'dinner' ? 'Dinner' : 'Tiffin';
   return `
     <div class="meal-group">
-      <span class="meal-label">${meal === 'lunch' ? 'Lunch' : 'Tiffin'}</span>
+      <span class="meal-label">${label}</span>
       <div class="toggle-btns">
         <button class="${current ? 'active-on':'inactive'}" onclick="markMeal(${row}, '${meal}', true)">Taken</button>
         <button class="${!current ? 'active-off':'inactive'}" onclick="markMeal(${row}, '${meal}', false)">Not Yet</button>
@@ -410,18 +490,29 @@ function renderTeam(team){
 
   const rosterHtml = team.members.map(m => `
     <div class="member-card">
-      <div class="name">${escapeHtml(m.name)}</div>
+      <div>
+        <div class="name">${escapeHtml(m.name)}</div>
+        <div style="font-size:12px; color:${m.present ? '#15803D' : '#6B7280'}; margin-top:2px;">
+          ${m.present ? '● Checked in' : '○ Not checked in'}
+        </div>
+      </div>
       <div class="meal-groups">
         ${mealToggle(m.row, 'lunch', m.lunch)}
+        ${mealToggle(m.row, 'dinner', m.dinner)}
         ${mealToggle(m.row, 'tiffin', m.tiffin)}
       </div>
     </div>
   `).join('');
 
+  const metaParts = [];
+  if (team.team_id) metaParts.push(`Team ID <b>${escapeHtml(team.team_id)}</b>`);
+  if (team.table_number) metaParts.push(`Table ${escapeHtml(team.table_number)}`);
+  if (team.project_title) metaParts.push(escapeHtml(team.project_title));
+
   content.innerHTML = `
     <div class="team-header">
-      <h1>${escapeHtml(team.team_name)}</h1>
-      <div class="meta">Team ID <b>${escapeHtml(team.team_id)}</b> &nbsp;·&nbsp; Table ${escapeHtml(team.table_number || '—')} &nbsp;·&nbsp; ${escapeHtml(team.project_title || 'No project title')}</div>
+      <h1>${escapeHtml(team.team_name || team.team_id)}</h1>
+      <div class="meta">${metaParts.join(' &nbsp;·&nbsp; ')}</div>
     </div>
     <div class="roster">${rosterHtml}</div>
   `;
@@ -429,24 +520,26 @@ function renderTeam(team){
 
 async function markMeal(row, meal, taken){
   try{
-    const res = await fetch('https://cbc-2-xv2u.vercel.app/api/mark', {
-      method:'POST', headers:{'Content-Type':'application/json'},
+    const res = await apiFetch('/api/mark', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
       body: JSON.stringify({row, meal, taken})
     });
+    const data = await res.json();
     if(!res.ok){
-      const err = await res.json();
-      showToast(err.error || 'Could not update');
+      showToast(data.error || 'Could not update');
       return;
     }
     const member = currentTeam.members.find(m => m.row === row);
     if(member){
-      if(meal === 'lunch') member.lunch = taken; else member.tiffin = taken;
+      member[meal] = taken;
     }
     renderTeam(currentTeam);
-    showToast(`${meal === 'lunch' ? 'Lunch' : 'Tiffin'} marked ${taken ? 'taken':'not taken'}`);
+    const label = meal === 'lunch' ? 'Lunch' : meal === 'dinner' ? 'Dinner' : 'Tiffin';
+    showToast(`${label} marked ${taken ? 'taken':'not taken'}`);
   }catch(e){
-    showToast(e.name === 'SyntaxError' ? 'Server error: Are you running locally via Vite? Try vercel dev.' : 'Network error — check your connection');
     console.error(e);
+    showToast(e.message || 'Network error — check connection');
   }
 }
 
@@ -455,25 +548,50 @@ function manualLookup(){
   if(q) loadTeam(q);
 }
 
-// ---- QR Scanner (camera only — no image upload) ----
+// ---- QR Scanner ----
 function toggleScanner(){
   if(scannerRunning) stopScanner(); else startScanner();
 }
 
 function startScanner(){
+  if(typeof Html5Qrcode === 'undefined'){
+    showToast('QR Scanner library not loaded. Check internet connection.');
+    return;
+  }
   html5QrCode = new Html5Qrcode("reader");
-  html5QrCode.start(
-    { facingMode: "environment" },
-    { fps: 10, qrbox: 240 },
-    onScanSuccess,
-    () => {}
-  ).then(()=>{
-    scannerRunning = true;
-    document.getElementById('scanToggle').textContent = 'Stop Camera';
-  }).catch(err=>{
-    showToast('Camera error — check browser permissions');
-    console.error(err);
-  });
+  const config = { fps: 10, qrbox: { width: 240, height: 240 } };
+
+  html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, () => {})
+    .then(()=> onCameraStarted())
+    .catch(err=>{
+      console.warn('environment camera failed, trying user camera:', err);
+      html5QrCode.start({ facingMode: "user" }, config, onScanSuccess, () => {})
+        .then(()=> onCameraStarted())
+        .catch(err2=>{
+          console.warn('user camera failed, trying device list:', err2);
+          Html5Qrcode.getCameras().then(devices=>{
+            if(!devices || !devices.length){
+              showToast('No camera found. You can upload a QR image or type Team ID.');
+              return;
+            }
+            const cam = devices.find(c => /back|rear|environment/i.test(c.label)) || devices[0];
+            html5QrCode.start({ deviceId: { exact: cam.id } }, config, onScanSuccess, () => {})
+              .then(()=> onCameraStarted())
+              .catch(err3=>{
+                showToast('Camera permission denied or camera in use.');
+                console.error(err3);
+              });
+          }).catch(err3=>{
+            showToast('Camera error. Try typing the Team ID or uploading an image.');
+            console.error(err3);
+          });
+        });
+    });
+}
+
+function onCameraStarted(){
+  scannerRunning = true;
+  document.getElementById('scanToggle').textContent = 'Stop Camera';
 }
 
 function stopScanner(){
@@ -481,25 +599,41 @@ function stopScanner(){
     html5QrCode.stop().then(()=>{
       scannerRunning = false;
       document.getElementById('scanToggle').textContent = 'Start Camera';
+    }).catch(()=>{
+      scannerRunning = false;
+      document.getElementById('scanToggle').textContent = 'Start Camera';
     });
+  }
+}
+
+async function handleFileScan(e){
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+  const qr = new Html5Qrcode("reader");
+  try{
+    showToast('Scanning QR from file…');
+    const decodedText = await qr.scanFile(file, true);
+    await onScanSuccess(decodedText);
+  }catch(err){
+    showToast('No QR code found in this image. Try another image or type Team ID.');
+    console.error(err);
+  }finally{
+    e.target.value = '';
+    try{ qr.clear(); }catch(_){}
   }
 }
 
 let lastScan = '', lastScanTime = 0;
 async function onScanSuccess(decodedText){
   const now = Date.now();
-  if(decodedText === lastScan && (now - lastScanTime) < 4000) return;
+  if(decodedText === lastScan && (now - lastScanTime) < 3000) return;
   lastScan = decodedText;
   lastScanTime = now;
 
   if (navigator.vibrate) navigator.vibrate(200);
 
-  let teamId = decodedText.trim();
-  try{
-    const payload = JSON.parse(decodedText);
-    if(payload.team_id) teamId = payload.team_id;
-  }catch(e){ /* not JSON — treat raw text as the team_id */ }
-
+  const teamId = extractTeamId(decodedText);
+  document.getElementById('searchInput').value = teamId;
   await loadTeam(teamId);
 }
 </script>

@@ -1,5 +1,20 @@
 import sys; print("FLASK APP LOADED", file=sys.stderr, flush=True)
 import os
+try:
+    from dotenv import load_dotenv
+    base = os.path.dirname(os.path.abspath(__file__))
+    for p in (
+        os.path.join(base, ".env"),
+        os.path.join(base, "..", ".env"),
+        os.path.join(base, "..", "..", ".env"),
+        os.path.join(os.getcwd(), ".env"),
+        os.path.join(os.getcwd(), "2nd-verse-of-CBC2.0", ".env"),
+    ):
+        if os.path.isfile(p):
+            load_dotenv(p)
+except ImportError:
+    pass
+
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -13,17 +28,18 @@ from flask_cors import CORS
 
 try:
     try:
-        from ._sheets import get_team_members, set_attendance, set_meal
+        from ._sheets import get_team_members, set_attendance, set_meal, MEALS
     except (ImportError, ValueError):
         try:
-            from _sheets import get_team_members, set_attendance, set_meal
+            from _sheets import get_team_members, set_attendance, set_meal, MEALS
         except ImportError:
-            from api._sheets import get_team_members, set_attendance, set_meal
+            from api._sheets import get_team_members, set_attendance, set_meal, MEALS
 except Exception as e:
     print("Warning: _sheets could not be loaded:", e, file=sys.stderr)
     get_team_members = None
     set_attendance = None
     set_meal = None
+    MEALS = ("lunch", "dinner", "tiffin")
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
@@ -349,8 +365,10 @@ def api_verify_otp():
         print("[ERROR in /api/verify-otp]:", e, file=sys.stderr)
         return jsonify({"error": f"Verification error: {str(e)}"}), 500
 
-@app.route("/api/team", methods=["GET"])
+@app.route("/api/team", methods=["GET", "OPTIONS"])
 def api_team():
+    if request.method == "OPTIONS":
+        return "", 200
     team_id = (request.args.get("team_id") or "").strip()
     if not team_id:
         return jsonify({"error": "team_id is required"}), 400
@@ -359,12 +377,14 @@ def api_team():
     except Exception as err:
         print(err)
         return jsonify({"error": str(err) or "Server error"}), 500
-    if not team["members"]:
+    if not team or not team.get("members"):
         return jsonify({"error": f"No team found with ID '{team_id}'"}), 404
     return jsonify(team), 200
 
-@app.route("/api/mark", methods=["POST"])
+@app.route("/api/mark", methods=["POST", "OPTIONS"])
 def api_mark():
+    if request.method == "OPTIONS":
+        return "", 200
     body = request.get_json(silent=True) or {}
     row = body.get("row")
     if not row:
@@ -377,6 +397,9 @@ def api_mark():
             return jsonify({"ok": True, "row": row, "present": present}), 200
         elif "meal" in body:
             meal = body.get("meal")
+            valid_meals = MEALS if MEALS else ("lunch", "dinner", "tiffin")
+            if meal not in valid_meals:
+                return jsonify({"error": f"meal must be one of: {', '.join(valid_meals)}"}), 400
             taken = bool(body.get("taken"))
             set_meal(row, meal, taken)
             return jsonify({"ok": True, "row": row, "meal": meal, "taken": taken}), 200
