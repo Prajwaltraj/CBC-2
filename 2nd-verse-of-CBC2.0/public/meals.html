@@ -268,8 +268,8 @@
 
 
 
-  // EDIT THIS ARRAY TO CONTROL WHO CAN ACCESS THIS PAGE
-  const ALLOWED_EMAILS = [
+  // EDIT THIS ARRAY TO CONTROL WHO CAN ACCESS MEALS & ATTENDANCE (Volunteers)
+  const VOLUNTEER_EMAILS = [
     'prajwaltraj213@gmail.com',
     'bhuvan.ar0101@gmail.com',
     'codebreaker.aiml@gmail.com',
@@ -284,7 +284,7 @@
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      if (ALLOWED_EMAILS.includes(user.email)) {
+      if (VOLUNTEER_EMAILS.includes(user.email)) {
         overlay.style.display = 'none'; // Grant access
       } else {
         errorMsg.textContent = 'Access Denied: ' + user.email + ' is not authorized.';

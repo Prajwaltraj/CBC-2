@@ -7,7 +7,8 @@ import AdminTeamViews from "../components/AdminTeamViews";
 import AdminMediaControls from "../components/AdminMediaControls"; // Import the template for live preview
 
 // List of emails allowed to access the Admin Portal
-const ALLOWED_EMAILS = [
+// EDIT THIS ARRAY TO CONTROL WHO CAN ACCESS THE ADMIN DASHBOARD (Admins Only)
+const ADMIN_EMAILS = [
   'prajwaltraj213@gmail.com',
   'bhuvan.ar0101@gmail.com',
   'codebreaker.aiml@gmail.com',
@@ -99,7 +100,7 @@ const AdminPortal = () => {
     const unsubscribe = auth.onAuthStateChanged((u) => {
       if (u) {
         const userEmail = u.email ? u.email.toLowerCase() : '';
-        const isAllowed = ALLOWED_EMAILS.some(e => e.toLowerCase() === userEmail);
+        const isAllowed = ADMIN_EMAILS.some(e => e.toLowerCase() === userEmail);
         if (isAllowed) {
           setUser(u);
         } else {
@@ -219,7 +220,7 @@ const AdminPortal = () => {
       const u = await loginWithGoogle();
       if (u) {
         const userEmail = u.email ? u.email.toLowerCase() : '';
-        const isAllowed = ALLOWED_EMAILS.some(e => e.toLowerCase() === userEmail);
+        const isAllowed = ADMIN_EMAILS.some(e => e.toLowerCase() === userEmail);
         if (isAllowed) {
           setUser(u);
         } else {
