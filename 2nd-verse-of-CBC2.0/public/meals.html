@@ -370,29 +370,13 @@ let scannedIds = new Set();
 const PROD_API = 'https://cbc-2-xv2u.vercel.app';
 
 async function apiFetch(path, options = {}) {
-  // If running on local Flask port 5000 or on Vercel deployment directly, relative works directly
   const isPort5000 = window.location.port === '5000';
   const isVercel = window.location.origin.includes('vercel.app');
 
   if (isPort5000 || isVercel) {
-    try {
-      const res = await fetch(path, options);
-      return res;
-    } catch (_) {}
+    return await fetch(path, options);
   }
 
-  // When testing on Vite (port 5173 / localhost) or other local servers, try local relative first:
-  if (window.location.protocol.startsWith('http')) {
-    try {
-      const res = await fetch(path, options);
-      // If local server answered with a valid HTTP response (including 400/404), return it
-      if (res.status !== 502 && res.status !== 504 && res.status !== 500) {
-        return res;
-      }
-    } catch (_) {}
-  }
-
-  // Fallback seamlessly to the live backend
   const fallbackUrl = `${PROD_API}${path}`;
   return await fetch(fallbackUrl, options);
 }
