@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { auth, loginWithGoogle, loginWithEmail, logout, rtdb } from '../firebase';
 import { ref, set, onValue } from 'firebase/database';
-import { LogOut, Send, AlertTriangle, XCircle, CheckCircle2, Monitor, Code2 } from 'lucide-react';
+import { LogOut, Send, AlertTriangle, XCircle, CheckCircle2, Monitor, Code2, Search, Sparkles, Edit3 } from 'lucide-react';
 import { BoardTemplate } from "./SmartBoard";
 import AdminTeamViews from "../components/AdminTeamViews";
 import AdminMediaControls from "../components/AdminMediaControls"; // Import the template for live preview
@@ -18,51 +18,181 @@ const ADMIN_EMAILS = [
 ];
 
 const PRESETS = [
+  // Kickoff & Setup
   {
-    type: 'warning',
-    title: 'Judging Starts in 15 Mins',
-    desc: 'Please return to your assigned bays with project demos ready.',
-    broadcastTitle: 'Judging Starts in 15 Minutes',
-    broadcastMessage: 'Please return to your assigned bays with project demos ready.'
-  },
-  {
-    type: 'urgent',
-    title: 'Hacking Time Ended',
-    desc: 'Stop all coding! Submit your GitHub repo links on the portal now.',
-    broadcastTitle: 'Hacking Time Has Ended!',
-    broadcastMessage: 'Stop all coding! Submit your GitHub repo links on the portal now.'
-  },
-  {
-    type: 'success',
-    title: 'Dinner is Served',
-    desc: 'Head to the food court area for dinner. Badges required.',
-    broadcastTitle: 'Dinner is Served 🍽️',
-    broadcastMessage: 'Head to the food court area for dinner. Badges required.'
-  },
-  {
+    category: 'day1',
+    time: 'Kickoff',
     type: 'info',
-    title: 'Mid-Hack Review Starting',
-    desc: 'Mentors are approaching your tables for round 1 evaluation.',
-    broadcastTitle: 'Mid-Hack Review Starting',
-    broadcastMessage: 'Mentors are approaching your tables for round 1 evaluation.'
+    title: 'Welcome to CBC 2.0',
+    desc: 'Presented by Dept of AIML, GAT. Think, Build & Break Limits!',
+    broadcastTitle: 'Welcome to Code Breaker Challenge 2.0 🚀',
+    broadcastMessage: 'A 24-Hour National Hackathon by Dept of AIML, GAT. Let’s build something extraordinary!'
   },
   {
+    category: 'day1',
+    time: '10:30 AM',
+    type: 'info',
+    title: 'Workspace & Wi-Fi Setup',
+    desc: 'Teams proceed to assigned bays, connect to Wi-Fi and verify power.',
+    broadcastTitle: 'Team Placement & Workspace Setup 🛠️',
+    broadcastMessage: 'Settle into your assigned bays. Connect to Wi-Fi and verify power sockets.'
+  },
+
+  // Day 1 Design Round
+  {
+    category: 'day1',
+    time: '11:00 AM',
+    type: 'info',
+    title: 'Design Round + PPT Submission',
+    desc: 'Design round is live. Prepare architecture and slide deck by 1:00 PM.',
+    broadcastTitle: 'Hackathon Design Round is LIVE! 💡',
+    broadcastMessage: 'Finalize architecture, wireframes, and presentation slides. PPT submission deadline: 1:00 PM.'
+  },
+  {
+    category: 'urgent',
+    time: '12:45 PM',
     type: 'warning',
-    title: 'Midnight Energy Drinks',
-    desc: 'Snacks & drinks available at the registration desk!',
-    broadcastTitle: 'Midnight Snacks & Refreshments ☕',
-    broadcastMessage: 'Snacks & drinks available at the registration desk!'
+    title: '15 Mins: PPT Submission',
+    desc: 'Design slide submission locks at 1:00 PM sharp. Submit now.',
+    broadcastTitle: '⚠️ 15 Mins Left: PPT Submission Deadline',
+    broadcastMessage: 'Upload your design presentation slides before 1:00 PM sharp. Late submissions will not be accepted!'
+  },
+
+  // Day 1 Lunch & Coding
+  {
+    category: 'meals',
+    time: '1:00 PM',
+    type: 'success',
+    title: 'Lunch Break (1:00 PM – 2:00 PM)',
+    desc: 'Lunch is served at the dining hall. Badges required.',
+    broadcastTitle: 'Lunch Break is Open 🍽️',
+    broadcastMessage: 'Lunch is now served at the dining hall. Coding Session 01 starts promptly at 2:00 PM.'
+  },
+  {
+    category: 'day1',
+    time: '2:00 PM',
+    type: 'info',
+    title: 'Coding Session 01 Starts',
+    desc: 'Implementation phase is officially live. Start building core modules.',
+    broadcastTitle: 'Coding Session 01: Implementation Starts 💻',
+    broadcastMessage: 'Time to turn designs into working software! Mentors will begin lab walkthroughs shortly.'
+  },
+  {
+    category: 'meals',
+    time: '5:00 PM',
+    type: 'warning',
+    title: 'Tea & Snacks Break (5:00 PM – 6:00 PM)',
+    desc: 'Tea, coffee and evening snacks ready at the refreshment counter.',
+    broadcastTitle: 'Refreshment Break: Tea & Snacks ☕🍪',
+    broadcastMessage: 'Take a quick stretch and recharge! Hot tea, coffee, and snacks are ready at the counter.'
+  },
+  {
+    category: 'day1',
+    time: '6:00 PM',
+    type: 'info',
+    title: 'Coding Session 02',
+    desc: 'Deep feature integration and API bindings. Commit regularly.',
+    broadcastTitle: 'Coding Session 02 Underway 🔥',
+    broadcastMessage: 'Deep development in progress. Remember to commit your code frequently to GitHub!'
+  },
+  {
+    category: 'meals',
+    time: '8:30 PM',
+    type: 'success',
+    title: 'Dinner Time (8:30 PM – 9:30 PM)',
+    desc: 'Dinner is open at the dining hall. Fuel up for the night sprint!',
+    broadcastTitle: 'Dinner is Served 🍛🌙',
+    broadcastMessage: 'Head to the food court for dinner. Participant badges required. Fuel up for the night sprint!'
+  },
+  {
+    category: 'day1',
+    time: '9:30 PM',
+    type: 'info',
+    title: 'Coding Session 03 (Night Sprint)',
+    desc: 'Integrate core modules and resolve major blockers by midnight.',
+    broadcastTitle: 'Coding Session 03: The Night Sprint ⚡',
+    broadcastMessage: 'Night sprint is live! Target operational workflows before midnight refreshments at 12:00 AM.'
+  },
+
+  // Day 2 Overnight & Milestones
+  {
+    category: 'meals',
+    time: '12:00 AM',
+    type: 'success',
+    title: 'Midnight Refreshments & Fun',
+    desc: 'Midnight snacks, music and mini-games in the lounge area.',
+    broadcastTitle: 'Midnight Refreshments & Entertainment 🎉🍕',
+    broadcastMessage: 'You survived Day 1! Grab snacks, enjoy the music, and recharge for the final overnight push!'
+  },
+  {
+    category: 'day2',
+    time: '1:00 AM',
+    type: 'info',
+    title: 'Coding Session 04 (Overnight Sprint)',
+    desc: 'Final overnight sprint! Test user flows and polish documentation.',
+    broadcastTitle: 'Coding Session 04: The Final Overnight Sprint 🦉💻',
+    broadcastMessage: 'The final sprint is here! Polish user journeys, test edge cases, and prepare demo data.'
+  },
+
+  // Day 2 Submission & Evaluation
+  {
+    category: 'urgent',
+    time: '6:30 AM',
+    type: 'urgent',
+    title: 'Project Submissions OPEN',
+    desc: 'Submit your GitHub repo URL on the portal before 7:00 AM lock.',
+    broadcastTitle: '🚨 Project Submission Phase OPEN!',
+    broadcastMessage: 'Pens down, code frozen! Team leaders submit your GitHub repo URL on the portal before 7:00 AM sharp.'
+  },
+  {
+    category: 'urgent',
+    time: '6:50 AM',
+    type: 'urgent',
+    title: '10 Mins Left: Submissions Closing',
+    desc: 'Portal permanently locks at 7:00 AM. Confirm your submission now!',
+    broadcastTitle: '🚨 10 Mins Remaining: Submission Portal Closing!',
+    broadcastMessage: 'Submissions lock permanently at 7:00 AM. Double-check your repo URL and click Confirm & Submit now!'
+  },
+  {
+    category: 'day2',
+    time: '7:00 AM',
+    type: 'info',
+    title: 'Preliminary Jury Evaluation',
+    desc: 'Evaluation live across all bays. Keep project demo running on laptop.',
+    broadcastTitle: 'Preliminary Jury Evaluation Round 🎤',
+    broadcastMessage: 'Evaluation is live! Keep your project running on your demo laptop with team members present.'
+  },
+  {
+    category: 'meals',
+    time: '8:30 AM',
+    type: 'success',
+    title: 'Breakfast Break (8:30 AM – 9:30 AM)',
+    desc: 'Hot breakfast ready in the dining hall. Rotate if presenting.',
+    broadcastTitle: 'Breakfast is Ready 🍳☕',
+    broadcastMessage: 'Good morning! Hot breakfast is served. Teams scheduled for evaluation may rotate members.'
+  },
+  {
+    category: 'day2',
+    time: '10:00 AM',
+    type: 'info',
+    title: 'Grand Final Presentation Round',
+    desc: 'Top shortlisted teams pitch live on stage in Main Auditorium.',
+    broadcastTitle: '🌟 Grand Final Presentation Round – Auditorium',
+    broadcastMessage: 'Top finalist teams pitch live on stage! All participants and mentors please assemble in the Main Auditorium.'
   }
 ];
 
 const AdminPortal = () => {
   const [user, setUser] = useState(null);
   const [statement, setStatement] = useState('');
+  const [secondaryMessage, setSecondaryMessage] = useState('');
   const [selectedType, setSelectedType] = useState('info');
   const [status, setStatus] = useState({ type: '', msg: '' });
   const [showLivePreview, setShowLivePreview] = useState(false);
   const [activeTab, setActiveTab] = useState("broadcast");
   const [submissionsOpen, setSubmissionsOpen] = useState(false);
+  const [presetFilter, setPresetFilter] = useState('all');
+  const [presetSearch, setPresetSearch] = useState('');
 
   useEffect(() => {
     const subRef = ref(rtdb, 'config/submissionsOpen');
@@ -119,7 +249,7 @@ const AdminPortal = () => {
     if (!user) return;
     const typeToUse = customType || selectedType;
     const titleToUse = customTitle !== undefined ? customTitle : statement.trim();
-    const messageToUse = customMessage !== undefined ? customMessage : '';
+    const messageToUse = customMessage !== undefined ? customMessage : secondaryMessage.trim();
 
     if (!titleToUse) {
       setStatus({ type: 'error', msg: 'Please enter an announcement statement first.' });
@@ -168,7 +298,7 @@ const AdminPortal = () => {
         triggerSiren: preset.type === 'urgent',
         videoState: { playing: true }
       });
-      setStatus({ type: 'success', msg: `Sent preset "${preset.title}" ✓` });
+      setStatus({ type: 'success', msg: `Broadcasted "${preset.title}" ✓` });
       setTimeout(() => setStatus({ type: '', msg: '' }), 2500);
     } catch (error) {
       console.error("Preset broadcast error:", error);
@@ -182,8 +312,17 @@ const AdminPortal = () => {
     }
   };
 
+  const loadPresetToForm = (preset) => {
+    setSelectedType(preset.type);
+    setStatement(preset.broadcastTitle || preset.title);
+    setSecondaryMessage(preset.broadcastMessage || preset.desc);
+    setStatus({ type: 'info', msg: `Loaded "${preset.title}" into broadcast form.` });
+    setTimeout(() => setStatus({ type: '', msg: '' }), 2000);
+  };
+
   const clearBoard = async () => {
     setStatement('');
+    setSecondaryMessage('');
     if (!user) return;
     try {
       const broadcastRef = ref(rtdb, 'broadcast/current');
@@ -341,11 +480,29 @@ const AdminPortal = () => {
     );
   }
 
+  // Filtered presets based on tab and search query
+  const filteredPresets = PRESETS.filter(preset => {
+    const matchesCategory = presetFilter === 'all' 
+      || (presetFilter === 'day1' && preset.category === 'day1')
+      || (presetFilter === 'day2' && preset.category === 'day2')
+      || (presetFilter === 'meals' && preset.category === 'meals')
+      || (presetFilter === 'urgent' && (preset.category === 'urgent' || preset.type === 'urgent' || preset.type === 'warning'));
+    
+    if (!matchesCategory) return false;
+
+    if (!presetSearch.trim()) return true;
+    const query = presetSearch.toLowerCase();
+    return preset.title.toLowerCase().includes(query)
+      || preset.desc.toLowerCase().includes(query)
+      || (preset.broadcastTitle && preset.broadcastTitle.toLowerCase().includes(query))
+      || (preset.time && preset.time.toLowerCase().includes(query));
+  });
+
   // Generate live preview data object
   const previewData = {
     title: statement || 'Live Announcement Preview',
     statement: statement || 'Live Announcement Preview',
-    message: '',
+    message: secondaryMessage || '',
     posterUrl: '',
     type: selectedType,
     timestamp: Date.now(),
@@ -471,7 +628,7 @@ const AdminPortal = () => {
       </div>
 
       {/* Main Container - Conditionally Rendered based on Tab */}
-      <div className="flex-1 max-w-[1240px] mx-auto w-full px-6 md:px-8 py-8 flex flex-col justify-between">
+      <div className="flex-1 max-w-[1280px] mx-auto w-full px-6 md:px-8 py-8 flex flex-col justify-between">
         
         {activeTab === 'broadcast' && (
           <>
@@ -498,42 +655,64 @@ const AdminPortal = () => {
               <div className="font-mono text-xs text-[#33e0a1] italic mb-1">
                 “Think. Build. Break Limits.” • #AIforchange
               </div>
-              <p className="text-xs text-[#7c8891] mb-8">
-                Whatever you send here appears instantly on every /display screen, with sound.
+              <p className="text-xs text-[#7c8891] mb-6">
+                Whatever you send here appears instantly on every /board display screen with sound.
               </p>
             </div>
 
             {/* 2-Column Grid Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
-          {/* LEFT SIDE: Custom Broadcast Form */}
-          <div className="bg-[#14171b] border border-[#242a30] rounded-2xl p-6 md:p-7 flex flex-col justify-between">
+          {/* LEFT SIDE: Custom Broadcast Form (5 Cols) */}
+          <div className="lg:col-span-5 bg-[#14171b] border border-[#242a30] rounded-2xl p-6 md:p-7 flex flex-col justify-between">
             <div>
-              <div className="text-xs font-mono font-bold tracking-widest text-[#33e0a1] uppercase mb-5">
-                Custom Broadcast Form
+              <div className="flex items-center justify-between mb-5">
+                <div className="text-xs font-mono font-bold tracking-widest text-[#33e0a1] uppercase">
+                  Custom Broadcast Form
+                </div>
+                {statement && (
+                  <button 
+                    onClick={() => { setStatement(''); setSecondaryMessage(''); }} 
+                    className="text-[11px] font-mono text-[#7c8891] hover:text-red-400"
+                  >
+                    Clear Form
+                  </button>
+                )}
               </div>
 
               {/* Headline / Statement */}
-              <label className="block text-[11px] font-mono font-bold text-[#7c8891] tracking-wider uppercase mb-2">
-                Announcement Statement
+              <label className="block text-[11px] font-mono font-bold text-[#7c8891] tracking-wider uppercase mb-1.5">
+                Headline / Main Title
               </label>
               <textarea 
                 value={statement} 
                 onChange={(e) => setStatement(e.target.value)} 
-                placeholder="e.g. Judging starts in 15 minutes..." 
-                rows="4"
-                className="w-full bg-[#0f1215] border border-[#242a30] rounded-lg p-3.5 text-[#e8ecef] outline-none focus:border-[#7c5cff] transition-all text-sm resize-none"
+                placeholder="e.g. Hackathon Design Round is LIVE! 💡" 
+                rows="2"
+                className="w-full bg-[#0f1215] border border-[#242a30] rounded-lg p-3 text-[#e8ecef] outline-none focus:border-[#7c5cff] transition-all text-sm resize-none font-medium"
+              />
+
+              {/* Optional Secondary Message / Details */}
+              <label className="block text-[11px] font-mono font-bold text-[#7c8891] tracking-wider uppercase mt-4 mb-1.5">
+                Details / Secondary Message (Optional)
+              </label>
+              <textarea 
+                value={secondaryMessage} 
+                onChange={(e) => setSecondaryMessage(e.target.value)} 
+                placeholder="e.g. Finalize architecture and upload PPT by 1:00 PM..." 
+                rows="3"
+                className="w-full bg-[#0f1215] border border-[#242a30] rounded-lg p-3 text-[#e8ecef] outline-none focus:border-[#7c5cff] transition-all text-xs resize-none"
               />
 
               {/* Priority */}
-              <label className="block text-[11px] font-mono font-bold text-[#7c8891] tracking-wider uppercase mt-5 mb-2">
-                Priority
+              <label className="block text-[11px] font-mono font-bold text-[#7c8891] tracking-wider uppercase mt-4 mb-2">
+                Priority & Tone
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <button
                   type="button"
                   onClick={() => setSelectedType('info')}
-                  className={`py-2 px-2.5 rounded-lg font-mono text-xs uppercase tracking-wider font-semibold border transition-all ${
+                  className={`py-2 px-2 rounded-lg font-mono text-xs uppercase tracking-wider font-semibold border transition-all ${
                     selectedType === 'info'
                       ? 'bg-[#7c5cff]/15 border-[#7c5cff] text-[#7c5cff]'
                       : 'bg-[#0f1215] border-[#242a30] text-[#7c8891] hover:text-white'
@@ -544,7 +723,7 @@ const AdminPortal = () => {
                 <button
                   type="button"
                   onClick={() => setSelectedType('success')}
-                  className={`py-2 px-2.5 rounded-lg font-mono text-xs uppercase tracking-wider font-semibold border transition-all ${
+                  className={`py-2 px-2 rounded-lg font-mono text-xs uppercase tracking-wider font-semibold border transition-all ${
                     selectedType === 'success'
                       ? 'bg-[#33e0a1]/15 border-[#33e0a1] text-[#33e0a1]'
                       : 'bg-[#0f1215] border-[#242a30] text-[#7c8891] hover:text-white'
@@ -555,7 +734,7 @@ const AdminPortal = () => {
                 <button
                   type="button"
                   onClick={() => setSelectedType('warning')}
-                  className={`py-2 px-2.5 rounded-lg font-mono text-xs uppercase tracking-wider font-semibold border transition-all ${
+                  className={`py-2 px-2 rounded-lg font-mono text-xs uppercase tracking-wider font-semibold border transition-all ${
                     selectedType === 'warning'
                       ? 'bg-[#ffb454]/15 border-[#ffb454] text-[#ffb454]'
                       : 'bg-[#0f1215] border-[#242a30] text-[#7c8891] hover:text-white'
@@ -566,7 +745,7 @@ const AdminPortal = () => {
                 <button
                   type="button"
                   onClick={() => setSelectedType('urgent')}
-                  className={`py-2 px-2.5 rounded-lg font-mono text-xs uppercase tracking-wider font-semibold border transition-all ${
+                  className={`py-2 px-2 rounded-lg font-mono text-xs uppercase tracking-wider font-semibold border transition-all ${
                     selectedType === 'urgent'
                       ? 'bg-[#ff5c68]/15 border-[#ff5c68] text-[#ff5c68]'
                       : 'bg-[#0f1215] border-[#242a30] text-[#7c8891] hover:text-white'
@@ -581,16 +760,16 @@ const AdminPortal = () => {
             <div className="mt-6">
               <button 
                 onClick={() => handleBroadcast()}
-                className="w-full bg-[#7c5cff] hover:bg-[#8f72ff] text-white font-semibold py-3.5 rounded-lg transition-all text-sm active:scale-[0.99] shadow-lg shadow-[#7c5cff]/10"
+                className="w-full bg-[#7c5cff] hover:bg-[#8f72ff] text-white font-semibold py-3.5 rounded-lg transition-all text-sm active:scale-[0.99] shadow-lg shadow-[#7c5cff]/15 flex items-center justify-center gap-2 cursor-pointer"
               >
-                Send to display screen
+                <Send size={15} /> Send to Display Screen
               </button>
 
               <button 
                 onClick={clearBoard}
-                className="w-full mt-2.5 bg-transparent border border-[#242a30] hover:border-[#ff5c68] text-[#7c8891] hover:text-[#ff5c68] font-mono text-xs py-2.5 rounded-lg transition-colors"
+                className="w-full mt-2.5 bg-transparent border border-[#242a30] hover:border-[#ff5c68] text-[#7c8891] hover:text-[#ff5c68] font-mono text-xs py-2.5 rounded-lg transition-colors cursor-pointer"
               >
-                Clear display history
+                Clear Display History
               </button>
 
               {/* Status Message */}
@@ -609,43 +788,116 @@ const AdminPortal = () => {
             </div>
           </div>
 
-          {/* RIGHT SIDE: Predefined Hackathon Commands */}
-          <div className="bg-[#14171b] border border-[#242a30] rounded-2xl p-6 md:p-7 flex flex-col">
-            <div className="text-xs font-mono font-bold tracking-widest text-[#33e0a1] uppercase mb-5">
-              PREDEFINED HACKATHON COMMANDS
+          {/* RIGHT SIDE: Predefined Hackathon Messages (7 Cols) */}
+          <div className="lg:col-span-7 bg-[#14171b] border border-[#242a30] rounded-2xl p-6 md:p-7 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+                <div className="text-xs font-mono font-bold tracking-widest text-[#33e0a1] uppercase flex items-center gap-1.5">
+                  <Sparkles size={14} /> CBC 2.0 PROGRAM FLOW PRESETS
+                </div>
+                <span className="text-[11px] font-mono text-[#7c8891] bg-[#0f1215] px-2 py-0.5 rounded border border-[#242a30]">
+                  {filteredPresets.length} Messages
+                </span>
+              </div>
+
+              {/* Search & Filter Bar */}
+              <div className="flex flex-col sm:flex-row gap-2 mb-4">
+                <div className="relative flex-1">
+                  <Search size={14} className="absolute left-3 top-3 text-[#7c8891]" />
+                  <input
+                    type="text"
+                    value={presetSearch}
+                    onChange={(e) => setPresetSearch(e.target.value)}
+                    placeholder="Search presets by keyword or time..."
+                    className="w-full bg-[#0f1215] border border-[#242a30] rounded-lg pl-9 pr-3 py-2 text-xs text-[#e8ecef] outline-none focus:border-[#7c5cff] transition-all font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Filter Tabs */}
+              <div className="flex gap-1.5 mb-4 overflow-x-auto pb-1">
+                {[
+                  { id: 'all', label: 'All' },
+                  { id: 'day1', label: 'Day 1' },
+                  { id: 'day2', label: 'Day 2' },
+                  { id: 'meals', label: 'Breaks & Food' },
+                  { id: 'urgent', label: 'Urgent & Deadlines' }
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setPresetFilter(tab.id)}
+                    className={`text-[11px] font-mono px-3 py-1 rounded-md transition-all whitespace-nowrap cursor-pointer ${
+                      presetFilter === tab.id
+                        ? 'bg-[#7c5cff] text-white font-bold shadow-sm'
+                        : 'bg-[#0f1215] border border-[#242a30] text-[#7c8891] hover:text-white hover:border-[#7c5cff]/40'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Scrollable Preset List */}
+              <div className="flex flex-col gap-2.5 overflow-y-auto max-h-[460px] pr-1">
+                {filteredPresets.length === 0 ? (
+                  <div className="text-center py-10 text-xs font-mono text-[#7c8891]">
+                    No presets match your search query.
+                  </div>
+                ) : (
+                  filteredPresets.map((preset, idx) => (
+                    <div 
+                      key={idx} 
+                      className="bg-[#0f1215] border border-[#242a30] hover:border-[#7c5cff]/50 rounded-xl p-3.5 flex items-center justify-between gap-3 transition-colors group"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <span className={`font-mono text-[9px] font-bold px-1.5 py-0.5 rounded tracking-wider uppercase ${
+                            preset.type === 'urgent' ? 'bg-[#ff5c68]/15 text-[#ff5c68]' :
+                            preset.type === 'warning' ? 'bg-[#ffb454]/15 text-[#ffb454]' :
+                            preset.type === 'success' ? 'bg-[#33e0a1]/15 text-[#33e0a1]' :
+                            'bg-[#7c5cff]/15 text-[#7c5cff]'
+                          }`}>
+                            {preset.type.toUpperCase()}
+                          </span>
+                          {preset.time && (
+                            <span className="font-mono text-[10px] text-[#7c8891] bg-[#14171b] px-1.5 py-0.5 rounded border border-[#242a30]">
+                              ⏰ {preset.time}
+                            </span>
+                          )}
+                        </div>
+
+                        <h3 className="text-xs md:text-sm font-bold text-[#e8ecef] mb-0.5 font-sans truncate">
+                          {preset.broadcastTitle || preset.title}
+                        </h3>
+                        <p className="text-[11px] text-[#7c8891] leading-relaxed line-clamp-2">
+                          {preset.broadcastMessage || preset.desc}
+                        </p>
+                      </div>
+                      
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <button
+                          onClick={() => loadPresetToForm(preset)}
+                          title="Load into custom form to edit"
+                          className="bg-[#14171b] border border-[#242a30] hover:border-[#7c5cff] hover:text-[#7c5cff] text-[#7c8891] p-2 rounded-lg transition-all cursor-pointer"
+                        >
+                          <Edit3 size={13} />
+                        </button>
+                        <button
+                          onClick={() => sendPreset(preset)}
+                          className="bg-[#242a30] hover:bg-[#7c5cff] text-[#e8ecef] hover:text-white font-mono text-xs font-semibold px-3 py-1.5 rounded-lg transition-all active:scale-95 flex items-center gap-1 cursor-pointer"
+                        >
+                          <Send size={11} /> <span>Send</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
 
-            <div className="flex flex-col gap-3 overflow-y-auto max-h-[480px] pr-1">
-              {PRESETS.map((preset, idx) => (
-                <div 
-                  key={idx} 
-                  className="bg-[#0f1215] border border-[#242a30] hover:border-[#7c5cff]/50 rounded-xl p-4 flex items-center justify-between gap-4 transition-colors"
-                >
-                  <div className="flex-1 min-w-0">
-                    <span className={`font-mono text-[10px] font-bold px-2 py-0.5 rounded tracking-wider uppercase inline-block mb-1.5 ${
-                      preset.type === 'urgent' ? 'bg-[#ff5c68]/15 text-[#ff5c68]' :
-                      preset.type === 'warning' ? 'bg-[#ffb454]/15 text-[#ffb454]' :
-                      preset.type === 'success' ? 'bg-[#33e0a1]/15 text-[#33e0a1]' :
-                      'bg-[#7c5cff]/15 text-[#7c5cff]'
-                    }`}>
-                      {preset.type.toUpperCase()}
-                    </span>
-                    <h3 className="text-sm font-bold text-[#e8ecef] mb-0.5 font-sans">
-                      {preset.title}
-                    </h3>
-                    <p className="text-xs text-[#7c8891] leading-relaxed">
-                      {preset.desc}
-                    </p>
-                  </div>
-                  
-                  <button
-                    onClick={() => sendPreset(preset)}
-                    className="shrink-0 bg-[#242a30] hover:bg-[#7c5cff] text-[#e8ecef] hover:text-white font-mono text-xs font-semibold px-4 py-2 rounded-lg transition-all active:scale-95"
-                  >
-                    Send
-                  </button>
-                </div>
-              ))}
+            <div className="mt-4 pt-3 border-t border-[#242a30]/60 flex items-center justify-between text-[11px] font-mono text-[#7c8891]">
+              <span>Click <b>Send</b> to blast immediately to /board.</span>
+              <span>Click <b>✏️</b> to customize before sending.</span>
             </div>
           </div>
 
