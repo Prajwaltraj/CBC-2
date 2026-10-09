@@ -22,7 +22,7 @@ const SponsorsSection = () => {
           </div>
           */}
 
-          {/* Layer 2: Hosting Sponsors */}
+             {/* Layer 2: Hosting Sponsors */}
           <div className="text-center">
             <h3 className="text-sm font-mono text-[#00F3FF] tracking-[0.2em] uppercase mb-6">Hosting Partners</h3>
             <div className="flex justify-center items-center gap-6 flex-wrap glass-panel p-6 rounded-2xl w-fit mx-auto">
